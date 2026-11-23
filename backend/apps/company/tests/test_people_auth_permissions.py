@@ -6,6 +6,8 @@ from rest_framework.test import APIClient
 
 from apps.company.models import AuthorizedSignatory, CompanyPartner, CompanyProfileAuditEvent as Event
 
+from apps.company.constants import DocType
+
 from .base import API, PASSWORD, CompanyTestMixin, png_bytes
 
 
@@ -193,5 +195,5 @@ class PermissionMatrixTests(CompanyTestMixin, TestCase):
 
     def test_lookups_available_to_everyone_signed_in(self):
         body = self.api_staff.get(f"{API}/lookups/").json()
-        self.assertEqual(len(body["document_types"]), 18)
+        self.assertEqual(len(body["document_types"]), len(DocType.CHOICES))
         self.assertIn("29 - Karnataka", {s["label"] for s in body["gst_states"]})

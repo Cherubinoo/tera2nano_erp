@@ -12,6 +12,8 @@ from rest_framework.response import Response
 
 from apps.core.files import inspect_upload
 
+from apps.accounts import access
+
 from . import api
 from .api import Action, current_company, record_simple, request_reason, save_with_audit
 from .constants import AccessClass, DocType, VerificationStatus
@@ -356,7 +358,7 @@ class CompanyBankAccountViewSet(CompanyScopedViewSet):
                     raise ValidationError({"supporting_document": "Attach the bank verification document first."})
                 if instance.last_changed_by_id == request.user.pk:
                     others = User.objects.filter(is_active=True).exclude(pk=request.user.pk).filter(
-                        role__in=["admin", "finance"]
+                        role__in=access.roles_with("finance.manage")
                     ) | User.objects.filter(is_active=True, is_superuser=True).exclude(pk=request.user.pk)
                     if others.exists():
                         raise PermissionDenied(
@@ -721,7 +723,7 @@ class IssuedDocumentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vi
         return qs
 
     # Documents that move money need a finance role to issue.
-    FINANCE_ONLY = {DocType.INVOICE, DocType.CREDIT_NOTE}
+    FINANCE_ONLY = {DocType.INVOICE, DocType.CREDIT_NOTE, DocType.PROFORMA, DocType.DEBIT_NOTE}
 
     def create(self, request):
         data = IssueDocumentRequestSerializer(data=request.data)
@@ -729,6 +731,8 @@ class IssuedDocumentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vi
         v = data.validated_data
         if v["document_type"] in self.FINANCE_ONLY and not request.user.is_finance:
             raise PermissionDenied("Only finance users can issue invoices and credit notes.")
+        if not request.user.has_code("documents.issue"):
+            raise PermissionDenied("Your role may not issue documents.")
         template = None
         ref = (v.get("letterhead_template") or "").strip()
         if ref:
@@ -745,6 +749,10 @@ class IssuedDocumentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vi
         if template is not None and is_operation != (template.kind == LetterheadTemplate.Kind.OPERATION):
             raise ValidationError({"letterhead_template": (
                 "Operations documents use an operation ID (OPS-…); letters use a template ID (LHT-…).")})
+        if v["document_type"] == DocType.QUOTATION and isinstance((v["content"] or {}).get("quotation"), dict) and template is None:
+            held = self._hold_for_approval(request, v)
+            if held is not None:
+                return held
         document = document_service.issue_document(
             v["document_type"], actor=request.user, content=v["content"], title=v.get("title", ""),
             letterhead_template=template,
@@ -752,6 +760,22 @@ class IssuedDocumentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vi
             source_id=v.get("source_id", ""), numbered=v.get("numbered", True), supersedes=v.get("supersedes"),
         )
         return Response(self.get_serializer(document).data, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def _hold_for_approval(request, v):
+        """A quotation above an approval rule is not issued: it waits (202) until the approvers decide."""
+        from django.apps import apps as django_apps
+        if not django_apps.is_installed("apps.sales"):
+            return None
+        from apps.sales import quotes
+        content = dict(v["content"]["quotation"])
+        if v.get("source_module") and v.get("source_id"):
+            content["source"] = {"module": v["source_module"], "id": v["source_id"]}  # kept so the link survives the approval
+        held = quotes.hold_if_needed(current_company(), request.user, content=content,
+                                     issue_date=v.get("issue_date") or datetime.date.today())
+        if held is None:
+            return None
+        return Response({"pending_approval": True, "quotation": quotes.as_dict(held)}, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=["get"])
     def download(self, request, pk=None):

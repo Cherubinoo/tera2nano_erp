@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../api';
 import { useLookups } from '../context';
 import { localToday } from '../forms';
 import { useLoad } from '../hooks';
-import { ErrorBox, Field, FormErrors, Loading, Notice, useConfirm, useToast } from '../ui';
+import { Badge, ErrorBox, Field, FormErrors, Loading, Notice, fmtDate, useConfirm, useToast } from '../ui';
 import { Downloads, IssuedList } from './Letters';
 
 // Starting headings for an IT solution quotation. Paste the text under the ones you need; empty ones are not printed.
@@ -12,18 +13,18 @@ const blankSection = (heading = '') => ({ heading, body: '' });
 const startSections = () => SECTION_HEADINGS.map((h) => blankSection(h));
 const DETAIL_LABELS = ['Project', 'Client', 'Project scope', 'Completion period', 'Warranty / defect liability', 'Payment terms', 'Offer validity', 'EMD', 'Performance guarantee'];
 const blankDetail = () => ({ label: '', value: '' });
-const UNITS = ['Nos', 'Licence', 'User', 'Month', 'Year', 'Hour', 'Man-day', 'Lot', 'Server', 'Domain'];
+export const UNITS = ['Nos', 'Licence', 'User', 'Month', 'Year', 'Hour', 'Man-day', 'Lot', 'Server', 'Domain'];
 // Commonly used for IT services; confirm the right code for each item with your tax adviser.
-const SAC_CODES = [
+export const SAC_CODES = [
   ['998313', 'IT consulting and support'], ['998314', 'IT design and development'], ['998315', 'Hosting and IT infrastructure provisioning'],
   ['998316', 'IT infrastructure and network management'], ['998319', 'Other IT services'], ['997331', 'Licensing of computer software'],
 ];
-const blankItem = () => ({ description: '', hsn_sac: '', quantity: '1', unit: '', rate: '', discount_percent: '', gst_rate: '' });
-const inr = (value) => Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const isBlank = (i) => !i.description.trim() && !String(i.rate).trim();
+export const blankItem = () => ({ description: '', hsn_sac: '', quantity: '1', unit: '', rate: '', discount_percent: '', gst_rate: '' });
+export const inr = (value) => Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export const isBlank = (i) => !i.description.trim() && !String(i.rate).trim();
 
 // Only what the server needs: blank rows are left out and empty optional values are not sent.
-const itemsPayload = (items) => items.filter((i) => !isBlank(i)).map((i) => {
+export const itemsPayload = (items) => items.filter((i) => !isBlank(i)).map((i) => {
   const out = { description: i.description.trim(), quantity: i.quantity, rate: i.rate };
   if (i.hsn_sac.trim()) out.hsn_sac = i.hsn_sac.trim();
   if (i.unit.trim()) out.unit = i.unit.trim();
@@ -32,7 +33,7 @@ const itemsPayload = (items) => items.filter((i) => !isBlank(i)).map((i) => {
   return out;
 });
 
-function ItemEditor({ item, n, many, options, errors, set, remove }) {
+export function ItemEditor({ item, n, many, options, errors, set, remove }) {
   const id = (k) => `qi-${n}-${k}`;
   return (
     <div className="row-editor">
@@ -71,7 +72,7 @@ function ItemEditor({ item, n, many, options, errors, set, remove }) {
   );
 }
 
-function Totals({ working, error, pending }) {
+export function Totals({ working, error, pending }) {
   if (error) return <Notice type="warn">{error}</Notice>;
   if (!working) return <p className="hint">The totals appear here as you fill in the customer and items.</p>;
   const t = working.totals;
@@ -98,6 +99,57 @@ function Totals({ working, error, pending }) {
   );
 }
 
+const str = (v) => (v === null || v === undefined ? '' : String(v));
+
+// The form's state for a quotation that came back as a draft (what was sent when it was first issued).
+export function formFromQuotation(q) {
+  const c = q.content || {};
+  const cust = c.customer || {};
+  return {
+    customer: { name: str(cust.name), address: (cust.address || []).join('\n'), gstin: str(cust.gstin), state_code: str(cust.state_code) },
+    meta: {
+      issue_date: q.issue_date, valid_until: str(c.valid_until), enquiry_ref: str(c.enquiry_ref), subject: str(c.subject), intro: str(c.intro),
+      notes: str(c.notes), terms: str(c.terms), include_bank: c.include_bank !== false, show_signature: !!c.show_signature,
+    },
+    items: (c.items || []).map((i) => ({ description: str(i.description), hsn_sac: str(i.hsn_sac), quantity: str(i.quantity), unit: str(i.unit),
+      rate: str(i.rate), discount_percent: str(i.discount_percent), gst_rate: str(i.gst_rate) })),
+    sections: (c.sections || []).length ? c.sections.map((x) => ({ heading: str(x.heading), body: str(x.body) })) : startSections(),
+    details: (c.details || []).length ? c.details.map((x) => ({ label: str(x.label), value: str(x.value) })) : [blankDetail()],
+  };
+}
+
+export const QUOTE_TONE = { draft: 'neutral', pending_approval: 'warn', issued: 'good' };
+
+// Quotations that are not issued yet: waiting for approval, or sent back to a draft with the approver's note.
+function HeldQuotations({ refreshKey }) {
+  const { data, error, loading, reload } = useLoad(() => api.get('/sales/quotes/'), [refreshKey]);
+  const rows = (data?.results || []).filter((q) => q.status !== 'issued');
+  if (loading || error || !rows.length) return error ? <ErrorBox error={error} onRetry={reload} /> : null;
+  return (
+    <section className="card" aria-label="Quotations waiting for approval">
+      <div className="card-head"><div><h2>Waiting for approval and drafts</h2>
+        <p className="muted">A quotation above an approval limit is issued, with its ID and PDF, only once it is approved. A rejected one comes back here as a draft.</p></div></div>
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Dated</th><th className="amount">Total</th><th>Status</th><th>Prepared by</th><th><span className="sr-only">Open</span></th></tr></thead>
+          <tbody>
+            {rows.map((q) => (
+              <tr key={q.id}>
+                <td data-label="Customer"><Link to={`/company/quotations/${q.id}`}><strong>{q.customer_name}</strong></Link>{q.decision_note && q.status === 'draft' && <div className="hint">{q.decision_note}</div>}</td>
+                <td data-label="Dated">{fmtDate(q.issue_date)}</td>
+                <td className="amount" data-label="Total">{q.currency} {inr(q.total)}</td>
+                <td data-label="Status"><Badge tone={QUOTE_TONE[q.status] || 'neutral'}>{q.status_label}</Badge></td>
+                <td data-label="Prepared by">{q.created_by || '—'}</td>
+                <td className="row-actions"><Link className="btn btn-small" to={`/company/quotations/${q.id}`}>Open</Link></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 export function QuotationsManager() {
   const lookups = useLookups();
   const notify = useToast();
@@ -119,6 +171,77 @@ export function QuotationsManager() {
   const [workingError, setWorkingError] = useState('');
   const [pending, setPending] = useState(false);
   const ticket = useRef(0);
+  const [params, setParams] = useSearchParams();
+  const editId = params.get('edit') || '';
+  const [held, setHeld] = useState(null); // a quotation sent for approval instead of being issued
+  // Where the quotation starts from, when another screen sent the person here (the CRM deal): kept with the issued document.
+  const [source, setSource] = useState(null);
+
+  // ?edit=<id>: a draft that an approver sent back is loaded into the form to be corrected and sent again.
+  useEffect(() => {
+    if (!editId) return undefined;
+    let live = true;
+    api.get(`/sales/quotes/${editId}/`).then((q) => {
+      if (!live) return;
+      const f = formFromQuotation(q);
+      setCustomer(f.customer); setMeta((m) => ({ ...m, ...f.meta })); setItems(f.items.length ? f.items : [blankItem()]);
+      setSections(f.sections); setDetails(f.details);
+    }).catch((e) => notify(e.message, 'error'));
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editId]);
+
+  // ?source_module=crm&source_id=<deal>: fill the form from the CRM deal (customer, contact, deal reference, the deal's products).
+  // The query string alone already carries the customer name, subject and amount; the deal adds the rest when the person may see it.
+  const fromDeal = params.get('source_module') === 'crm' ? params.get('source_id') || '' : '';
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (editId || prefilled.current || !options || !lookups.gst_states) return undefined;
+    const name = params.get('customer') || '';
+    if (!name && !fromDeal) return undefined;
+    prefilled.current = true;
+    let live = true;
+    const dealRef = params.get('deal') || '';
+    const amount = params.get('amount') || '';
+    const subject = params.get('subject') || '';
+    setSource(fromDeal ? { module: 'crm', id: fromDeal, label: dealRef || subject || 'CRM deal' } : null);
+    setCustomer((c) => ({ ...c, name }));
+    setMeta((m) => ({ ...m, subject }));
+    if (dealRef) setDetails([{ label: 'Deal reference', value: dealRef }]);
+    if (Number(amount) > 0) setItems([{ ...blankItem(), description: subject || 'Services', rate: amount }]);
+    if (!fromDeal) return undefined;
+    (async () => {
+      try {
+        const d = await api.get(`/crm/deals/${fromDeal}/`);
+        let lines = [], gstin = '', state = '', code = '';
+        const customerId = d.customer_id || params.get('customer_id');
+        if (customerId) {
+          try { const c = await api.get(`/sales/customers/${customerId}/`); lines = c.address_lines || []; gstin = c.gstin || ''; code = c.state_code || ''; } catch { /* not allowed to see it */ }
+        }
+        if (!lines.length && !gstin) {
+          try {
+            const a = await api.get(`/crm/accounts/${d.account.id}/`);
+            lines = [a.address, [a.city, a.state].filter(Boolean).join(', ')].filter(Boolean); gstin = a.gstin || ''; state = a.state || '';
+          } catch { /* not allowed to see it */ }
+        }
+        if (!code && state) {
+          const hit = lookups.gst_states.find((s) => s.label.split(' - ')[1]?.toLowerCase() === state.toLowerCase());
+          if (hit) code = hit.value;
+        }
+        if (d.contact?.name) lines = [`Kind attention: ${d.contact.name}`, ...lines];
+        if (!live) return;
+        setCustomer({ name: name || d.customer?.name || d.account.name, address: lines.join('\n'), gstin, state_code: code });
+        setMeta((m) => ({ ...m, subject: subject || d.name }));
+        setDetails([{ label: 'Deal reference', value: d.reference_code }]);
+        const rows = (d.items || []).map((i) => ({ ...blankItem(), description: i.description, quantity: String(Number(i.quantity)),
+          rate: String(Number(i.unit_price)), gst_rate: options.gst_rates.find((r) => Number(r) === Number(i.gst_rate) && Number(r) > 0) ?? '' }));
+        if (rows.length) setItems(rows);
+        setSource({ module: 'crm', id: d.id, label: `${d.reference_code} · ${d.name}` });
+      } catch { /* the query string already filled the basics */ }
+    })();
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options, lookups.gst_states]);
 
   const quotation = () => {
     const q = {
@@ -200,27 +323,43 @@ export function QuotationsManager() {
     setFailure(null);
     if (!validate()) return;
     const ok = await confirm({
-      title: 'Issue this quotation?',
+      title: editId ? 'Send this quotation again?' : 'Issue this quotation?',
       body: (
         <>
-          <p>A unique quotation ID is allocated now and the quotation is saved exactly as shown. An issued quotation cannot be edited; if it is wrong, void it and issue a new one.</p>
+          <p>A unique quotation ID is allocated now and the quotation is saved exactly as shown. An issued quotation cannot be edited; if it is wrong, void it and issue a new one.
+            A quotation above an approval limit is not issued yet: it waits for approval and gets its ID once approved.</p>
           {working && <p>Total: <strong>{working.currency} {inr(working.totals.grand_total)}</strong> for <strong>{customer.name.trim()}</strong>.</p>}
         </>
       ),
-      confirmLabel: 'Issue quotation',
+      confirmLabel: editId ? 'Send quotation' : 'Issue quotation',
     });
     if (!ok) return;
     setBusy(true);
     try {
-      const doc = await api.post('/company/issued-documents/', { document_type: 'quotation', issue_date: meta.issue_date, content: { quotation: quotation() } });
-      setIssued(doc);
+      let doc;
+      let waiting = null;
+      if (editId) {
+        await api.patch(`/sales/quotes/${editId}/`, { issue_date: meta.issue_date, content: quotation() });
+        const sent = await api.post(`/sales/quotes/${editId}/issue/`);
+        if (sent.issued) doc = await api.get(`/company/issued-documents/${sent.issued.id}/`);
+        else waiting = sent;
+        setParams({}, { replace: true });
+      } else {
+        const r = await api.post('/company/issued-documents/', { document_type: 'quotation', issue_date: meta.issue_date, content: { quotation: quotation() },
+          ...(source ? { source_module: source.module, source_id: source.id } : {}) });
+        if (r.pending_approval) waiting = r.quotation;
+        else doc = r;
+      }
+      setIssued(doc || null);
+      setHeld(waiting);
+      if (source) { setParams({}, { replace: true }); prefilled.current = true; setSource(null); }
       setRefreshKey((k) => k + 1);
       setCustomer({ name: '', address: '', gstin: '', state_code: '' });
       setMeta((m) => ({ ...m, valid_until: '', enquiry_ref: '', subject: '', intro: '', notes: '', terms: '' }));
       setItems([blankItem()]);
       setSections(startSections());
       setDetails([blankDetail()]);
-      notify(`Quotation issued: ${doc.reference_number}`);
+      notify(waiting ? 'Quotation sent for approval. It is issued once approved.' : `Quotation issued: ${doc.reference_number}`);
     } catch (err) {
       setFailure(err);
       setErrors(err.fieldErrors || {});
@@ -235,7 +374,7 @@ export function QuotationsManager() {
       <form className="card" onSubmit={submit} noValidate>
         <div className="card-head">
           <div>
-            <h2>New IT solution quotation</h2>
+            <h2>{editId ? 'Correct the quotation and send it again' : 'New IT solution quotation'}</h2>
             <p className="muted">Enter the customer, the solution items (development, hosting, licences, support) and the scope. Prices and GST are worked out for you; issuing gives a unique quotation ID, a PDF with the letterhead and a plain PDF for your pre-printed paper.</p>
           </div>
         </div>
@@ -247,6 +386,11 @@ export function QuotationsManager() {
               : 'assigned automatically when you issue.'}
         </div>
         {!options.gst_applied && <Notice>GST is not switched on for the company (Tax Configuration), so this quotation is printed without tax.</Notice>}
+        {source && (
+          <div className="notice notice-info" role="status">
+            <span>Started from the CRM deal <Link to={`/crm/deals/${source.id}`}>{source.label}</Link>: customer, contact and the deal's products are filled in. Check them, then issue; the quotation is linked back to the deal.</span>
+          </div>
+        )}
 
         <fieldset className="subcard">
           <legend>Customer</legend>
@@ -364,9 +508,17 @@ export function QuotationsManager() {
         </div>
         {options.payment_terms && <p className="hint">Payment terms from Company Policies ("{options.payment_terms}") print under the totals.</p>}
         <div className="actions">
-          <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Issuing…' : 'Issue quotation'}</button>
+          <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Issuing…' : editId ? 'Send quotation' : 'Issue quotation'}</button>
+          {editId && <button type="button" className="btn" onClick={() => { setParams({}, { replace: true }); window.location.reload(); }}>Cancel the correction</button>}
         </div>
       </form>
+
+      {held && (
+        <div id="q-held" ref={(el) => el && el.scrollIntoView({ block: 'nearest' })}><Notice type="warn">
+          <p><strong>Sent for approval.</strong> This quotation for <strong>{held.customer_name}</strong> ({held.currency} {inr(held.total)}) is above an approval limit, so it has no ID or PDF yet.
+            It is issued as soon as it is approved. <Link to={`/company/quotations/${held.id}`}>Follow it here</Link>.</p>
+        </Notice></div>
+      )}
 
       {issued && (
         <Notice type="success">
@@ -376,6 +528,7 @@ export function QuotationsManager() {
         </Notice>
       )}
 
+      <HeldQuotations refreshKey={refreshKey} />
       <IssuedList refreshKey={refreshKey} types={['quotation']} title="Issued quotations" emptyText="No quotations issued yet."
         showTemplates={false} searchHint="T2N/QUO/26/…" />
       {confirmDialog}

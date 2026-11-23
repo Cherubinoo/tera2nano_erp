@@ -7,6 +7,8 @@ from django.test import TestCase, TransactionTestCase
 from apps.company.models import DocumentNumberSequence, IssuedDocument, LetterheadTemplate
 from apps.company.services import letterheads
 
+from apps.company.constants import DocType
+
 from .base import API, CompanyTestMixin
 
 CATALOGUE = {
@@ -28,7 +30,7 @@ class LookupsBeforeSetupTests(CompanyTestMixin, TestCase):
         self.assertEqual(r.status_code, 200, r.content)
         body = r.json()
         self.assertEqual(body["letterhead_templates"], [])
-        self.assertEqual(len(body["document_types"]), 18)
+        self.assertEqual(len(body["document_types"]), len(DocType.CHOICES))
 
 
 class TemplateCatalogueTests(CompanyTestMixin, TestCase):

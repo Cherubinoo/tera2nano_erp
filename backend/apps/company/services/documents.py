@@ -45,7 +45,7 @@ def _signature_bytes(resolved):
 def _default_content(doc_type, resolved, snapshot, content):
     content = dict(content or {})
     policy = snapshot.get("policy") or {}
-    if doc_type in (DocType.QUOTATION, DocType.INVOICE):
+    if doc_type in (DocType.QUOTATION, DocType.INVOICE, DocType.PROFORMA, DocType.DEBIT_NOTE):
         content.setdefault("terms", policy.get("terms", ""))
         content.setdefault("include_bank", snapshot.get("bank") is not None)
         if policy.get("payment_terms"):
@@ -55,6 +55,7 @@ def _default_content(doc_type, resolved, snapshot, content):
     return content
 
 
+TITLES = {DocType.PROFORMA: "Proforma Invoice", DocType.CREDIT_NOTE: "Credit Note", DocType.DEBIT_NOTE: "Debit Note"}
 MODE_LABELS = {"in_person": "In person", "online": "Online", "hybrid": "Hybrid"}
 
 
@@ -88,6 +89,8 @@ def _title(doc_type, resolved, title):
         return "Minutes of Meeting"
     if doc_type == DocType.INVOICE:
         return resolved.tax_settings.invoice_title or "Invoice"
+    if doc_type in TITLES:
+        return TITLES[doc_type]
     return dict(DocType.CHOICES)[doc_type]
 
 
@@ -113,6 +116,11 @@ def issue_document(doc_type, *, actor, content, title="", issue_date=None, sourc
         snapshot = company_service.build_snapshot(resolved, doc_type)
         if doc_type == DocType.QUOTATION and content.get("quotation"):
             snapshot["quotation"], built = quotations.build(company, resolved, content["quotation"], issue_date)
+            content = built
+        elif doc_type in DocType.BILLING and content.get("billing"):
+            # Sales documents (invoices, notes, proforma): the sales module passes the worked-out input; see apps/sales.
+            snapshot["billing"], built = quotations.build(
+                company, resolved, content["billing"], issue_date, purpose=doc_type, extra_meta=content.get("extra_meta"))
             content = built
         content = _default_content(doc_type, resolved, snapshot, content)
         if doc_type == DocType.MEETING_MINUTES and content.get("minutes"):

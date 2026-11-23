@@ -1,0 +1,38 @@
+from django.urls import path
+
+from . import views as v
+
+urlpatterns = [
+    path("summary/", v.SummaryView.as_view(), name="compliance-summary"),
+    path("dashboard/", v.DashboardView.as_view(), name="compliance-dashboard"),
+    path("reminders/", v.RemindersView.as_view(), name="compliance-reminders"),
+    path("expiry-watch/", v.ExpiryWatchView.as_view(), name="compliance-expiry-watch"),
+    path("tax-events/", v.TaxEventsView.as_view(), name="compliance-tax-events"),
+    path("registry/", v.RegistryView.as_view(), name="compliance-registry"),
+    path("assignees/", v.AssigneesView.as_view(), name="compliance-assignees"),
+    path("options/", v.OptionsView.as_view(), name="compliance-options"),
+    path("obligations/", v.ObligationCollectionView.as_view(), name="compliance-obligations"),
+    path("obligations/seed/", v.ObligationSeedView.as_view(), name="compliance-obligations-seed"),
+    path("obligations/<uuid:pk>/", v.ObligationDetailView.as_view(), name="compliance-obligation"),
+    path("calendar/generate/", v.GenerateView.as_view(), name="compliance-generate"),
+    path("items/", v.ItemCollectionView.as_view(), name="compliance-items"),
+    path("items/bulk/", v.ItemBulkView.as_view(), name="compliance-items-bulk"),
+    path("items/<uuid:pk>/", v.ItemDetailView.as_view(), name="compliance-item"),
+    path("items/<uuid:pk>/file/", v.ItemFileView.as_view(), name="compliance-item-file"),
+    path("items/<uuid:pk>/not-applicable/", v.ItemNotApplicableView.as_view(), name="compliance-item-na"),
+    path("items/<uuid:pk>/reopen/", v.ItemReopenView.as_view(), name="compliance-item-reopen"),
+    path("penalty/rules/", v.PenaltyRulesView.as_view(), name="compliance-penalty-rules"),
+    path("penalty/estimate/", v.PenaltyEstimateView.as_view(), name="compliance-penalty-estimate"),
+    path("legal-events/", v.EventCollectionView.as_view(), name="compliance-events"),
+    path("legal-events/import-history/", v.EventImportView.as_view(), name="compliance-events-import"),
+    path("legal-events/<uuid:pk>/", v.EventDetailView.as_view(), name="compliance-event"),
+    path("contracts/", v.ContractCollectionView.as_view(), name="compliance-contracts"),
+    path("contracts/<uuid:pk>/", v.ContractDetailView.as_view(), name="compliance-contract"),
+    path("contracts/<uuid:pk>/renew/", v.ContractRenewView.as_view(), name="compliance-contract-renew"),
+    path("contracts/<uuid:pk>/terminate/", v.ContractTerminateView.as_view(), name="compliance-contract-terminate"),
+    path("cases/", v.CaseCollectionView.as_view(), name="compliance-cases"),
+    path("cases/<uuid:pk>/", v.CaseDetailView.as_view(), name="compliance-case"),
+    path("policies/", v.PolicyCollectionView.as_view(), name="compliance-policies"),
+    path("policies/<uuid:pk>/", v.PolicyDetailView.as_view(), name="compliance-policy"),
+    path("policies/<uuid:pk>/acknowledge/", v.PolicyAcknowledgeView.as_view(), name="compliance-policy-ack"),
+]

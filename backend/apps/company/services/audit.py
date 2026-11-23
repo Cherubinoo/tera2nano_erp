@@ -34,6 +34,8 @@ class EntityAudit:
     categories: dict = field(default_factory=dict)
     # Changing any of these (after setup is complete) needs a stated reason.
     reason_required: frozenset = frozenset()
+    # False for records that change all the time (customers, payments): they do not bump the company record version.
+    bump_version: bool = True
 
 
 ENTITIES = {
@@ -110,7 +112,21 @@ ENTITIES = {
     "document": EntityAudit("Company document", "document"),
     "issued_document": EntityAudit("Issued document", "issued_document"),
     "number_reference": EntityAudit("Reference number", "numbering"),
+    "customer": EntityAudit("Customer", "sales", redact=frozenset({"email", "phone", "gstin", "pan"}), bump_version=False),
+    "sales_document": EntityAudit("Sales document", "sales", bump_version=False),
+    "payment": EntityAudit("Payment received", "sales", bump_version=False),
+    "account": EntityAudit("Ledger account", "accounting", bump_version=False),
+    "journal_entry": EntityAudit("Journal entry", "accounting", bump_version=False),
+    "voucher": EntityAudit("Expense or income", "accounting", bump_version=False),
+    "reconciliation": EntityAudit("Bank reconciliation", "accounting", bump_version=False),
+    "user": EntityAudit("User", "access", redact=frozenset({"email", "password"})),
+    "access_matrix": EntityAudit("Access permissions", "access"),
 }
+
+
+def register_entity(name, spec):
+    """Let a module add its own audited record types (call from its AppConfig.ready())."""
+    ENTITIES.setdefault(name, spec)
 
 
 def _jsonable(value):
@@ -185,7 +201,7 @@ def _actor_fields(actor):
 def record_event(company, actor, entity, entity_id, action, *, changed=(), previous=None, new=None,
                  reason="", category=None, instance=None):
     spec = ENTITIES[entity]
-    bump = action not in {
+    bump = spec.bump_version and action not in {
         CompanyProfileAuditEvent.Action.REVEALED,
         CompanyProfileAuditEvent.Action.DOWNLOADED,
         CompanyProfileAuditEvent.Action.ISSUED,
@@ -207,3 +223,15 @@ def record_event(company, actor, entity, entity_id, action, *, changed=(), previ
         profile_version=company.version,
         **_actor_fields(actor),
     )
+
+
+def log(company, actor, entity, entity_id, action, *, new=None, previous=None, reason="", category=None):
+    """One call for a module to write an audit event: `previous` and `new` are plain dicts of the fields that changed.
+
+    `action` is a CompanyProfileAuditEvent.Action value ("created", "updated", "deactivated", "deleted", "issued" ...).
+    The entity must have been registered (see register_entity). Emails, phone numbers and similar personal data should be
+    listed in the EntityAudit's `redact` so they are not copied into the history.
+    """
+    changed, prev, cur = diff(entity, previous or {}, new or {})
+    return record_event(company, actor, entity, entity_id, action, changed=changed, previous=prev, new=cur, reason=reason,
+                        category=category or ENTITIES[entity].default_category)

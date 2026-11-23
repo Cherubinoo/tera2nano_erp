@@ -1,4 +1,8 @@
-# Tera2Nano ERP — Company Profile and Management module
+# Tera2Nano ERP
+
+A basic ERP for Tera2Nano Solutions LLP (India: GST, TDS, LLP Act, INR): company management, partners, accounting, sales and
+quotations, purchases, projects, people and payroll, GST and tax, compliance, workplace, approvals, reports and CRM.
+The layout uses familiar ERP and CRM patterns (module launcher, left menu, list pages, detail pages, dashboards) in a Graphite & Gold theme. Module status is in `docs/ROADMAP.md`.
 
 Django REST API + PostgreSQL (`t2n_erp`) in `backend/`, React (Vite) UI in `frontend/`.
 Company details live only in PostgreSQL; the UI, PDF templates and business code read them through the Company Management service.
@@ -22,6 +26,118 @@ Company details live only in PostgreSQL; the UI, PDF templates and business code
    `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 3. **Frontend.** `cd frontend; npm install; npm run dev` (proxies `/api` to `localhost:8000`).
 4. Sign in as the administrator; with no company yet, the UI opens the **setup wizard**.
+
+## Using the app
+
+After signing in you land on **Home**: this month's documents and quotation value, a six-month chart, items needing attention
+(expiring documents, unverified bank accounts) and your recent documents with downloads. **+ New** (top right) opens the page to
+create a quotation, letter, minutes, operations document or user. **Go to a page** (Ctrl+K) finds any page by name. The left menu
+groups pages by module (CRM, Sales, Purchases, Accounting, GST & Tax, Projects, People, Partners, Approvals, Compliance, Workplace,
+Reports, Documents, settings, Company, Administration) and shows only what your role may open. The bell in the top bar counts
+approvals waiting for you; the menu button collapses the sidebar to icons.
+
+## The Guide and the module guide
+
+The **Guide** tile on the launcher (and the **?** icon in the top bar, and *How this module works* at the foot of each module's menu)
+opens the in-app guide: the whole process from lead to reports as a clickable diagram with a *Play the process* tour, a map and table
+of how the modules connect (what posts to the books, what uses approvals and attachments), one page per module (what it is used for,
+who uses it, key screens, a step-by-step workflow with example figures, statuses, what it sends and receives, what the system does by
+itself, and honest limits), a roles table and a glossary.
+
+The same text is written out in [docs/MODULE_GUIDE.md](docs/MODULE_GUIDE.md). It is generated from
+`frontend/src/modules/guide/guideData.js` (with `guideModulesA.js`, `guideModulesB.js` and `rolesData.js`), so the screens and the
+document cannot drift:
+
+```powershell
+cd frontend
+node scripts/build-roles-data.mjs      # roles table from backend/apps/accounts/access.py
+node scripts/build-guide-docs.mjs      # rewrite docs/MODULE_GUIDE.md (add --check to only compare)
+node scripts/check-guide-links.mjs     # every link in the guide matches a real route
+```
+
+Modules covered: CRM, Sales, Purchases, Accounting, GST & Tax, Projects, People (HR), Partners, Approvals, Compliance, Workplace,
+Reports, Documents, Company, Administration.
+
+## Sales
+
+The **Sales** group (menu) holds everything about billing customers. It needs the `sales.view` permission to open and
+`sales.manage` / `sales.issue` to change or issue (Finance Manager, Managing Partner and Admin by default; Partners and Project
+Managers can look). All of it reuses the quotation builder, so GST, rounding, numbering and the two PDFs (letterhead and plain
+for pre-printed paper) behave exactly as on quotations.
+
+- **Sales Dashboard**: total receivables, overdue, invoiced this month, receivables by age (stacked bar), invoice status
+  (donut), invoiced versus received over six months (columns) and who owes the most.
+- **Customers**: name, legal name, GST treatment and GSTIN (checked, state taken from it), PAN, contact, address, payment terms
+  in days. Each gets an automatic code (`T2N-CUS-26-1211-0001`). A customer page shows what they owe, advances, unused credit
+  notes, a statement with a running balance, their documents and details. A customer who owes money cannot be switched off.
+- **Invoices and Notes**: invoices, proforma invoices, credit notes and debit notes, with status filters (draft, unpaid,
+  overdue, partially paid, paid, void), search and totals. A **draft** can be edited or deleted and uses no number. **Issue**
+  allocates the number (`T2N/INV/26/1211/00001`, `T2N/PI/…`, `T2N/CN/…`, `T2N/DN/…`), makes both PDFs and freezes the
+  document; after that it can only be voided (reason needed; the number is never reused). Due date comes from the customer's
+  payment terms, else the company policy. A proforma can be converted into an invoice draft; an invoice can be cloned.
+- **Credit and debit notes** are raised from an invoice (same customer, reason required). A credit note is applied to its
+  invoice at once; any unused part can be applied to another invoice later. Credit notes against an invoice cannot together
+  exceed it. An invoice with payments, credits or live notes cannot be voided until those are voided.
+- **Payments received**: record money against a customer, applied to invoices oldest-due-first or by hand. Whatever is not
+  applied stays as the customer's advance. Each payment gets a number (`T2N/PAY/26/1211/00001`); a payment can be voided
+  (reason needed) and the invoices go back to unpaid.
+- **Receivables Ageing**: unpaid amounts by days past due (current, 1-15, 16-30, 31-45, over 45), per customer and in total.
+- **Recurring invoices**: a profile (customer, template items with GST, weekly / monthly / quarterly / half-yearly / yearly or
+  every N days or months, start date, optional end date or number of invoices, due days, project, notes and terms) creates a
+  normal invoice on each run, as a draft or issued (issuing needs `sales.issue`). The schedule is anchored on the start date, so a
+  profile starting on the 31st bills on the last day of shorter months and on 29 February in leap years. Each (profile, run
+  date) is made once only; missed runs are caught up, at most 12 per profile per call. Pause, resume (runs missed while paused
+  are skipped), stop, edit (affects future invoices only) and "Run now" are on the profile page; its **Child invoices** tab
+  lists what it made. Schedule the daily job with `.\.venv\Scripts\python manage.py generate_recurring_invoices` (optional
+  `--date YYYY-MM-DD`, `--limit N`); a profile that fails (for example its customer was switched off) shows "last error" and
+  does not stop the others.
+- **Reminders**: rules say when a reminder falls due relative to the invoice's due date (standard: 3 days before, on the day, 7,
+  15 and 30 days after) with editable subject and message using placeholders such as `{customer_name}`, `{invoice_no}`,
+  `{amount_due}`, `{due_date}`, `{days_overdue}`, `{company_name}`. The Reminders page lists unpaid invoices that need one
+  (never paid, void or draft invoices; each rule once per invoice; only the latest due rule when several have passed). **There is
+  no email server**: Send records the rendered text against the invoice and gives a Copy button and a `mailto:` link, Skip
+  records that it was passed over. History is on the Reminders page and on each invoice; the Sales dashboard counts what is due.
+
+Amounts are exact decimals and every action that changes money locks the rows it uses, so two people cannot overpay one
+invoice. Sales events are written to the change history without bumping the company record version.
+
+## Accounting
+
+The **Accounting** group holds the books. It is double entry: every entry's debits equal its credits, a posted entry is never
+edited (a mistake is corrected by a reversing entry), and every report is a sum of journal lines, so the statements always
+agree with each other. Permissions: `accounting.view` to read (Partners included), `accounting.manage` to record
+(Finance Manager, Managing Partner, Admin).
+
+- **Sales post themselves.** Issuing an invoice or debit note debits Accounts receivable and credits Sales and the GST payable
+  accounts; a credit note does the reverse; a payment debits the bank (or cash) and credits receivable, with any unapplied part
+  held as a customer advance. Voiding a sale or payment posts the mirror entry. The posting runs in the same transaction as
+  the sale, so the two can never disagree, and each event can post only once.
+- **Chart of accounts**: a standard chart for a services LLP (assets, liabilities, equity, income, expenses) is created on
+  first use. Accounts the system posts to are marked "System" and cannot be removed; add, rename and switch off the rest. Each
+  company bank account gets its own ledger account. **Set up the books** posts any sales made before the books existed.
+- **Expenses and income**: record money paid out or received outside invoices, with optional GST (input credit on expenses,
+  output tax on income; CGST + SGST or IGST). Each gets a number (`T2N/EXP/…`, `T2N/INC/…`) and can be voided.
+- **Journal**: manual entries with an automatic number (`T2N/JV/…`) and a live check that debits equal credits;
+  filter by where an entry came from; reverse a manual entry with a reason.
+- **Bank and cash**: balances, transfers between accounts, and **reconciliation**: tick the lines on the statement until the
+  difference is zero; the most recent reconciliation can be undone.
+- **Reports**: trial balance, general ledger per account, profit and loss, balance sheet (profit carried between financial
+  years without closing entries), and a cash-flow statement (indirect method) that always ends on the real cash and bank
+  balance. Every report exports to CSV and prints without the menu.
+- **Dashboard**: cash and bank, receivable, payable, profit this year, income versus expenses for six months, and where the
+  money went.
+- **Fixed assets**: categories carry the depreciation terms (straight line over a useful life, or written-down value at an
+  income-tax rate with an optional half-year rule) and the three ledger accounts. Assets are numbered `…-FAS-…`; the purchase can
+  be posted (Dr asset, Cr bank, cash or payable) or flagged as already in the books. Depreciation is previewed and run per month
+  (one entry per month, once per asset, reversible, never past cost less residual value); a sale, scrap or write-off posts the
+  gain or loss. Reports: register as on a date, schedule per asset, depreciation by financial year, disposals. The rules are written
+  at the top of `backend/apps/accounting/services/depreciation.py`.
+- **Budgets**: a budget per financial year with income and expense lines by account and project (the cost centre), even or
+  month-by-month phasing, a saved revision on every change, and **budget vs actual** by account, project and month. An expense that
+  would take a line past the active budget shows a warning but is still saved.
+- A locked financial year refuses new entries. Opening balances (balances brought forward) are posted from the chart page.
+
+Money in the API is always a string (`"1800.00"`), never a floating-point number.
 
 ## Tera2Nano letterhead
 
@@ -140,15 +256,45 @@ Private files live under `backend/private_media/`, in one folder per document ty
 `company/documents/<document_type>/` (uploaded repository documents). Other folders: `company/logo/`,
 `company/branding/`, `company/signatures/`. File names are random; originals are kept only in the database.
 
-## Roles
+## Users, roles and permissions
 
-| Role | Can do |
-|---|---|
-| `admin` (and superusers) | everything, including change history, signatures, restricted documents |
-| `finance` | bank accounts (create/change/verify/reveal), confidential documents, issue invoices/credit notes |
-| `staff` | read non-sensitive company data (bank numbers masked), issue letters/quotations/minutes |
+Page **Users and Access** (menu, for users who may manage users or view activity) has four tabs:
 
-Set a user's role in Django admin (`/admin/`) or `User.role`.
+- **Users**: add users, change names, email and role, set a password, switch users off and on. Switching a user off signs them
+  out at once. You cannot change your own role or switch yourself off, and the last administrator cannot be demoted or switched
+  off, so nobody can lock the company out.
+- **Role permissions**: a matrix of what each role may do. Changes apply at once, need a reason and are recorded; "Reset to
+  defaults" restores the standard set. The Admin role always holds every permission.
+- **Login history**: every sign-in, failed attempt (wrong password, account switched off) and sign-out, with time, IP address
+  and browser. A name typed at login is stored only when it belongs to a real user, so a password typed into the name box is
+  never kept.
+- **Changes**: who added or changed users and who changed permissions. These also appear in the Company Change History.
+
+Roles (the seven requested): Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee. The first
+version's roles carry over: `finance` became Finance Manager and `staff` became Employee, with the same powers.
+
+Default permissions (change them on the matrix; each module adds its own codes in `apps/accounts/access.py`):
+
+| Permission | Admin | Managing Partner | Partner | Finance Manager | HR / Project Manager | Employee |
+|---|---|---|---|---|---|---|
+| View company details | yes | yes | yes | yes | yes | yes |
+| Change company details | yes | yes | | | | |
+| Bank accounts, invoices, credit notes | yes | yes | | yes | | |
+| Issue letters, quotations, minutes | yes | yes | yes | yes | yes | yes |
+| View confidential documents | yes | yes | yes | yes | | |
+| View restricted documents | yes | yes | | | | |
+| View company change history | yes | yes | | | | |
+| Manage users and permissions | yes | | | | | |
+| View login history and user changes | yes | yes | | | | |
+
+Set a user's role on the Users tab, or in Django admin (`/admin/`).
+
+## How the modules were built (agents and prompts)
+
+The remaining modules (CRM, Purchases, GST & Tax, People & Payroll, Projects, Approvals, Compliance, Partners, Workplace,
+Reports) were built with one agent per module under a shared brief, run one at a time. The process, current status and the exact prompt given to
+every agent are in [docs/AGENT_PROCESS.md](docs/AGENT_PROCESS.md); module conventions are in
+[docs/BUILD_GUIDE.md](docs/BUILD_GUIDE.md).
 
 ## Tests
 
@@ -157,7 +303,7 @@ cd backend
 $env:DB_USER="..."; $env:DB_PASSWORD="..."   # a role allowed to CREATE DATABASE (tests use test_t2n_erp)
 .\.venv\Scripts\python manage.py test apps
 ```
-311 tests cover migrations, API behaviour, permissions, persistence, audit immutability,
+443 tests cover migrations, API behaviour, permissions, persistence, audit immutability,
 numbering uniqueness (including 36 concurrent allocations) and PDF issuing.
 
 ## Inspecting the database in pgAdmin 4

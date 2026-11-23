@@ -47,6 +47,19 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.company",
+    "apps.sales",
+    "apps.accounting",
+    "apps.attachments",
+    "apps.purchases",
+    "apps.tax",
+    "apps.hr",
+    "apps.projects",
+    "apps.approvals",
+    "apps.compliance",
+    "apps.partners",
+    "apps.workplace",
+    "apps.crm",
+    "apps.reports",
 ]
 
 MIDDLEWARE = [
@@ -130,7 +143,7 @@ if not FIELD_ENCRYPTION_KEY and not DEBUG:
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.TokenAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
-    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_RENDERER_CLASSES": ["apps.core.renderers.DecimalSafeJSONRenderer"],
     "DEFAULT_THROTTLE_RATES": {"login": "10/min"},
     "EXCEPTION_HANDLER": "apps.core.exceptions.api_exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",

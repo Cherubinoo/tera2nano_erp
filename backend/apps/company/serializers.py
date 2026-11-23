@@ -681,6 +681,8 @@ class IssueDocumentRequestSerializer(serializers.Serializer):
         if "minutes" in attrs["content"] and attrs["document_type"] != DocType.MEETING_MINUTES:
             raise serializers.ValidationError({"content": "Minutes content can only be used for meeting minutes."})
         content = attrs["content"]
+        if "billing" in content:
+            raise serializers.ValidationError({"content": "Invoices and notes are created in the Sales module."})
         if "quotation" in content:
             if attrs["document_type"] != DocType.QUOTATION:
                 raise serializers.ValidationError({"content": "Quotation items can only be used for a quotation."})

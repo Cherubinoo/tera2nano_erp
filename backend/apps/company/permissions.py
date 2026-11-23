@@ -40,8 +40,10 @@ class IsFinance(BasePermission):
 
 
 def visible_classifications(user):
-    if user.is_company_admin:
-        return [AccessClass.INTERNAL, AccessClass.CONFIDENTIAL, AccessClass.RESTRICTED]
-    if user.is_finance:
-        return [AccessClass.INTERNAL, AccessClass.CONFIDENTIAL]
-    return [AccessClass.INTERNAL]
+    """Document classes the user may see, from the permission matrix (see apps.accounts.access)."""
+    classes = [AccessClass.INTERNAL]
+    if user.has_code("documents.view_confidential"):
+        classes.append(AccessClass.CONFIDENTIAL)
+    if user.has_code("documents.view_restricted"):
+        classes.append(AccessClass.RESTRICTED)
+    return classes

@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  if (user) return <Navigate to={location.state?.from || '/company'} replace />;
+  if (user) return <Navigate to={location.state?.from || '/apps'} replace />;
 
   const submit = async (e) => {
     e.preventDefault();

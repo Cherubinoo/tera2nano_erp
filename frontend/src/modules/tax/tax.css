@@ -1,0 +1,19 @@
+.tax-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin: .8rem 0 0; }
+.tax-export { display: inline-flex; gap: .5rem; flex-wrap: wrap; }
+.tax-estimate { display: flex; align-items: end; gap: .7rem; flex-wrap: wrap; margin: .5rem 0 1rem; }
+.tax-estimate .field { min-width: 14rem; flex: 1; }
+.tax-events { list-style: none; margin: 0; padding: 0; }
+.tax-events li { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--border); }
+.tax-events li > span { text-align: right; color: var(--muted); }
+.tax-chart-data { margin-top: .5rem; }
+.tax-chart-data summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+.tax-link-button { border: 0; background: none; padding: 0; color: var(--accent, var(--primary)); font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+.tax-link-button:hover { text-decoration: underline; }
+.tax-diff-row td { background: color-mix(in srgb, var(--bad) 8%, transparent); }
+.good-text { color: var(--good); }
+.tax-estimate + .table-wrap { margin-top: .25rem; }
+@media (max-width: 600px) {
+  .tax-events li { display: block; }
+  .tax-events li > span { display: block; text-align: left; margin-top: .3rem; }
+  .tax-actions .btn { width: 100%; }
+}

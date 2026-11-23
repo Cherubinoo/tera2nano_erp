@@ -98,7 +98,7 @@ def resolve_bank_account(company, doc_type, on_date=None):
     if doc_type not in DocType.BANK_DETAIL_TYPES:
         return None
     on_date = on_date or datetime.date.today()
-    flag = "show_on_invoices" if doc_type == DocType.INVOICE else "show_on_quotations"
+    flag = "show_on_quotations" if doc_type == DocType.QUOTATION else "show_on_invoices"
     accounts = _effective(
         CompanyBankAccount.objects.filter(
             company=company, is_active=True, verification_status="verified", **{flag: True}
@@ -198,6 +198,8 @@ def build_snapshot(resolved: ResolvedCompany, doc_type):
             "terms": {
                 DocType.QUOTATION: resolved.policy.quotation_terms,
                 DocType.INVOICE: resolved.policy.invoice_terms,
+                DocType.PROFORMA: resolved.policy.invoice_terms,
+                DocType.DEBIT_NOTE: resolved.policy.invoice_terms,
             }.get(doc_type, ""),
             "confidentiality_notice": resolved.policy.confidentiality_notice,
             "footer_text": resolved.policy.document_footer_text,

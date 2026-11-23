@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthCtx);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+  const [signedOut, setSignedOut] = useState(false);
   useEffect(() => {
     const expired = () => setUser(null);
     window.addEventListener('auth:expired', expired);
@@ -23,14 +24,16 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (username, password) => {
     const res = await api.post('/auth/login/', { username, password });
     setToken(res.token);
+    setSignedOut(false);
     setUser(res.user);
   }, []);
   const logout = useCallback(async () => {
     try { await api.post('/auth/logout/'); } catch { /* token is dropped locally regardless */ }
     setToken(null);
+    setSignedOut(true);
     setUser(null);
   }, []);
-  const value = useMemo(() => ({ user, ready, login, logout }), [user, ready, login, logout]);
+  const value = useMemo(() => ({ user, ready, signedOut, login, logout }), [user, ready, signedOut, login, logout]);
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
 

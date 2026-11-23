@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "guide:docs": "node scripts/build-guide-docs.mjs",
+    "guide:roles": "node scripts/build-roles-data.mjs",
+    "guide:check": "node scripts/check-guide-links.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

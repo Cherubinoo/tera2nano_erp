@@ -6,3 +6,29 @@ node_modules/
 dist/
 backend/private_media/
 backend/staticfiles/
+
+# throwaway verification builds and browser-test Vite configs
+frontend/dist-*/
+frontend/vite.e2e.*.js
+frontend/vite.walkthrough.*.js
+
+# secrets and local settings (keep examples)
+.env.*
+!.env.example
+backend/media/
+
+# local databases, caches, logs, coverage
+*.sqlite3
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+*.tmp
+
+# editor, OS and assistant folders
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db

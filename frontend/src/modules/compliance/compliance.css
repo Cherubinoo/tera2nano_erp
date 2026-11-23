@@ -1,0 +1,61 @@
+/* Compliance module. Every class is prefixed .compliance- so nothing clashes with other modules. */
+.compliance-fy select { min-width: 8rem; }
+.compliance-month { margin: 0 .5rem; min-width: 11rem; text-align: center; }
+.compliance-item-head { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.compliance-history { list-style: none; margin: 0; padding: 0; }
+.compliance-history li { padding: .35rem 0; border-bottom: 1px solid var(--border); }
+.compliance-history li:last-child { border-bottom: 0; }
+.link-button { font: inherit; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-align: left; }
+.link-button:hover { text-decoration: underline; }
+
+/* month grid */
+.compliance-grid { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.compliance-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.compliance-head > div { padding: .4rem .5rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--bg); text-align: center; }
+.compliance-cell { min-height: 6.5rem; padding: .25rem; border-top: 1px solid var(--border); border-left: 1px solid var(--border); min-width: 0; background: var(--surface); }
+.compliance-row > .compliance-cell:first-child { border-left: 0; }
+.compliance-blank { background: var(--bg); }
+.compliance-today { background: var(--info-bg); }
+.compliance-selected { outline: 2px solid var(--accent); outline-offset: -2px; }
+.compliance-day { font: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: 0; padding: .1rem .2rem; cursor: pointer; color: var(--text); font-weight: 600; border-radius: 4px; }
+.compliance-day:hover { background: var(--bg); }
+.compliance-count { display: none; min-width: 1.3rem; padding: 0 .3rem; border-radius: 999px; font-size: .72rem; text-align: center; color: #fff; }
+.compliance-pills { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+.compliance-pill, .compliance-more { font: inherit; font-size: .72rem; text-align: left; border: 0; border-radius: 4px; padding: .1rem .3rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; display: block; text-decoration: none; }
+.compliance-more { background: none; color: var(--muted); }
+.tone-overdue { background: var(--bad-bg); color: var(--bad); }
+.tone-due_soon { background: var(--warn-bg); color: var(--warn); }
+.tone-upcoming { background: var(--info-bg); color: var(--info); }
+.tone-filed { background: var(--good-bg); color: var(--good); }
+.tone-not_applicable { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.tone-tax { background: var(--bg); color: var(--chart-5); border: 1px dashed var(--chart-5); }
+.compliance-count.tone-overdue { background: var(--bad); color: #fff; }
+.compliance-count.tone-due_soon { background: var(--chart-3); color: #1a1200; }
+.compliance-count.tone-upcoming { background: var(--chart-1); color: #fff; }
+.compliance-count.tone-filed { background: var(--chart-2); color: #fff; }
+.compliance-count.tone-tax { background: var(--chart-5); color: #fff; border: 0; }
+.compliance-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin: .6rem 0; font-size: .82rem; color: var(--muted); }
+.compliance-legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; margin-right: .3rem; vertical-align: -1px; }
+.compliance-daylist { list-style: none; margin: 0; padding: 0; }
+.compliance-daylist li { padding: .45rem 0; border-bottom: 1px solid var(--border); }
+.compliance-agenda-day h3 { margin-bottom: .2rem; }
+
+/* bulk bar, rules, timeline */
+.compliance-bulk { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .6rem .8rem; background: var(--info-bg); border-radius: var(--radius); margin-bottom: .6rem; }
+.compliance-bulk select { max-width: 11rem; }
+.compliance-rule-row { align-items: end; padding: .5rem 0; border-top: 1px dashed var(--border); }
+.compliance-timeline { list-style: none; margin: 1rem 0 0; padding: 0 0 0 1.2rem; border-left: 2px solid var(--border); }
+.compliance-timeline li { position: relative; padding: 0 0 1.1rem 1rem; display: grid; grid-template-columns: 8rem 1fr; gap: .8rem; }
+.compliance-timeline li::before { content: ''; position: absolute; left: -1.62rem; top: .35rem; width: .75rem; height: .75rem; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); }
+.compliance-timeline-date { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 700px) {
+  .compliance-cell { min-height: 3.2rem; padding: .1rem; }
+  .compliance-pills, .compliance-more { display: none; }
+  .compliance-count { display: inline-block; }
+  .compliance-day { flex-direction: column; gap: 2px; }
+  .compliance-head > div { padding: .3rem 0; font-size: .68rem; }
+  .compliance-timeline li { grid-template-columns: 1fr; gap: .1rem; }
+  .compliance-month { min-width: 0; flex-basis: 100%; order: -1; margin: 0; text-align: left; font-size: 1.1rem; }
+  .compliance-bulk select { max-width: 100%; }
+}

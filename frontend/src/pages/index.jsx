@@ -8,6 +8,8 @@ import { Notice, PageHeader, Tabs } from '../ui';
 import { BankAccounts } from './Bank';
 import { BrandingDesigner } from './Branding';
 import ChangeHistory from './History';
+import { AccessManager } from './Access';
+import Home from './Home';
 import { DocumentsManager } from './Documents';
 import { LettersManager } from './Letters';
 import { MinutesManager } from './Minutes';
@@ -116,6 +118,19 @@ export function LettersPage() {
     <>
       <PageHeader title="Letters and Documents" description="Write a letter, issue it with a unique ID, and download it for printing." />
       <LettersManager />
+    </>
+  );
+}
+
+export function HomePage() {
+  return <Home />;
+}
+
+export function AccessPage() {
+  return (
+    <>
+      <PageHeader title="Users and Access" description="Who can sign in, what each role may do, and a record of sign-ins and changes." />
+      <AccessManager />
     </>
   );
 }

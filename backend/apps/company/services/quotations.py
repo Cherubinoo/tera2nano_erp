@@ -175,11 +175,12 @@ def parse(raw):
         if label:
             out["details"].append({"label": label, "value": value})
     out["show_signature"] = bool(raw.get("show_signature", False))
-    valid_until = _text(raw.get("valid_until"), "Valid until", 10)
-    try:
-        out["valid_until"] = datetime.date.fromisoformat(valid_until) if valid_until else None
-    except ValueError:
-        raise QuotationError("Valid until must be a date (YYYY-MM-DD).")
+    for key, label in (("valid_until", "Valid until"), ("due_date", "Due date")):
+        raw_date = _text(raw.get(key), label, 10)
+        try:
+            out[key] = datetime.date.fromisoformat(raw_date) if raw_date else None
+        except ValueError:
+            raise QuotationError(f"{label} must be a date (YYYY-MM-DD).")
 
     items = raw.get("items")
     if not isinstance(items, list) or not items:
@@ -228,9 +229,21 @@ def _validity(parsed, policy, issue_date):
     return issue_date + datetime.timedelta(days=days) if days else None
 
 
-def build(company, resolved, raw, issue_date):
+def _due(parsed, issue_date):
+    due = parsed["due_date"]
+    if due and due < issue_date:
+        raise ValidationError({"content": "The due date cannot be before the date of the document."})
+    return due
+
+
+def build(company, resolved, raw, issue_date, *, purpose="quotation", extra_meta=None):
     """Work out the lines and totals. Returns (record, content): the JSON-safe working to keep with the issued
-    document, and the content the PDF renderer prints."""
+    document, and the content the PDF renderer prints.
+
+    `purpose` is the document type being built: a quotation (or proforma) carries a "valid until" date, an invoice or debit
+    note a due date, a credit note neither. `extra_meta` adds label/value rows under the reference (e.g. the invoice a
+    credit note is against).
+    """
     try:
         parsed = parse(raw)
     except QuotationError as exc:
@@ -284,12 +297,21 @@ def build(company, resolved, raw, issue_date):
             "total": taxable + line_tax,
         })
     grand_total = taxable_total + tax_total
-    valid_until = _validity(parsed, resolved.policy, issue_date)
+    valid_until = due_date = None
+    if purpose == "quotation":
+        valid_until = _validity(parsed, resolved.policy, issue_date)
+    elif purpose == "proforma_invoice":
+        valid_until = parsed["valid_until"]
+        if valid_until and valid_until < issue_date:
+            raise ValidationError({"content": "The proforma cannot be valid until a date before it is dated."})
+    elif purpose in ("invoice", "debit_note"):
+        due_date = _due(parsed, issue_date)
 
     state_name = india.GST_STATES.get(place, "") if place else ""
     record = {
         "customer": customer, "enquiry_ref": parsed["enquiry_ref"], "subject": parsed["subject"],
-        "valid_until": valid_until.isoformat() if valid_until else "", "currency": currency,
+        "purpose": purpose, "valid_until": valid_until.isoformat() if valid_until else "",
+        "due_date": due_date.isoformat() if due_date else "", "currency": currency,
         "gst_applied": gst_on, "supplier_state_code": supplier,
         "place_of_supply": {"code": place, "name": state_name} if gst_on else None,
         "supply_type": ("intra_state" if supplier == place and place != "97" else "inter_state") if gst_on else "",
@@ -302,13 +324,14 @@ def build(company, resolved, raw, issue_date):
         },
         "amount_in_words": amount_in_words(grand_total) if currency == "INR" else "",
         "sections": parsed["sections"], "details": parsed["details"], "show_signature": parsed["show_signature"],
+        "notes": parsed["notes"], "terms": parsed["terms"], "intro": parsed["intro"],  # kept so an invoice can start from them
     }
     return record, _content(record, parsed, resolved, valid_until, lines, tax_rows, gross_total, discount_total,
-                            taxable_total, tax_total, grand_total, currency)
+                            taxable_total, tax_total, grand_total, currency, due_date, extra_meta)
 
 
 def _content(record, parsed, resolved, valid_until, lines, tax_rows, gross_total, discount_total, taxable_total,
-             tax_total, grand_total, currency):
+             tax_total, grand_total, currency, due_date=None, extra_meta=None):
     ts, customer, gst_on = resolved.tax_settings, parsed["customer"], record["gst_applied"]
     fmt = lambda v: money(v, currency)
     show_hsn = ts.show_hsn_sac and any(line["hsn_sac"] for line in lines)
@@ -363,6 +386,9 @@ def _content(record, parsed, resolved, valid_until, lines, tax_rows, gross_total
     meta = []
     if valid_until:
         meta.append(["Valid until", valid_until.strftime("%d %B %Y")])
+    if due_date:
+        meta.append(["Due date", due_date.strftime("%d %B %Y")])
+    meta += [[label, value] for label, value in (extra_meta or []) if value]
     if parsed["enquiry_ref"]:
         meta.append(["Your reference", parsed["enquiry_ref"]])
     if gst_on and ts.show_place_of_supply and record["place_of_supply"]["name"]:

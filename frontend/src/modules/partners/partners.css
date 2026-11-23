@@ -1,0 +1,26 @@
+/* Partner module. Every class starts with .partners- so nothing clashes with other modules. */
+.partners-tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.partners-name { font-weight: 600; }
+.partners-pct { font-variant-numeric: tabular-nums; }
+.partners-total-row td { font-weight: 700; border-top: 2px solid var(--border); }
+.partners-share-row { display: grid; grid-template-columns: 1fr 120px auto; gap: .6rem; align-items: end; margin-bottom: .5rem; }
+.partners-share-row .field { margin: 0; }
+.partners-sum { font-weight: 600; font-variant-numeric: tabular-nums; }
+.partners-sum.ok { color: var(--good); }
+.partners-sum.off { color: var(--bad); }
+.partners-print-head { display: none; }
+.partners-statement .partners-neg { color: var(--bad); }
+.partners-kv { display: grid; grid-template-columns: max-content 1fr; gap: .3rem 1.25rem; margin: .5rem 0 1rem; }
+.partners-kv dt { color: var(--muted); }
+.partners-kv dd { margin: 0; }
+.partners-legend-note { font-size: .85rem; color: var(--muted); }
+.partners-cmp { display: grid; gap: .35rem; }
+@media (max-width: 600px) {
+  .partners-share-row { grid-template-columns: 1fr 100px auto; }
+  .partners-kv { grid-template-columns: 1fr; }
+}
+@media print {
+  .partners-print-head { display: block; margin-bottom: 1rem; }
+}
+
+.partners-linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); cursor: pointer; text-decoration: underline; }

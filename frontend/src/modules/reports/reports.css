@@ -1,0 +1,20 @@
+/* Reports hub. Every class starts with "rpt-" so nothing clashes with other modules; colours come from the theme variables. */
+.rpt-cards { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.rpt-card { display: flex; flex-direction: column; gap: .4rem; height: 100%; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--gold); border-radius: var(--radius); box-shadow: var(--shadow); padding: .9rem 1.1rem; color: var(--text); text-decoration: none; }
+.rpt-card:hover { border-color: var(--gold); box-shadow: 0 2px 8px rgba(38, 40, 45, .14); }
+.rpt-card:focus-visible { outline: none; box-shadow: var(--focus); }
+.rpt-card h2 { margin: 0; font-size: 1.05rem; }
+.rpt-card p { margin: 0; color: var(--muted); font-size: .9rem; flex: 1; }
+.rpt-card-featured { background: var(--graphite); border-color: var(--graphite); border-top-color: var(--gold); color: var(--nav-strong); }
+.rpt-card-featured p { color: var(--nav-text); }
+.rpt-card-featured:hover { border-color: var(--gold); }
+.rpt-card-link { color: var(--gold); font-weight: 600; font-size: .9rem; }
+.rpt-card-figure { display: flex; flex-direction: column; border-top: 1px solid var(--border); padding-top: .5rem; }
+.rpt-card-label { font-size: .74rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.rpt-card-figure strong { font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+
+.rpt-period { align-items: end; }
+.rpt-delta.up { color: var(--good); }
+.rpt-delta.down { color: var(--bad); }
+.rpt-neg { color: var(--bad); }
+.rpt-sub { display: block; font-size: .82rem; color: var(--muted); }

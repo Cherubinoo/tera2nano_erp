@@ -11,6 +11,7 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts import access
 from apps.core import india
 from apps.core.files import inspect_upload
 
@@ -32,6 +33,7 @@ from .models import (
     AuthorizedSignatory,
     DocumentNumberSequence,
     FinancialYear,
+    IssuedDocument,
     IssuedReferenceNumber,
     LetterheadTemplate,
 )
@@ -516,7 +518,7 @@ class AuditPagination(PageNumberPagination):
 
 
 class AuditHistoryView(generics.ListAPIView):
-    permission_classes = [IsCompanyAdmin]
+    permission_classes = [access.HasCode.for_code("audit.view")]
     serializer_class = AuditEventSerializer
     pagination_class = AuditPagination
 
@@ -588,6 +590,67 @@ class OverviewView(APIView):
             "active_policy_version": policy.version_number if policy else None,
             "checklist": [{"label": label, "done": done} for label, done in checklist],
             "attention": attention,
+        })
+
+
+class DashboardView(APIView):
+    """Home page figures: documents issued this month and over the last six months, quotation value, recent documents.
+
+    Void documents are left out of every count. Only what the signed-in user may already read is returned.
+    """
+
+    def get(self, request):
+        from decimal import Decimal
+
+        from django.db.models import Count
+        from django.db.models.functions import TruncMonth
+
+        company = current_company()
+        today = datetime.date.today()
+        first = today.replace(day=1)
+        issued = IssuedDocument.objects.filter(company=company, status=IssuedDocument.Status.ISSUED)
+
+        this_month = issued.filter(issue_date__gte=first, issue_date__lte=today)
+        by_type = {t: n for t, n in this_month.values_list("document_type").annotate(n=Count("id"))}
+        labels = dict(DocType.CHOICES)
+
+        # The last six calendar months, oldest first, including months with nothing issued.
+        months = []
+        year, month = first.year, first.month
+        for _ in range(6):
+            months.append((year, month))
+            month -= 1
+            if month == 0:
+                year, month = year - 1, 12
+        months.reverse()
+        counts = {(d.year, d.month): n for d, n in issued.filter(issue_date__gte=datetime.date(*months[0], 1))
+                  .annotate(m=TruncMonth("issue_date")).values_list("m").annotate(n=Count("id"))}
+
+        quotation_value = Decimal("0.00")
+        for snap in this_month.filter(document_type=DocType.QUOTATION).values_list("snapshot", flat=True):
+            try:
+                quotation_value += Decimal(snap["quotation"]["totals"]["grand_total"])
+            except (KeyError, TypeError, ValueError, ArithmeticError):
+                pass  # a quotation written as plain text has no worked-out total
+
+        recent = issued.select_related("generated_by").order_by("-generated_at")[:8]
+        return Response({
+            "today": today.isoformat(),
+            "month_label": first.strftime("%B %Y"),
+            "month": {
+                "documents": this_month.count(), "quotations": by_type.get(DocType.QUOTATION, 0),
+                "quotation_value": str(quotation_value), "currency": company.default_currency,
+                "letters": sum(n for t, n in by_type.items() if t.endswith("_letter") or t in (DocType.COMPLETION_CERTIFICATE,)),
+                "minutes": by_type.get(DocType.MEETING_MINUTES, 0), "operations": by_type.get(DocType.OPERATION, 0),
+            },
+            "monthly": [{"month": f"{y}-{m:02d}", "label": datetime.date(y, m, 1).strftime("%b"),
+                         "count": counts.get((y, m), 0)} for y, m in months],
+            "recent": [{
+                "id": str(d.id), "reference_number": d.reference_number, "title": d.title,
+                "document_type": d.document_type, "document_type_label": labels.get(d.document_type, d.document_type),
+                "issue_date": d.issue_date, "has_print_file": bool(d.print_file),
+                "generated_by_name": d.generated_by.get_username() if d.generated_by else "",
+            } for d in recent],
         })
 
 

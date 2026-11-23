@@ -20,6 +20,7 @@ urlpatterns = [
     path("profile/", views_misc.CompanyProfileView.as_view(), name="company-profile"),
     path("profile/logo/", views_misc.CompanyLogoView.as_view(), name="company-logo"),
     path("overview/", views_misc.OverviewView.as_view(), name="company-overview"),
+    path("dashboard/", views_misc.DashboardView.as_view(), name="company-dashboard"),
     path("lookups/", views_misc.LookupsView.as_view(), name="company-lookups"),
     path("resolve/", views_misc.ResolveView.as_view(), name="company-resolve"),
     path("setup/", views_misc.SetupStateView.as_view(), name="setup-state"),

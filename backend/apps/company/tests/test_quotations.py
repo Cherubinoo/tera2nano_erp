@@ -11,7 +11,7 @@ try:
     import fitz  # PyMuPDF is only a test-time helper
     HAS_FITZ = True
 except ImportError:  # pragma: no cover
-    HAS_FITZ = False
+    fitz, HAS_FITZ = None, False
 
 ITEMS = [
     {"description": "Nano coating service", "hsn_sac": "998313", "quantity": "2", "unit": "Nos", "rate": "1000",

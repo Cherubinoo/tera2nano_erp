@@ -1,0 +1,43 @@
+.apr-amount-input { width: 9rem; }
+.apr-kind { display: inline-block; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.apr-overdue { color: var(--bad); font-weight: 600; }
+.apr-row-actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.apr-order-tools { display: inline-flex; gap: .25rem; margin-left: .5rem; }
+.apr-rule-steps { margin: 0; padding-left: 1.1rem; }
+.apr-badge-link { text-decoration: none; }
+.apr-bulk-list { max-height: 10rem; overflow: auto; margin: 0 0 .75rem; padding-left: 1.1rem; }
+.apr-summary { white-space: pre-wrap; margin: .75rem 0 0; }
+
+.apr-steps { list-style: none; margin: 0; padding: 0; }
+.apr-step { position: relative; padding: .1rem 0 .9rem 1.6rem; border-left: 2px solid var(--border); margin-left: .45rem; }
+.apr-step::before { content: ''; position: absolute; left: -.5rem; top: .3rem; width: .85rem; height: .85rem; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--border); }
+.apr-step-approved::before { background: var(--good); border-color: var(--good); }
+.apr-step-rejected::before { background: var(--bad); border-color: var(--bad); }
+.apr-step-active::before { border-color: var(--primary); background: var(--info-bg); }
+.apr-step-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.apr-decision { margin-top: .3rem; font-size: .92rem; }
+.apr-decision q { color: var(--muted); }
+
+.apr-timeline { list-style: none; margin: 0; padding: 0; }
+.apr-timeline li { position: relative; padding: 0 0 .9rem 1.6rem; border-left: 2px solid var(--border); margin-left: .45rem; }
+.apr-dot { position: absolute; left: -.5rem; top: .2rem; width: .85rem; height: .85rem; border-radius: 50%; background: var(--muted); }
+.apr-dot-good { background: var(--good); }
+.apr-dot-bad { background: var(--bad); }
+.apr-dot-warn { background: var(--warn); }
+.apr-dot-info { background: var(--info); }
+.apr-event-comment { margin-top: .15rem; white-space: pre-wrap; }
+
+.apr-step-row { display: grid; grid-template-columns: 1.5rem repeat(4, minmax(0, 1fr)) auto; gap: .6rem; align-items: end; padding: .6rem 0; border-bottom: 1px dashed var(--border); }
+.apr-step-no { padding-bottom: .5rem; }
+.apr-step-tools { display: flex; gap: .3rem; padding-bottom: .1rem; }
+.apr-kind-stacks { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+.apr-kind-stacks h3 { margin: 0 0 .4rem; font-size: 1rem; }
+
+@media (max-width: 700px) {
+  .apr-step-row { grid-template-columns: 1fr; }
+  .apr-step-no { padding-bottom: 0; }
+  .apr-amount-input { width: 100%; }
+}
+
+.apr-panel { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }

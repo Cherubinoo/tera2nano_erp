@@ -44,7 +44,11 @@ function describe(status, data) {
 function fieldErrorsFrom(data) {
   const out = {};
   if (data && typeof data === 'object' && !Array.isArray(data)) {
-    Object.entries(data).forEach(([k, v]) => { if (k !== 'detail' && k !== 'code') flatten(k, v, out); });
+    // `code` is also the name of the machine-readable error code (a string); a list under `code` is a real field's errors.
+    Object.entries(data).forEach(([k, v]) => {
+      if (k === 'detail' || (k === 'code' && typeof v === 'string')) return;
+      flatten(k === '__all__' ? 'non_field_errors' : k, v, out);
+    });
   } else if (Array.isArray(data)) {
     flatten('non_field_errors', data, out);
   }
@@ -56,7 +60,7 @@ export class ApiError extends Error {
     super(describe(status, data));
     this.status = status;
     this.data = data;
-    this.code = data && data.code;
+    this.code = data && typeof data.code === 'string' ? data.code : undefined;
     this.fieldErrors = fieldErrorsFrom(data);
   }
 }
@@ -106,6 +110,7 @@ export async function request(method, path, { body, params, form, blob, fallback
 export const api = {
   get: (path, params) => request('GET', path, { params }),
   post: (path, body) => request('POST', path, { body }),
+  put: (path, body) => request('PUT', path, { body }),
   patch: (path, body) => request('PATCH', path, { body }),
   del: (path, body) => request('DELETE', path, { body }),
   upload: (path, form, method = 'POST') => request(method, path, { form }),

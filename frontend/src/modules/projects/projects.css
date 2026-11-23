@@ -1,0 +1,62 @@
+/* Projects module. Every class starts with "projects-" so nothing clashes with other modules. */
+.projects-progress { display: flex; align-items: center; gap: .5rem; min-width: 110px; }
+.projects-progress-track { flex: 1; height: 8px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+.projects-progress-fill { display: block; height: 100%; background: var(--chart-1); }
+.projects-progress-fill.good { background: var(--chart-2); }
+.projects-progress-fill.warn { background: var(--chart-3); }
+.projects-progress-fill.bad { background: var(--chart-4); }
+.projects-progress-num { font-size: .82rem; font-variant-numeric: tabular-nums; min-width: 2.6rem; text-align: right; }
+
+.projects-sub { display: block; font-size: .82rem; color: var(--muted); }
+.projects-tags { display: flex; gap: .3rem; flex-wrap: wrap; }
+.projects-tag { font-size: .75rem; padding: 0 .5rem; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--bg); }
+.projects-neg { color: var(--bad); }
+.projects-pos { color: var(--good); }
+.projects-lines { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .6rem 1rem; }
+.projects-section-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.projects-section-head h2 { margin: 0; }
+.projects-actions { display: flex; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Kanban */
+.projects-board { display: grid; grid-template-columns: repeat(4, minmax(210px, 1fr)); gap: .8rem; overflow-x: auto; padding-bottom: .5rem; }
+.projects-col { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: .6rem; min-height: 140px; display: flex; flex-direction: column; gap: .55rem; }
+.projects-col.over { outline: 2px dashed var(--accent); }
+.projects-col-head { display: flex; justify-content: space-between; align-items: center; font-weight: 650; font-size: .9rem; }
+.projects-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .55rem .65rem; display: flex; flex-direction: column; gap: .3rem; cursor: grab; }
+.projects-card.dragging { opacity: .5; }
+.projects-card.overdue { border-left: 3px solid var(--bad); }
+.projects-card-title { font-weight: 600; font-size: .92rem; background: none; border: 0; padding: 0; text-align: left; color: var(--text); cursor: pointer; font: inherit; font-weight: 600; }
+.projects-card-meta { display: flex; flex-wrap: wrap; gap: .3rem .7rem; font-size: .8rem; color: var(--muted); }
+.projects-card-move { display: flex; gap: .3rem; justify-content: space-between; }
+
+/* Timeline / Gantt-style bars */
+.projects-gantt { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.projects-gantt li { display: grid; grid-template-columns: minmax(120px, 220px) 1fr; gap: .75rem; align-items: center; }
+.projects-gantt-name { min-width: 0; font-size: .9rem; }
+.projects-gantt-name a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.projects-gantt-track { position: relative; height: 22px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; }
+.projects-gantt-bar { position: absolute; top: 2px; bottom: 2px; border-radius: 4px; background: var(--chart-1); opacity: .35; overflow: hidden; }
+.projects-gantt-bar.good { background: var(--chart-2); }
+.projects-gantt-bar.warn { background: var(--chart-3); }
+.projects-gantt-bar.bad { background: var(--chart-4); }
+.projects-gantt-done { position: absolute; left: 0; top: 0; bottom: 0; background: inherit; opacity: 1; filter: saturate(1.4) brightness(.85); }
+.projects-gantt-today { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text); }
+.projects-gantt-axis { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin: 0 0 .4rem calc(min(220px, 30%) + .75rem); }
+
+.projects-list-plain { list-style: none; margin: 0; padding: 0; }
+.projects-list-plain li { display: flex; justify-content: space-between; gap: .75rem; padding: .45rem 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.projects-list-plain li:last-child { border-bottom: 0; }
+.projects-activity li { display: block; }
+.projects-pl td, .projects-pl th { padding: .4rem .6rem; }
+.projects-pl .group th { background: var(--bg); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.projects-pl .total td, .projects-pl .total th { border-top: 2px solid var(--border); font-weight: 700; }
+.projects-bva-bar { display: block; height: 8px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; min-width: 80px; }
+.projects-bva-bar span { display: block; height: 100%; background: var(--chart-2); }
+.projects-bva-bar span.warn { background: var(--chart-3); }
+.projects-bva-bar span.bad { background: var(--chart-4); }
+
+@media (max-width: 720px) {
+  .projects-board { grid-template-columns: 1fr; overflow-x: visible; }
+  .projects-gantt li { grid-template-columns: 1fr; gap: .2rem; }
+  .projects-gantt-axis { margin-left: 0; }
+}

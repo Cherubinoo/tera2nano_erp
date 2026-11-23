@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api, downloadFile } from '../api';
 import { useAuth, useLookups } from '../context';
 import { localToday } from '../forms';
@@ -108,6 +109,9 @@ export function IssuedList({
                   <td data-label="Status">{d.status === 'issued' ? <Badge tone="good">Issued</Badge> : <Badge tone="bad">{d.status}</Badge>}</td>
                   <td className="row-actions">
                     <Downloads doc={d} onError={onError} />
+                    {d.document_type === 'quotation' && d.status === 'issued' && user.permissions.includes('sales.manage') && (
+                      <Link className="btn btn-small" to={`/sales/documents/new?kind=invoice&quotation=${d.id}`}>Create invoice</Link>
+                    )}
                     {user.is_company_admin && d.status === 'issued' && (
                       <button type="button" className="btn btn-small btn-danger" onClick={() => voidDoc(d)}>Void</button>
                     )}
