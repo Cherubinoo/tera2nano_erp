@@ -1,0 +1,291 @@
+{
+  "key": "projects",
+  "title": "Projects",
+  "purpose": "Projects tracks every client and internal project from plan to completion: milestones, tasks, the team, hours logged, the cost budget and what the project has earned and cost. Revenue and cost come straight from the books (invoices, bills and expenses tagged to the project), so the project profit and loss is always current. Milestones with an amount to bill can be turned into a draft invoice in one click, and budget changes above an approval limit go through Approvals.",
+  "who": [
+    {"role": "Admin, Managing partner, Partner", "does": "Hold every permission: create and change projects, budgets, milestones, tasks and time, and raise invoices from milestones."},
+    {"role": "Project manager", "does": "Runs projects by default (projects.view and projects.manage): creates projects, plans milestones and tasks, manages the team, logs time and proposes budget changes. Can see sales but not create invoices unless granted sales.manage."},
+    {"role": "Finance manager", "does": "Can view projects, profitability and financials (projects.view); creates invoices in Sales."},
+    {"role": "HR manager", "does": "Can view projects (projects.view)."},
+    {"role": "Employee", "does": "No access to the Projects module by default."}
+  ],
+  "before_you_start": [
+    "Open the Projects tile from the module launcher. The left menu shows: Projects Dashboard, All Projects, Tasks, Timesheets, Milestones, Project Profitability.",
+    "Creating or changing anything needs projects.manage; without it the pages are read-only.",
+    "A client project needs the customer to exist first in Sales > Customers.",
+    "Add employees in People (HR) so you can pick the project manager, team members, assignees and people on timesheets from a list (names can also be typed).",
+    "Creating an invoice from a milestone needs both projects.manage and sales.manage."
+  ],
+  "tasks": [
+    {
+      "title": "Create a project",
+      "who": "Project manager or partner",
+      "where": "Projects > All Projects > New project",
+      "route": "/projects/projects?new=1",
+      "steps": [
+        "Open Projects > All Projects and click New project (or use + New > Project in the top bar).",
+        "Enter the Project name, for example ERP rollout for Acme Ltd, and choose the Project type (IT solution, Nano-technology / R&D, Consulting, Internal, Other).",
+        "Choose the Client (optional only for Internal projects), Status (Planned, Active or On hold) and Priority.",
+        "Choose the Project manager, Start date and Planned end date.",
+        "Choose Billing method: Fixed price or Time and material. For time and material, enter the Default hourly rate (INR), for example 1,500.",
+        "Enter Contract value (INR), for example 12,00,000, and Budget (INR), for example 8,00,000 (or leave it empty to use the sum of the category lines).",
+        "Under Budget by category, split the budget into Labour, Materials, Subcontract, Travel and Other.",
+        "Add Tags (comma separated) and a Description, then click Create project."
+      ],
+      "result": "The project is created with an automatic project code (shown in the message). It appears in All Projects with its status, health and progress.",
+      "tips": ["A new project can only start as Planned, Active or On hold."]
+    },
+    {
+      "title": "Find, filter and export projects",
+      "who": "Anyone with projects.view",
+      "where": "Projects > All Projects",
+      "route": "/projects/projects",
+      "steps": [
+        "Open Projects > All Projects.",
+        "Click a status chip: All, Open, Active, Planned, On hold, Completed, Cancelled.",
+        "Type in Search (name, code, client, manager or tag), choose Health if needed, and click Search.",
+        "Click Export CSV to download the list."
+      ],
+      "result": "The table shows each project's status, health, progress, dates, contract value, cost and profit. Click a project to open it.",
+      "tips": []
+    },
+    {
+      "title": "Edit a project or change its budget",
+      "who": "Project manager or partner",
+      "where": "Projects > All Projects > (project) > Edit",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project and click Edit (or Edit budget on the Budget vs Actual tab).",
+        "Change the details, the Budget (INR) or the category lines.",
+        "Click Save changes."
+      ],
+      "result": "Ordinary details are saved at once. A budget change that falls under an approval rule does not change the project yet: it is stored as a budget change waiting for approval, and the message says so. A change no rule covers is applied immediately.",
+      "tips": ["Only one budget change per project can wait for approval at a time; withdraw it first to propose another."]
+    },
+    {
+      "title": "Follow a budget change through approval",
+      "who": "Project manager (proposer); approvers set in Approvals",
+      "where": "Projects > (project) > Budget change waiting for approval",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project. A card Budget change waiting for approval shows the proposed change and its approval badge.",
+        "Approvers decide from the approvals bell or the Approvals module.",
+        "To cancel the proposal, click Withdraw."
+      ],
+      "result": "Approval applies the new budget to the project and records it as a revision. Rejection or withdrawal leaves the budget as it was.",
+      "tips": ["Budget changes waiting for approval are decided in the Approvals module, not on the project page."]
+    },
+    {
+      "title": "Change a project's status (complete, hold, cancel)",
+      "who": "Project manager or partner",
+      "where": "Projects > (project) > Change status",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project and click Change status.",
+        "Choose Planned, Active, On hold, Completed or Cancelled.",
+        "For Completed enter the Actual end date. For Cancelled a Reason is required; for others the note is optional.",
+        "Click Save."
+      ],
+      "result": "The status changes and is recorded in the Activity tab. A cancelled project shows a warning and no more time can be logged on it.",
+      "tips": ["The actual end date cannot be before the start date."]
+    },
+    {
+      "title": "Delete a project",
+      "who": "Project manager or partner",
+      "where": "Projects > (project) > Delete",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project and click Delete.",
+        "Confirm Delete."
+      ],
+      "result": "The project is removed. Only a project with no time, invoices, bookings or files can be deleted; otherwise the message tells you why and you should cancel it instead.",
+      "tips": []
+    },
+    {
+      "title": "Manage the project team",
+      "who": "Project manager or partner",
+      "where": "Projects > (project) > Team tab > Add member",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project and click the Team tab.",
+        "Click Add member.",
+        "Pick the Employee from the directory (or type the Name), enter the Role, Allocation (%) (for example 50) and Bill rate per hour (INR) (for example 2,000).",
+        "Click Save. Use Edit to change a member or Remove to take them off the team."
+      ],
+      "result": "The member is listed with hours logged. Removing a member keeps the time they already logged.",
+      "tips": ["A person can be on the team only once."]
+    },
+    {
+      "title": "Add and track milestones",
+      "who": "Project manager or partner",
+      "where": "Projects > Milestones > New milestone (or project > Milestones & Tasks > Add milestone)",
+      "route": "/projects/milestones",
+      "steps": [
+        "Open Projects > Milestones and click New milestone, or open a project's Milestones & Tasks tab and click Add milestone.",
+        "Choose the Project, enter the Milestone name (for example Design sign-off) and Due date.",
+        "Enter Amount to bill (INR), for example 3,00,000, if this milestone is a billing point.",
+        "Set the Status and add Notes, then click Save.",
+        "From the list use Start, Mark done (completion date is today unless you enter Completed on), Reopen, Edit or Remove."
+      ],
+      "result": "Milestones show their due date, days late, status, amount to bill and linked invoice. Overdue milestones show on the dashboard and profitability page and make the project's schedule health At risk or Delayed.",
+      "tips": [
+        "The due date cannot be before the project starts, and the completion date cannot be in the future.",
+        "Filter the Milestones page by status chip, search or project, and click Export CSV to download."
+      ]
+    },
+    {
+      "title": "Create an invoice from a milestone",
+      "who": "User with projects.manage and sales.manage (for example a partner)",
+      "where": "Projects > Milestones > Create invoice",
+      "route": "/projects/milestones",
+      "steps": [
+        "Find the milestone (it must have an Amount to bill and no invoice yet).",
+        "Click Create invoice.",
+        "The draft invoice opens in Sales. Check the lines, GST and dates, then save and issue it there."
+      ],
+      "result": "A draft invoice is created for the project's client with the milestone amount and linked to the milestone. Once the invoice is issued, it posts to the books and the project's revenue rises.",
+      "tips": [
+        "The project must have a client.",
+        "After an invoice is raised, the milestone amount cannot change and the milestone cannot be removed until that invoice is voided or deleted."
+      ]
+    },
+    {
+      "title": "Plan and move tasks on the board",
+      "who": "Project manager or partner",
+      "where": "Projects > Tasks",
+      "route": "/projects/tasks?new=1",
+      "steps": [
+        "Open Projects > Tasks and click Add task (or + New > Project task).",
+        "Choose the Project, enter the Task title, Status, Priority, Assignee, Due date, Estimated hours and Milestone, plus a Description.",
+        "Click Save task.",
+        "On the Board view, drag a card to another column (To do, In progress, In review, Done) or use the arrow buttons on the card.",
+        "On the List view, change the status from the dropdown, or click Edit or Delete."
+      ],
+      "result": "The task gets an automatic task code. Moving it changes its status; the project's progress uses tasks done and milestones done.",
+      "tips": [
+        "Filter by Project, Priority, Show and Assignee and click Filter. Click Export CSV to download.",
+        "Deleting a task keeps the hours already logged on the project."
+      ]
+    },
+    {
+      "title": "Log time on a project",
+      "who": "Project manager or partner",
+      "where": "Projects > Timesheets > Log time",
+      "route": "/projects/timesheets?new=1",
+      "steps": [
+        "Open Projects > Timesheets and click Log time (or Log time on a project page).",
+        "Choose the Project and optionally the Task.",
+        "Enter the Date and Hours, for example 2.5.",
+        "Choose the Person.",
+        "Tick Billable if the client pays for this time; leave Rate per hour (INR) empty to use the team member's or project's rate.",
+        "Add Notes and click Save."
+      ],
+      "result": "The entry is saved with its value (hours x rate when billable). Weekly totals and the project's hours, billable hours and billable value update.",
+      "tips": [
+        "Time cannot be logged for a future date, on a cancelled project, or above 24 hours in one entry.",
+        "Use Edit or Delete on a row to correct an entry."
+      ]
+    },
+    {
+      "title": "Review and export timesheets",
+      "who": "Anyone with projects.view",
+      "where": "Projects > Timesheets",
+      "route": "/projects/timesheets",
+      "steps": [
+        "Open Projects > Timesheets.",
+        "Filter by Project, From, To, Billable and Person, then click Filter.",
+        "Read the totals strip and the hours per week chart and table.",
+        "Click Export CSV to download."
+      ],
+      "result": "You see hours, billable hours and value by week and entry, ready for time-and-material billing.",
+      "tips": []
+    },
+    {
+      "title": "Read a project's budget vs actual and P&L",
+      "who": "Anyone with projects.view",
+      "where": "Projects > (project) > Budget vs Actual / Financials",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project. The Overview tiles show progress, schedule, budget, revenue, cost, profit, receivable and hours.",
+        "Click Budget vs Actual to see budget, actual cost (booked to the project in the ledger), remaining and budget health by category and by account.",
+        "Click Financials for revenue, cost, profit, receivable outstanding, work in progress and the month-by-month chart.",
+        "Click Invoices to see the project's sales documents (New invoice opens one for the client), and Bills & Expenses for every cost entry, with Export CSV."
+      ],
+      "result": "Budget health is On budget up to 90% used, then Nearing budget, then Over budget. Costs come from expenses, bills and other entries tagged to the project.",
+      "tips": ["Tag expenses (Accounting) and bills (Purchases) with the project so they appear here."]
+    },
+    {
+      "title": "Keep project documents",
+      "who": "Project manager or partner",
+      "where": "Projects > (project) > Documents tab",
+      "route": "/projects/projects",
+      "steps": [
+        "Open the project and click the Documents tab.",
+        "Upload contracts, work orders and agreements under Agreements and documents.",
+        "Give an agreement an expiry date to be reminded."
+      ],
+      "result": "The files are stored with the project. The Activity tab lists changes made to the project.",
+      "tips": []
+    },
+    {
+      "title": "Compare profitability across all projects",
+      "who": "Anyone with projects.view",
+      "where": "Projects > Project Profitability",
+      "route": "/projects/profitability",
+      "steps": [
+        "Open Projects > Project Profitability.",
+        "Read the tiles: Revenue, Cost, Profit (with margin) and Work in progress.",
+        "Look at Profit by project, Revenue and cost by project, Month by month and the Timeline.",
+        "Use the All projects table (status, health, budget, progress, revenue, cost, profit, margin) and Overdue milestones.",
+        "Click Export CSV to download."
+      ],
+      "result": "You see which projects make or lose money, straight from the books.",
+      "tips": ["The Projects Dashboard gives a quicker view: active projects, overdue milestones, open contract value, work in progress, margin and open tasks."]
+    }
+  ],
+  "statuses": [
+    {"name": "Planned / Active / On hold", "meaning": "Open project states. Open contract value counts these."},
+    {"name": "Completed", "meaning": "Work finished; has an actual end date."},
+    {"name": "Cancelled", "meaning": "Stopped, with a reason. No more time can be logged."},
+    {"name": "On track / At risk / Delayed", "meaning": "Schedule health, based on overdue milestones and time passed."},
+    {"name": "On budget / Nearing budget / Over budget / No budget", "meaning": "Budget health: cost against budget (On budget up to 90% used)."},
+    {"name": "Pending / In progress / Done / Overdue (milestone)", "meaning": "Milestone state; Overdue means past the due date and not done."},
+    {"name": "To do / In progress / In review / Done (task)", "meaning": "Columns of the task board."},
+    {"name": "Billable / No (time entry)", "meaning": "Whether the hours are charged to the client."},
+    {"name": "Budget change waiting for approval", "meaning": "A proposed budget held by an approval rule; the project keeps its old budget until approved."}
+  ],
+  "routines": {
+    "daily": [
+      "Log the day's hours for each person on Timesheets.",
+      "Move tasks on the board as work progresses."
+    ],
+    "weekly": [
+      "Check the Projects Dashboard for overdue milestones and tasks due in the next 30 days.",
+      "Review weekly timesheet totals and billable value."
+    ],
+    "monthly": [
+      "Raise invoices for milestones reached (Create invoice) and bill time-and-material hours.",
+      "Review Budget vs Actual on each active project and propose budget changes early.",
+      "Review Project Profitability with the partners."
+    ],
+    "yearly": [
+      "Mark finished projects Completed with their actual end date, and cancel abandoned ones with a reason."
+    ]
+  },
+  "common_problems": [
+    {"problem": "I cannot see New project or Log time.", "fix": "You need projects.manage. Ask an admin to grant it in Administration > Users and Access."},
+    {"problem": "Create invoice is missing on a milestone.", "fix": "The milestone needs an Amount to bill and no invoice yet, and you need sales.manage as well as projects.manage."},
+    {"problem": "Creating the invoice says the project has no client.", "fix": "Edit the project and choose the Client, then try again."},
+    {"problem": "My budget change did not take effect.", "fix": "It is above an approval limit and is waiting for approval. Check the card on the project page or the Approvals module."},
+    {"problem": "Delete project is refused.", "fix": "The project has time, invoices, bookings or files. Change its status to Cancelled instead."},
+    {"problem": "Time cannot be saved.", "fix": "Check the date is not in the future, the project is not cancelled and the hours are 24 or less."},
+    {"problem": "An expense does not show in the project's cost.", "fix": "It was not tagged with the project. Void and re-record it with the project chosen, or tag future entries."}
+  ],
+  "connected": [
+    "Sales: customers are the project clients; milestone invoices are created as draft invoices in Sales; issued invoices tagged to the project are its revenue.",
+    "Accounting: expenses, income and fixed-asset depreciation tagged to the project are its costs; budget lines can use a project as cost centre.",
+    "Purchases: vendor bills tagged to the project add to its cost.",
+    "People (HR): employees are picked as manager, team members and assignees; Project Assignments in People shows who works on which project.",
+    "Approvals: budget changes above an approval rule wait for a decision there."
+  ]
+}

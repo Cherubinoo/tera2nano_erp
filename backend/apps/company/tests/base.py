@@ -37,6 +37,23 @@ def make_user(username, role):
     return User.objects.create_user(username=username, email=f"{username}@example.com", password=PASSWORD, role=role)
 
 
+def grant(role, *codes):
+    """Give `role` extra permission codes through the permission matrix (as an administrator would). The partner roles already hold
+    everything, so tests that need someone who can view but not manage use a role such as employee with a code granted here."""
+    from apps.accounts import access
+    from apps.accounts.models import RolePermission
+
+    for code in codes:
+        RolePermission.objects.update_or_create(role=role, code=code, defaults={"granted": True})
+    access.matrix_changed()
+
+
+def viewer_client(username, *codes, role=Role.PROJECT_MANAGER):
+    """A client for a new user of `role` who holds `codes` on top of the role's defaults (e.g. a view-only user)."""
+    grant(role, *codes)
+    return client_for(make_user(username, role))
+
+
 def client_for(user):
     client = APIClient()
     client.force_authenticate(user=user)

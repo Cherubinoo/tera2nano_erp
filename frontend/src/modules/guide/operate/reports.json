@@ -1,0 +1,239 @@
+{
+  "key": "reports",
+  "title": "Reports",
+  "purpose": "The Reports module gathers figures from Sales, Purchases, Accounting, Payroll, Projects, Partners and Tax into ready-made reports and an executive dashboard. Reports only read data: nothing you do here changes an invoice, bill or entry. Every report can be filtered by period and downloaded as a CSV file that opens in a spreadsheet. Each person sees only the reports their role allows.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "See every report and every dashboard tile."},
+    {"role": "Finance Manager", "does": "Sees Annual Revenue, Project Profitability, Partner Capital, Salary Report, Pending Customer Payments, Vendor Outstanding, GST Summary and Cash-Flow Analysis (by default)."},
+    {"role": "HR Manager", "does": "Sees the Salary Report and the Headcount tile on the dashboard (by default); also Project Profitability because the role can view projects."},
+    {"role": "Project Manager", "does": "Sees Project Profitability, Pending Customer Payments and Vendor Outstanding, plus the Headcount and Open CRM deals tiles (by default)."},
+    {"role": "Employee", "does": "Has no access to Reports by default."}
+  ],
+  "before_you_start": [
+    "You need the permission \"Open the reports and analytics pages\" (reports.view). Each report also needs the view permission of the module it reads, for example Salary Report needs \"See salaries; prepare and run payroll\". An administrator can change this in Administration > Access.",
+    "Reports are only as good as the records behind them: issue invoices, record bills and payments, and post payroll before you rely on the figures.",
+    "The financial year runs from 1 April to 31 March. A year is written like 2026-27."
+  ],
+  "tasks": [
+    {
+      "title": "Open the Reports home page",
+      "who": "Anyone with reports.view",
+      "where": "Reports > Reports Home",
+      "route": "/reports",
+      "steps": [
+        "On the module launcher, click the Reports tile.",
+        "In the left menu, click Reports Home.",
+        "Read the cards: each card is one report you are allowed to open and shows a live headline figure, for example \"Owed by customers ₹4,25,000.00\".",
+        "Click a card to open that report, or click \"Open the dashboard\" on the Executive dashboard card."
+      ],
+      "result": "Only the reports your role may see are listed. If a headline cannot be worked out it shows \"Headline unavailable\" and a dash; the report itself may still open.",
+      "tips": [
+        "If the page says \"Your role does not include any of the reports yet.\", ask an administrator to give your role the right permissions.",
+        "Headlines use each report's default period: the current financial year, or all dates for the reports that allow it."
+      ]
+    },
+    {
+      "title": "Read the Executive dashboard",
+      "who": "Anyone with reports.view",
+      "where": "Reports > Executive Dashboard",
+      "route": "/reports/dashboard",
+      "steps": [
+        "Click Executive Dashboard in the left menu.",
+        "Read the tiles. Depending on your role you see Revenue, Expenses, Profit and Cash and bank (needs accounting view), Receivables (sales view), Payables (purchases view), Headcount (HR view) and Open CRM deals (CRM view).",
+        "Click a tile to go to the report or page behind it, for example Receivables opens Pending Customer Payments.",
+        "Scroll down to \"Six-month trend\" to see revenue and expenses for each of the last six months as a chart and a table with a Profit column."
+      ],
+      "result": "Revenue, Expenses and Profit cover the financial year to date. Receivables, Payables, Headcount and Cash and bank are as of today. Profit shows in red when negative.",
+      "tips": [
+        "The dashboard has no period filter and no CSV export; use the individual reports for that.",
+        "Headcount counts employees who are working or on notice."
+      ]
+    },
+    {
+      "title": "Choose the period of a report",
+      "who": "Anyone who can open the report",
+      "where": "Any report > Period",
+      "route": "",
+      "steps": [
+        "Open any report from the left menu.",
+        "In the Period box choose \"Financial year 2026-27\" (or one of the four years before it), or \"Custom date range\".",
+        "For a custom range, fill From and To, for example From 01-04-2026 To 30-09-2026.",
+        "On Project Profitability, Partner Capital, Pending Customer Payments and Vendor Outstanding you can also choose \"All dates\"; these reports start on All dates."
+      ],
+      "result": "The figures reload as soon as the period changes. The other reports start on the current financial year.",
+      "tips": [
+        "If you see \"Choose both dates.\" or \"The end date is before the start date.\", fix the dates; the report and Export CSV wait until the range is valid.",
+        "A custom range may be at most five years long."
+      ]
+    },
+    {
+      "title": "Export a report to CSV",
+      "who": "Anyone who can open the report",
+      "where": "Any report > Export CSV",
+      "route": "",
+      "steps": [
+        "Open the report and choose the period you want.",
+        "Click Export CSV at the top right. The button shows \"Preparing…\" while the file is made.",
+        "When \"CSV downloaded.\" appears, open the file from your downloads folder in your spreadsheet program."
+      ],
+      "result": "The file starts with the report title, the period and the date it was created, followed by the same tables you see on screen. Every download of the Salary Report is written to the company change history.",
+      "tips": [
+        "Cells that begin like a spreadsheet formula are made safe automatically.",
+        "Export CSV is greyed out while the report is loading or the date range is invalid."
+      ]
+    },
+    {
+      "title": "Check annual revenue",
+      "who": "Roles with accounting view (Finance Manager, partners, admin)",
+      "where": "Reports > Annual Revenue",
+      "route": "/reports/revenue",
+      "steps": [
+        "Click Annual Revenue.",
+        "Pick the financial year in Period.",
+        "Read the tiles: Revenue, Previous year (same dates a year earlier), Change in percent and Monthly average with the best month.",
+        "Use \"Revenue by month\" to compare each month with last year.",
+        "If your role can also view Sales, scroll to \"Revenue by customer\" to see each customer's revenue, last year's figure, change and share of the total."
+      ],
+      "result": "Revenue is sales income before GST, net of credit notes, from issued invoices and debit notes. Entries not made from an invoice appear on their own row in the customer table.",
+      "tips": [
+        "Change shows a dash when there were no sales a year earlier to compare with.",
+        "Draft or void invoices are not counted; only issued ones."
+      ]
+    },
+    {
+      "title": "Check project profitability",
+      "who": "Roles with projects view",
+      "where": "Reports > Project Profitability",
+      "route": "/reports/project-profitability",
+      "steps": [
+        "Click Project Profitability.",
+        "Leave Period on All dates for lifetime figures, or pick a year or range.",
+        "Read the tiles: Revenue, Cost, Profit with margin, and \"Not tagged to a project\" with the number of projects making a loss.",
+        "In the table, click a project name to open the project. Columns are Status, Contract value, Revenue, Cost, Profit and Margin."
+      ],
+      "result": "Figures come from accounting entries tagged to each project. Loss-making projects show their profit in red.",
+      "tips": [
+        "A large \"Not tagged to a project\" figure means income was booked without choosing a project; tag entries to the project when you record them.",
+        "If the chart says \"Nothing has been booked to a project in this period.\", widen the period."
+      ]
+    },
+    {
+      "title": "Check partner capital",
+      "who": "Roles with partners view",
+      "where": "Reports > Partner Capital",
+      "route": "/reports/partner-capital",
+      "steps": [
+        "Click Partner Capital.",
+        "Choose All dates or a period; balances are shown at the end of the period.",
+        "Read the tiles: Total capital, Agreed capital, Current accounts and Drawings in the period.",
+        "Use the table for each partner's Agreed capital, Opening capital, Capital at end, Change, Current account, Loan, Drawings and Share of capital."
+      ],
+      "result": "Current accounts are profit credited less drawings. Share of capital is each partner's percentage of total capital.",
+      "tips": ["Agreed capital comes from each partner account in the Partners module."]
+    },
+    {
+      "title": "Check the salary report",
+      "who": "Roles with hr.payroll (HR Manager, Finance Manager, partners, admin)",
+      "where": "Reports > Salary Report",
+      "route": "/reports/salary",
+      "steps": [
+        "Click Salary Report.",
+        "Pick the financial year or a date range.",
+        "Read the tiles: Cost to company, Gross pay, Net pay (after deductions) and Employees paid in the latest month.",
+        "Use \"Pay by month\" and \"Cost by department\" for the breakdown."
+      ],
+      "result": "Only approved, posted or paid payroll runs are counted. The report shows totals only; no single person's pay is shown. Each CSV export is recorded in the change history.",
+      "tips": ["If you see \"No payroll has been run in this period.\", check that the payroll run has been approved in HR."]
+    },
+    {
+      "title": "Follow up pending customer payments",
+      "who": "Roles with sales view",
+      "where": "Reports > Pending Customer Payments",
+      "route": "/reports/receivables",
+      "steps": [
+        "Click Pending Customer Payments.",
+        "Keep All dates to see everything still owed, or pick a period to limit it to invoices raised in that period.",
+        "Read the tiles: Outstanding, Overdue (with percent of total), Customers owing with number of open invoices, and Largest.",
+        "Look at \"By age\": Current, 1-15 days, 16-30 days, 31-45 days and Over 45 days past the due date.",
+        "In \"By customer\", click a customer's name to open their record and follow up. The Oldest overdue column shows the age in days."
+      ],
+      "result": "Amounts come from issued invoices and debit notes that are not fully paid, as of today.",
+      "tips": ["Not yet due counts as Current."]
+    },
+    {
+      "title": "Check what we owe vendors",
+      "who": "Roles with purchases view",
+      "where": "Reports > Vendor Outstanding",
+      "route": "/reports/vendor-outstanding",
+      "steps": [
+        "Click Vendor Outstanding.",
+        "Keep All dates, or pick a period to limit it to bills dated in that period.",
+        "Read the tiles: Outstanding, Overdue, Vendors owed with number of open bills, and Largest.",
+        "Look at \"By age\": Current, 1-30 days, 31-60 days, 61-90 days and Over 90 days.",
+        "In \"By vendor\", click a vendor name to open the vendor and plan payments."
+      ],
+      "result": "Amounts come from open vendor bills and vendor opening balances, as of today.",
+      "tips": ["Note that vendor age bands (30-day steps) differ from customer age bands (15-day steps)."]
+    },
+    {
+      "title": "Review the GST summary",
+      "who": "Roles with tax view",
+      "where": "Reports > GST Summary",
+      "route": "/reports/gst",
+      "steps": [
+        "Click GST Summary.",
+        "Pick the financial year or a date range.",
+        "Read the tiles: GST raised on sales, Input tax credit (with the unused balance), Net for the period, and Still owed (with the amount paid in cash).",
+        "Use \"GST by month\" for Taxable sales, GST raised, Input credit, Net, Paid in cash and Owed at month end.",
+        "Use \"By tax head\" to see each head with Owed at start, GST raised, Credit earned, Credit used, Paid in cash and Owed at end."
+      ],
+      "result": "Still owed shows in red when more than ₹0 is due.",
+      "tips": ["This is a summary for checking; record returns and tax payments in the Tax module."]
+    },
+    {
+      "title": "Analyse cash flow",
+      "who": "Roles with accounting view",
+      "where": "Reports > Cash-Flow Analysis",
+      "route": "/reports/cash-flow",
+      "steps": [
+        "Click Cash-Flow Analysis.",
+        "Pick the financial year or a date range.",
+        "Read the tiles: Cash and bank at end (and at start), Money in, Money out and Net change.",
+        "Use \"Money in and out by month\" for each month's in, out, net and balance at month end.",
+        "Read the \"Cash-flow statement\": Net profit, operating, investing and financing lines, net change, and cash at start and end."
+      ],
+      "result": "Transfers between your own bank and cash accounts are left out of money in and out. The statement's hint says whether it ties to the real change in cash and bank.",
+      "tips": ["If it says \"The statement does not tie to the cash and bank balances: check the journal.\", ask the accountant to review recent journal entries."]
+    }
+  ],
+  "statuses": [
+    {"name": "Current", "meaning": "In the age bands: not yet past its due date."},
+    {"name": "Overdue", "meaning": "Past its due date; shown by age band in days."},
+    {"name": "All dates", "meaning": "The report covers everything to date, with no period limit."},
+    {"name": "FY 2026-27", "meaning": "The report covers 1 April 2026 to 31 March 2027."}
+  ],
+  "routines": {
+    "daily": ["Glance at the Executive dashboard for cash, receivables and payables."],
+    "weekly": ["Open Pending Customer Payments and follow up the oldest overdue customers.", "Open Vendor Outstanding to plan the week's vendor payments."],
+    "monthly": ["After payroll is approved, check the Salary Report.", "Review the GST summary before filing returns.", "Review Cash-Flow Analysis and Project Profitability; export CSVs for the partners."],
+    "yearly": ["After 31 March, export Annual Revenue, Partner Capital and Cash-Flow Analysis for the closed financial year."]
+  },
+  "common_problems": [
+    {"problem": "A report is missing from the menu or Reports Home.", "fix": "Your role lacks the source module's view permission. Ask an administrator to grant it in Administration > Access."},
+    {"problem": "The page says \"Your role does not allow this.\"", "fix": "You opened a report link your role cannot see. Ask an administrator for the permission."},
+    {"problem": "A headline says \"Headline unavailable\".", "fix": "That figure could not be worked out from the data. Open the report to see the details, and tell your administrator if it fails too."},
+    {"problem": "Revenue looks too low.", "fix": "Only issued invoices count. Check that draft invoices have been issued and the period is correct."},
+    {"problem": "Export CSV is greyed out.", "fix": "Wait for the report to load, and make sure both custom dates are filled with From before To."}
+  ],
+  "connected": [
+    "Reads issued invoices, debit and credit notes and customer payments from Sales.",
+    "Reads vendor bills and opening balances from Purchases.",
+    "Reads accounting entries for revenue, expenses, profit and cash flow from Accounting.",
+    "Reads approved, posted and paid payroll runs from HR.",
+    "Reads projects and project-tagged entries from Projects.",
+    "Reads partner capital, current accounts, loans and drawings from Partners.",
+    "Reads GST liability and input credit from Tax.",
+    "Reads open deals from CRM for the dashboard.",
+    "Salary Report CSV downloads are written to the company change history."
+  ]
+}

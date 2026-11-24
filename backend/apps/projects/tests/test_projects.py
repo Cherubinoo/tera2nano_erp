@@ -172,12 +172,12 @@ class PermissionTests(ProjectsBase):
                   ("post", "/tasks/", {"project": p["id"], "title": "T"}), ("patch", f"/tasks/{t['id']}/", {"title": "T2"}),
                   ("delete", f"/tasks/{t['id']}/", None), ("post", "/team/", {"project": p["id"], "name": "N"}),
                   ("post", "/timesheets/", {"project": p["id"], "date": "2026-08-10", "hours": "1"})]
-        for name, c in (("finance", self.api_finance), ("hr", self.hr), ("partner", self.partner), ("staff", self.api_staff)):
+        for name, c in (("finance", self.api_finance), ("hr", self.hr), ("staff", self.api_staff)):
             for method, url, body in writes:
                 self.assertEqual(getattr(c, method)(f"{P}{url}", body, format="json").status_code, 403, (name, method, url))
         # still intact after all the refused writes
         self.assertEqual(self.get(p)["name"], "Alpha")
-        for name, c in (("admin", self.api), ("managing", self.managing), ("pm", self.pm)):
+        for name, c in (("admin", self.api), ("managing", self.managing), ("partner", self.partner), ("pm", self.pm)):  # a partner holds projects.manage
             r = c.post(f"{P}/projects/", {"name": f"By {name}", "project_type": "internal"}, format="json")
             self.assertEqual(r.status_code, 201, (name, r.content))
 

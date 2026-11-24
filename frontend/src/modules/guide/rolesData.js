@@ -201,6 +201,16 @@ export const PERMISSIONS = [
     "code": "users.view_activity",
     "text": "View login history and user-management activity",
     "group": "Administration"
+  },
+  {
+    "code": "users.invite",
+    "text": "Invite new members with a one-time link (the access role is chosen by the person inviting)",
+    "group": "Administration"
+  },
+  {
+    "code": "email.manage",
+    "text": "Set up email (sender name, reply-to, signature, test email); see every sent email and send failed ones again",
+    "group": "Administration"
   }
 ];
 
@@ -220,6 +230,7 @@ export const MATRIX = {
     "documents.issue",
     "documents.view_confidential",
     "documents.view_restricted",
+    "email.manage",
     "finance.manage",
     "hr.manage",
     "hr.payroll",
@@ -236,6 +247,7 @@ export const MATRIX = {
     "sales.view",
     "tax.manage",
     "tax.view",
+    "users.invite",
     "users.manage",
     "users.view_activity",
     "workplace.manage",
@@ -256,6 +268,7 @@ export const MATRIX = {
     "documents.issue",
     "documents.view_confidential",
     "documents.view_restricted",
+    "email.manage",
     "finance.manage",
     "hr.manage",
     "hr.payroll",
@@ -272,26 +285,48 @@ export const MATRIX = {
     "sales.view",
     "tax.manage",
     "tax.view",
+    "users.invite",
+    "users.manage",
     "users.view_activity",
     "workplace.manage",
     "workplace.view"
   ],
   "partner": [
+    "accounting.manage",
     "accounting.view",
+    "approvals.manage",
     "approvals.view",
+    "audit.view",
+    "company.manage",
     "company.view",
+    "compliance.manage",
     "compliance.view",
     "crm.manage",
     "crm.view",
     "documents.issue",
     "documents.view_confidential",
+    "documents.view_restricted",
+    "email.manage",
+    "finance.manage",
+    "hr.manage",
+    "hr.payroll",
     "hr.view",
+    "partners.manage",
     "partners.view",
+    "projects.manage",
     "projects.view",
+    "purchases.manage",
     "purchases.view",
     "reports.view",
+    "sales.issue",
+    "sales.manage",
     "sales.view",
+    "tax.manage",
     "tax.view",
+    "users.invite",
+    "users.manage",
+    "users.view_activity",
+    "workplace.manage",
     "workplace.view"
   ],
   "finance_manager": [
@@ -327,6 +362,7 @@ export const MATRIX = {
     "hr.view",
     "projects.view",
     "reports.view",
+    "users.invite",
     "workplace.manage",
     "workplace.view"
   ],

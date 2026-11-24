@@ -52,8 +52,19 @@ document cannot drift:
 cd frontend
 node scripts/build-roles-data.mjs      # roles table from backend/apps/accounts/access.py
 node scripts/build-guide-docs.mjs      # rewrite docs/MODULE_GUIDE.md (add --check to only compare)
-node scripts/check-guide-links.mjs     # every link in the guide matches a real route
+node scripts/check-guide-links.mjs     # every link in the guide and the manual matches a real route
+node scripts/build-operate-docs.mjs    # rewrite docs/HOW_TO_OPERATE.md (add --check to only compare)
 ```
+
+**How to operate.** Guide > *How to operate* (`/guide/operate`) is the operating manual: a *Getting started* chapter (first-week
+setup order, finding your way around, roles, daily / month-end / year-end checklists) and one chapter per module with click-by-click
+tasks, who may do each one, what happens afterwards, statuses, routines and common problems, plus a task search. The same manual is
+written out in [docs/HOW_TO_OPERATE.md](docs/HOW_TO_OPERATE.md), generated from `frontend/src/modules/guide/operate/*.json`.
+
+**Access and invitations.** The Admin, Managing Partner and Partner roles always hold every permission. Partners, HR managers and
+admins can invite members from Administration > *Invite members*: the inviter picks the access role, the invitee opens the one-time
+link (`/join/...`) and fills in their details (the fields are listed in `INVITE_FIELDS` in `backend/apps/accounts/invitations.py`).
+*Email this link* emails the link from the app (see **Email** below); the Sent emails log stores the message with the link hidden.
 
 Modules covered: CRM, Sales, Purchases, Accounting, GST & Tax, Projects, People (HR), Partners, Approvals, Compliance, Workplace,
 Reports, Documents, Company, Administration.
@@ -88,15 +99,18 @@ for pre-printed paper) behave exactly as on quotations.
   profile starting on the 31st bills on the last day of shorter months and on 29 February in leap years. Each (profile, run
   date) is made once only; missed runs are caught up, at most 12 per profile per call. Pause, resume (runs missed while paused
   are skipped), stop, edit (affects future invoices only) and "Run now" are on the profile page; its **Child invoices** tab
-  lists what it made. Schedule the daily job with `.\.venv\Scripts\python manage.py generate_recurring_invoices` (optional
-  `--date YYYY-MM-DD`, `--limit N`); a profile that fails (for example its customer was switched off) shows "last error" and
+  lists what it made. Due invoices are made on their own once a day: the first time anyone opens the app that day (switch
+  off with `DAILY_JOBS_ON_REQUEST=false`). To run them even on days nobody signs in, schedule
+  `.\.venv\Scripts\python manage.py run_daily_jobs` (Windows Task Scheduler or cron; it also runs the other daily jobs such as
+  automatic reminders). `generate_recurring_invoices` (optional `--date YYYY-MM-DD`, `--limit N`) still runs just this job; a profile that fails (for example its customer was switched off) shows "last error" and
   does not stop the others.
 - **Reminders**: rules say when a reminder falls due relative to the invoice's due date (standard: 3 days before, on the day, 7,
   15 and 30 days after) with editable subject and message using placeholders such as `{customer_name}`, `{invoice_no}`,
   `{amount_due}`, `{due_date}`, `{days_overdue}`, `{company_name}`. The Reminders page lists unpaid invoices that need one
   (never paid, void or draft invoices; each rule once per invoice; only the latest due rule when several have passed). **There is
-  no email server**: Send records the rendered text against the invoice and gives a Copy button and a `mailto:` link, Skip
-  records that it was passed over. History is on the Reminders page and on each invoice; the Sales dashboard counts what is due.
+  email server set up** (see **Email**), Send emails the reminder (editable first) and records it; without one it records the
+  rendered text and gives a Copy button and a `mailto:` link. Skip records that it was passed over. With *Email payment reminders
+  automatically* on, a daily job emails due reminders to customers with an email address, once per reminder step. History is on the Reminders page and on each invoice; the Sales dashboard counts what is due.
 
 Amounts are exact decimals and every action that changes money locks the rows it uses, so two people cannot overpay one
 invoice. Sales events are written to the change history without bumping the company record version.
@@ -121,6 +135,15 @@ agree with each other. Permissions: `accounting.view` to read (Partners included
   filter by where an entry came from; reverse a manual entry with a reason.
 - **Bank and cash**: balances, transfers between accounts, and **reconciliation**: tick the lines on the statement until the
   difference is zero; the most recent reconciliation can be undone.
+- **Bank reconciliation from statements**: upload the bank's statement (CSV, Excel .xlsx/.xls, a text-based PDF, or OFX) for a bank account; the
+  columns are guessed from the headings (Indian date formats, amounts with commas, Dr/Cr columns, heading and total rows) and
+  remembered per account, and re-importing an overlapping statement skips lines already imported. Each line is offered
+  matching entries from the books (same amount on a nearby date, then a reference or name in the narration) to accept, can be
+  matched by hand (one line to several entries or the reverse), ignored with a reason, or turned into the missing customer
+  payment, vendor payment, expense, income, bank charge or transfer through the normal services and approval rules. The
+  reconciliation report (CSV and print) explains the difference between the books and the statement, and an account can be
+  marked reconciled up to a date. Statement files are stored privately. There is no live bank feed. Code:
+  `backend/apps/accounting/services/statement_files.py`, `statements.py`, `bank_matching.py`, `reconcile.py`.
 - **Reports**: trial balance, general ledger per account, profit and loss, balance sheet (profit carried between financial
   years without closing entries), and a cash-flow statement (indirect method) that always ends on the real cash and bank
   balance. Every report exports to CSV and prints without the menu.
@@ -249,12 +272,24 @@ not record any approval.
 Numbering for meetings and minutes comes from the default sequences, which `apply_tera2nano_letterhead` creates when
 missing (or use Document Numbering, "Create the missing sequences").
 
+## Email
+
+The app emails invoices and credit notes, quotations and letters, purchase orders, payslips, payment reminders and invitation links
+(each from a dialog prefilled with to, cc, subject and message, with the PDF attached). Set the mail server in `backend/.env`:
+`EMAIL_HOST`, `EMAIL_PORT` (587), `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` (true) or `EMAIL_USE_SSL` (port 465),
+`DEFAULT_FROM_EMAIL`, optionally `EMAIL_TIMEOUT` (seconds) and `APP_BASE_URL` (the address used in invitation links). Without
+`EMAIL_HOST` (development) messages are written as files to `EMAIL_FILE_PATH` (default `backend/sent_emails/`) and the app says
+"Email is not set up on the server; messages are saved but not delivered". The password is read from the environment only. Sender
+name, reply-to, signature and automatic reminders are per company under Administration > *Email settings* (with a test email);
+Administration > *Sent emails* logs every message with its result, the reason for failures and *Send again* (`email.manage`). A
+failed send never undoes the business action. Code: `backend/apps/emails/`.
+
 ## Where files are stored
 
 Private files live under `backend/private_media/`, in one folder per document type:
 `company/issued/<document_type>/` (generated PDFs, with `logos/` copies used for that document) and
 `company/documents/<document_type>/` (uploaded repository documents). Other folders: `company/logo/`,
-`company/branding/`, `company/signatures/`. File names are random; originals are kept only in the database.
+`company/branding/`, `company/signatures/`, `bank-statements/` (uploaded bank statements). File names are random; originals are kept only in the database.
 
 ## Users, roles and permissions
 

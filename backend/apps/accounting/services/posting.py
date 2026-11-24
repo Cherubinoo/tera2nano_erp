@@ -58,7 +58,10 @@ def reverse_document(doc, reason, actor):
 
 
 def money_account_for(company, payment):
-    """Where a payment's money went: the chosen bank's ledger account, else cash for cash payments, else the default bank."""
+    """Where a payment's money went: a specific ledger account from a bank statement line, else the chosen bank's ledger
+    account, else cash for cash payments, else the default bank."""
+    if payment.bank_ledger_account_id:
+        return payment.bank_ledger_account
     if payment.deposit_account_id:
         return chart.ledger_for_bank(company, payment.deposit_account)
     return chart.system_account(company, "cash" if payment.mode == Payment.Mode.CASH else "bank")

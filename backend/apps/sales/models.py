@@ -180,6 +180,9 @@ class Payment(UUIDModel):
     mode = models.CharField(max_length=14, choices=Mode.choices, default=Mode.BANK_TRANSFER)
     reference = models.CharField(max_length=100, blank=True)  # cheque number, UTR, UPI id ...
     deposit_account = models.ForeignKey(CompanyBankAccount, null=True, blank=True, on_delete=models.PROTECT, related_name="+")
+    # Set only when this payment was created from a bank statement line on a ledger account with no Company Bank Account of
+    # its own (and not the default bank account): posts straight to this ledger account instead of through deposit_account.
+    bank_ledger_account = models.ForeignKey("accounting.Account", null=True, blank=True, on_delete=models.PROTECT, related_name="+")
     notes = models.CharField(max_length=300, blank=True)
     # The project this money belongs to (apps.projects.Project id); its lines in the books carry the same tag.
     project_id = models.UUIDField(null=True, blank=True, db_index=True)
@@ -347,9 +350,10 @@ class ReminderRule(UUIDModel):
 
 
 class PaymentReminder(UUIDModel):
-    """The record of one reminder being sent or skipped for an invoice. There is no email server: "sent" means the text was
-    prepared and recorded here for the user to send themselves. One row per (invoice, rule offset), so a rule never
-    reminds the same invoice twice."""
+    """The record of one reminder being sent or skipped for an invoice. "Sent" means the text was prepared and recorded here;
+    when email is set up it was also emailed (the outcome is in apps.emails' log, kind "payment_reminder"), otherwise the
+    user sent it themselves. One row per (invoice, rule offset), so a rule never reminds the same invoice twice, by hand or
+    by the automatic daily job."""
 
     class Status(models.TextChoices):
         SENT = "sent", "Sent"

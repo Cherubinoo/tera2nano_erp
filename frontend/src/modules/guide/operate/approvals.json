@@ -1,0 +1,262 @@
+{
+  "key": "approvals",
+  "title": "Approvals",
+  "purpose": "The Approvals module is one inbox for everything that needs a second person's yes before it goes ahead: purchase orders, vendor bills, payments, expenses, leave, payroll runs, salary revisions, project budgets, partner withdrawals and quotations. Approval rules decide who must approve, in how many steps and for which amounts. When the last approver says yes, the record is released automatically in its own module (for example the bill is posted to the books). Nobody approves their own request, not even a partner who holds every permission.",
+  "who": [
+    {"role": "Every signed-in user", "does": "Sees Pending My Approval (requests waiting for them) and My Requests (what they sent). Approves or rejects when they are an approver for the current step. Withdraws and resends their own requests."},
+    {"role": "Finance Manager, HR Manager, Project Manager", "does": "Also see All Approvals, Approval Analytics and Approval Rules (read only). The HR Manager can also reassign an approval step to another person."},
+    {"role": "Admin, Managing Partner, Partner", "does": "Hold every permission: see everything, create and change rules, withdraw or resend anyone's request, reassign steps. They still cannot approve their own requests (only an administrator, when nobody else at all could approve, is allowed to)."},
+    {"role": "Employee", "does": "Pending My Approval and My Requests only."}
+  ],
+  "before_you_start": [
+    "Each person's role must be set correctly in Access, because rule steps usually say 'anyone with a role' (for example Finance Manager).",
+    "The first time a request is sent, the system creates editable example rules, for example: purchase orders above ₹50,000 (Finance Manager, then Managing Partner); vendor bills above ₹1,00,000 (Managing Partner); leave requests (HR Manager); expenses of ₹10,000 to ₹50,000 (Finance Manager) and above ₹50,000 (Finance Manager, then Managing Partner); payroll runs (Managing Partner); salary increases (HR Manager, then Managing Partner); project budgets (Managing Partner); payments above ₹50,000 (Managing Partner); partner withdrawals (every partner); quotations above ₹5,00,000 (Managing Partner).",
+    "Requests are created from the other modules (for example when a bill or expense is saved above the rule amount, or with a 'Request approval' button). You do not create them in this module."
+  ],
+  "tasks": [
+    {
+      "title": "See what is waiting for you (the bell)",
+      "who": "Everyone",
+      "where": "Top bar > bell icon, or Approvals > Pending My Approval",
+      "route": "/approvals",
+      "steps": [
+        "Look at the bell icon in the top bar. The number on it is how many requests are waiting for your decision (it refreshes every 90 seconds).",
+        "Click the bell, or open the Approvals tile on the launcher (it also shows the count 'waiting for you').",
+        "The Pending my approval list opens. Use the chips All waiting for me, Pending or Escalated.",
+        "Narrow the list with Search (reference, title or requester), Type, Amount from, Amount to and Waiting (Over 1 day, Over 3 days, Over 7 days, Over 30 days)."
+      ],
+      "result": "You see each request's reference, type, title, requester, amount, step (for example 1 of 2), how long it has waited (with 'overdue' when past its escalation days) and status. The footer shows the count and total value.",
+      "tips": ["Click 'Open record' under a title to look at the purchase order, bill or other record before deciding."]
+    },
+    {
+      "title": "Approve a request",
+      "who": "An approver for the current step",
+      "where": "Approvals > Pending My Approval > Approve",
+      "route": "/approvals",
+      "steps": [
+        "Find the request in Pending my approval, or click its reference to open the full request.",
+        "Check the Details card (type, amount, requested by, rule applied) and the Approval steps.",
+        "Click Approve.",
+        "Type a Comment (optional), for example 'Rates checked against last order'.",
+        "Click Approve in the dialog."
+      ],
+      "result": "If more approvals are needed in this step (an 'everyone must approve' step) or there is a next step, the message says your approval is recorded and the request moves on. When the last step is complete the request becomes Approved and the source record is released automatically (see 'What approving does for each type').",
+      "tips": ["You cannot decide twice on the same step.", "If the source module cannot accept the approval (for example the bill was changed), nothing is changed and you see the module's message."]
+    },
+    {
+      "title": "Reject a request with a reason",
+      "who": "An approver for the current step",
+      "where": "Approvals > Pending My Approval > Reject",
+      "route": "/approvals",
+      "steps": [
+        "Click Reject on the request's row, or open the request and click Reject.",
+        "Type the Reason for rejecting, for example 'Quote from a second vendor needed'. The reason is required.",
+        "Click Reject."
+      ],
+      "result": "The request becomes Rejected at once, whatever step it was on. The source record is sent back in its module (for example the purchase order is rejected) with your reason, and the requester sees it in My Requests.",
+      "tips": []
+    },
+    {
+      "title": "Approve several requests at once",
+      "who": "An approver",
+      "where": "Approvals > Pending My Approval > tick boxes > Approve selected",
+      "route": "/approvals",
+      "steps": [
+        "In Pending my approval, tick the box on each row you want to approve, or the box in the header to select all you can approve.",
+        "Click Approve selected (n) at the top.",
+        "Check the list in the dialog, add an optional comment and click Approve."
+      ],
+      "result": "Each request is approved in turn. If some cannot be approved, the dialog lists them with the reason under 'Not approved' and the others go through.",
+      "tips": ["Bulk rejection is not available; reject one at a time so each gets its own reason."]
+    },
+    {
+      "title": "Open a request and read its history",
+      "who": "Approvers, the requester, and anyone with the approvals view permission",
+      "where": "Approvals > any list > click the reference",
+      "route": "",
+      "steps": [
+        "Click a request's reference in any list.",
+        "Details shows the type, amount, requester, submission time, who it is waiting for (or when it was decided), age, the rule applied and a link to Open the record.",
+        "Approval steps shows each step, who can approve it, its due time, and each decision with comment. 'everyone must approve' marks an all-approvers step; 'reassigned' marks a step handed to someone else.",
+        "History lists every event: Submitted, Step approved, Approved, Rejected, Withdrawn, Reassigned, Escalated and so on, with who and when."
+      ],
+      "result": "Nothing changes; you get the full trail. The history cannot be edited or deleted.",
+      "tips": ["'Sent again after ...' shows that the request is a resubmission of an earlier one."]
+    },
+    {
+      "title": "Track your own requests",
+      "who": "Everyone",
+      "where": "Approvals > My Requests",
+      "route": "/approvals/mine",
+      "steps": [
+        "Click My Requests in the left menu.",
+        "Use the chips All, Open, Approved, Rejected or Withdrawn, and the search and filter boxes.",
+        "Click a reference to see who it is waiting for and any comments.",
+        "Click Export CSV to download the list."
+      ],
+      "result": "The tab shows how many of your requests are open, for example 'My requests (2 open)'.",
+      "tips": []
+    },
+    {
+      "title": "Withdraw a request",
+      "who": "The requester (or Admin, Managing Partner, Partner)",
+      "where": "Approvals > My Requests > open the request > Withdraw",
+      "route": "/approvals/mine",
+      "steps": [
+        "Open the request (it must still be Pending or Escalated).",
+        "Click Withdraw.",
+        "Type a reason if you like (optional) and click Withdraw."
+      ],
+      "result": "The request becomes Cancelled (shown as Withdrawn in the chips) and the record goes back to its owner in its module. You can send it again later.",
+      "tips": []
+    },
+    {
+      "title": "Send a rejected or withdrawn request again",
+      "who": "The requester (or Admin, Managing Partner, Partner)",
+      "where": "Approvals > My Requests > open the request > Send again",
+      "route": "/approvals/mine",
+      "steps": [
+        "Correct the record in its own module first if the rejection asked for changes.",
+        "Open the rejected or withdrawn request and click Send again.",
+        "Confirm with Send again."
+      ],
+      "result": "A new request with a new reference is created using the latest figures from the record, and the current rules decide its steps. The old request stays in the history and links to the new one.",
+      "tips": ["Only rejected or withdrawn requests can be sent again, and only when the record has no other open request."]
+    },
+    {
+      "title": "Send a record for approval from its own page",
+      "who": "The person who manages that record",
+      "where": "In the record's module, next to its 'Waiting for approval' status",
+      "route": "",
+      "steps": [
+        "Open the record (for example a partner withdrawal in Partners > Transactions) that shows it is waiting for approval.",
+        "If no approval request is open for it, a Request approval button appears next to the status. Click it."
+      ],
+      "result": "The message shows either 'Sent for approval: (reference)' or 'Approved automatically' when no rule applies and you may approve that kind of record yourself. A badge such as 'Approval: Pending' links to the request.",
+      "tips": ["Most records are sent automatically when saved; the button is for records whose earlier request was closed."]
+    },
+    {
+      "title": "Reassign an approval step to someone else (delegation)",
+      "who": "Admin, Managing Partner, Partner or HR Manager",
+      "where": "Approvals > open the request > Reassign",
+      "route": "",
+      "steps": [
+        "Open the request (it must be Pending or Escalated).",
+        "Click Reassign.",
+        "In Step, choose the step (the current one, or a later one not yet started).",
+        "In New approver, choose the person. The requester is not offered.",
+        "Add a Note (optional), for example 'Finance Manager on leave this week', and click Reassign."
+      ],
+      "result": "Only the chosen person can approve that step now. The step shows 'reassigned' and the history records who reassigned it to whom.",
+      "tips": ["There is no automatic out-of-office delegation; reassign each request as needed."]
+    },
+    {
+      "title": "Create an approval rule (amount bands, several steps, any or all)",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Approvals > Approval Rules > New rule",
+      "route": "/approvals/rules",
+      "steps": [
+        "Click Approval Rules, then New rule.",
+        "Enter a Rule name, for example 'Vendor bills 1 to 5 lakh', and choose what it Applies to (for example Vendor bill).",
+        "Set the amount band: Amount from 100000.01 and Amount to 500000. Both are included; leave one empty for no limit.",
+        "Optionally fill Project contains or Department contains to match only certain projects or departments.",
+        "Under Approval steps, in order, set step 1: Approver is 'Anyone with a role' and choose the Role (for example Finance Manager), or 'A specific user' and choose the person.",
+        "In Needs, choose 'Any one of them' or 'All of them' (for role steps).",
+        "In Escalate after (days), enter for example 2, or leave empty for never.",
+        "Click Add step for a second step (for example Managing Partner). Use Up, Down and Remove to arrange steps.",
+        "Keep 'Rule is switched on' ticked and click Add rule."
+      ],
+      "result": "Records of that type sent from now on use the first switched-on rule whose conditions match (top of the list first). Requests already in progress keep the steps they started with.",
+      "tips": ["If no rule matches, the request goes to the Managing Partner (or an administrator), unless the requester holds the permission to manage that kind of record, in which case it is approved automatically. Partners and administrators hold every permission, so keep rules in place for things you want checked.", "A step whose approvers are all unavailable (or only the requester) falls back to the Managing Partners and administrators."]
+    },
+    {
+      "title": "Edit, reorder, switch off or delete a rule",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Approvals > Approval Rules",
+      "route": "/approvals/rules",
+      "steps": [
+        "Rules are grouped by type. Use Up and Down in the Order column to change which rule is tried first.",
+        "Click Edit to change a rule and then Save rule.",
+        "Click Switch off to stop using a rule without deleting it (Switch on to restore).",
+        "Click Delete and confirm with Delete rule to remove it."
+      ],
+      "result": "Changes affect only requests sent afterwards. Open requests that already used a deleted rule carry on unchanged.",
+      "tips": ["Other roles with the approvals view permission can read the rules but see no buttons."]
+    },
+    {
+      "title": "Know what approving does for each type",
+      "who": "Approvers",
+      "where": "Approvals > open the request > Open the record",
+      "route": "",
+      "steps": [
+        "Purchase order: the order moves from pending approval to approved.",
+        "Vendor bill: the bill is numbered and posted to the books.",
+        "Payment (vendor payment): the payment is numbered, applied to its bills and posted to the books. A payment void request (made or received): the payment is voided and its entry reversed.",
+        "Expense: the expense is numbered and posted to the books.",
+        "Leave request: the leave is approved.",
+        "Payroll run: the run moves to Approved.",
+        "Salary revision: the revision is approved.",
+        "Project budget: the budget change is approved.",
+        "Partner withdrawal: the drawing or capital withdrawal is posted to the books.",
+        "Quotation: the quotation is issued (numbered, with its PDF)."
+      ],
+      "result": "Rejecting sends each record back in its module with the reason (for a payment void, the void request is refused).",
+      "tips": ["Always open the record before approving anything that posts to the books."]
+    },
+    {
+      "title": "Search all approvals and export",
+      "who": "Anyone with the approvals view permission",
+      "where": "Approvals > All Approvals",
+      "route": "/approvals/all",
+      "steps": [
+        "Click All Approvals.",
+        "Use the chips All, Open, Escalated, Approved, Rejected, Withdrawn and the search and filter boxes.",
+        "Click Export CSV to download the list (reference, type, title, amount, requester, status, step, waiting on, dates, age, rule)."
+      ],
+      "result": "You see every request in the company.",
+      "tips": []
+    },
+    {
+      "title": "Read Approval Analytics",
+      "who": "Anyone with the approvals view permission",
+      "where": "Approvals > Approval Analytics",
+      "route": "/approvals/dashboard",
+      "steps": [
+        "Click Approval Analytics.",
+        "Read the tiles: Pending (with average wait), Average turnaround, Approved, Rejected, Overdue or escalated. Click a tile to open the matching list.",
+        "Check the charts: Requests per month (last six months), By type, Slowest approvers, Waiting on (open requests per person) and Status by type."
+      ],
+      "result": "You can see where requests get stuck and follow up with the people concerned.",
+      "tips": []
+    }
+  ],
+  "statuses": [
+    {"name": "Pending", "meaning": "Waiting for a decision on the current step."},
+    {"name": "Escalated", "meaning": "The current step waited past its escalation days. It is still open, and the Managing Partners and administrators can now approve it too."},
+    {"name": "Approved", "meaning": "Every step is complete (or it was approved automatically); the source record has been released."},
+    {"name": "Rejected", "meaning": "An approver said no with a reason; the source record was sent back."},
+    {"name": "Cancelled (shown as Withdrawn)", "meaning": "The requester withdrew it, or the source record was cancelled or changed so its approval was closed."},
+    {"name": "Step: Waiting for decision / Not started / Approved / Rejected / Skipped", "meaning": "Where each step of a request stands."}
+  ],
+  "routines": {
+    "daily": ["Clear the bell: approve or reject everything in Pending My Approval.", "Check My Requests for anything rejected that needs correcting and sending again."],
+    "weekly": ["Look at items marked overdue or Escalated and chase the approvers, or reassign the step if someone is away."],
+    "monthly": ["Review Approval Analytics for slow approvers and long waits."],
+    "yearly": ["Review the approval rules and amount bands against the current delegation of authority and update them."]
+  },
+  "common_problems": [
+    {"problem": "Message: You are not an approver for this step.", "fix": "The step is meant for another role or person. Ask an administrator to check the rule or reassign the step."},
+    {"problem": "I sent something and it was approved automatically.", "fix": "No rule matched and you hold the permission to manage that kind of record. Ask an administrator to add or switch on a rule for that type and amount."},
+    {"problem": "Message: This record is already waiting for approval.", "fix": "A request for the record is already open. Find it in My Requests or All Approvals."},
+    {"problem": "Message: This request is already approved (or rejected).", "fix": "Someone decided it before you. Refresh the page."},
+    {"problem": "Message: Give a reason for rejecting.", "fix": "Type the reason in the box; it is required for a rejection."},
+    {"problem": "A partner cannot approve their own withdrawal or purchase.", "fix": "This is by design: nobody approves their own request. Another approver must decide."},
+    {"problem": "Nobody seems able to approve a step.", "fix": "If no active user has the step's role, the step falls back to the Managing Partners and administrators. Check users' roles in Access."}
+  ],
+  "connected": [
+    "Receives requests from Purchases (purchase orders, vendor bills, vendor payments and payment voids), Sales (quotations, customer receipt voids), Accounting (expenses), HR (leave, payroll runs, salary revisions), Projects (budgets) and Partners (withdrawals).",
+    "Sends the decision back: approving releases or posts the record in its module; rejecting returns it with the reason; withdrawing returns it to its owner.",
+    "Top bar bell and the launcher tile show your pending count.",
+    "Access: user roles decide who the approvers of a role step are."
+  ]
+}

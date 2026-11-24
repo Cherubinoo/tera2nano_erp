@@ -1,0 +1,394 @@
+{
+  "key": "purchases",
+  "title": "Purchases",
+  "purpose": "Purchases covers everything you buy: vendors, internal purchase requests, vendor quotations and their comparison, purchase orders with approval, receiving goods, vendor bills with input tax credit (ITC) and TDS, payments to vendors applied to bills, and the payables ageing. Recording a bill or a payment posts it to the books automatically, and large orders, bills and payments can be held for approval.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Everything in Purchases, and decide approvals in the Approvals module."},
+    {"role": "Finance Manager", "does": "Creates and changes vendors, purchase requests, quotations, orders, bills and vendor payments (purchases.view and purchases.manage)."},
+    {"role": "Project Manager", "does": "Views vendors, orders, bills, payments and the ageing (purchases.view); cannot create or change them."},
+    {"role": "HR Manager, Employee", "does": "No Purchases access by default."}
+  ],
+  "before_you_start": [
+    "Company > Addresses and Company > Tax Configuration: the company's state decides whether purchase GST is CGST and SGST (same state as the vendor) or IGST (another state).",
+    "Company > Bank Accounts: vendor payments are paid from one of these accounts (or the default bank account).",
+    "Approvals > Approval Rules: add rules for Purchase order, Vendor bill and Payment if large amounts must be approved first.",
+    "Numbers are automatic: for example T2N-VEN-26-2411-0001 (vendor), T2N/PR/26/2411/00001 (purchase request), T2N/VQ/… (vendor quotation), T2N/PO/… (purchase order), T2N/BILL/… (bill) and T2N/VPY/… (vendor payment)."
+  ],
+  "tasks": [
+    {
+      "title": "Read the Purchases Dashboard",
+      "who": "Anyone with purchases.view",
+      "where": "Purchases > Purchases Dashboard",
+      "route": "/purchases",
+      "steps": [
+        "Open the Purchases tile on the launcher.",
+        "Read the tiles: Outstanding payables, Overdue, Purchases this month and Open purchase orders. Click a tile to open the matching list.",
+        "Look at Purchases per month, Top vendors, Payables by age, Spend by category and Payments due in the next 30 days.",
+        "Use New purchase order, New bill, Record payment or New vendor at the top to start work."
+      ],
+      "result": "Nothing is changed.",
+      "tips": []
+    },
+    {
+      "title": "Add a vendor",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Vendors > New vendor",
+      "route": "/purchases/vendors?new=1",
+      "steps": [
+        "Open Purchases > Vendors and click New vendor (or + New > Vendor).",
+        "Enter the Vendor name (for example Bright Office Supplies), Contact person, Email and Phone.",
+        "Choose GST registration: Registered (has a GSTIN), Unregistered or Overseas. For a registered vendor enter the GSTIN (15 characters, for example 27AAACB1234C1Z9); the State (place of supply) fills in from its first two digits.",
+        "Enter PAN, the address, PIN code and Payment terms (days), for example 30.",
+        "If you deduct TDS from this vendor, choose the Default TDS section (for example 194J Professional fees (10%)); the Default TDS rate (%) fills in.",
+        "If you already owe the vendor money from before, enter Opening balance we owe (for example ₹45,000) and Opening balance as on.",
+        "Under Bank details enter Account holder, Bank, Account number and IFSC.",
+        "Click Save vendor."
+      ],
+      "result": "The vendor gets a code (for example T2N-VEN-26-2411-0001) and their page opens. An opening balance is posted to the books as an amount payable to the vendor.",
+      "tips": [
+        "Once the opening balance is in the books it cannot be changed here.",
+        "An unregistered vendor's bills carry no GST (Not charged (vendor is not registered))."
+      ]
+    },
+    {
+      "title": "Find, edit or export vendors",
+      "who": "Anyone with purchases.view (editing: purchases.manage)",
+      "where": "Purchases > Vendors",
+      "route": "/purchases/vendors",
+      "steps": [
+        "Open Purchases > Vendors. Use the chips Active, We owe money, Inactive or All.",
+        "Search by name, code, GSTIN, email or phone and click Search.",
+        "Click Export CSV to download the list.",
+        "Open a vendor: tiles show Billed, Paid, Outstanding and Overdue; tabs show Overview, Bills, Payments, Orders, Quotations, Documents and Statement.",
+        "Click Edit to change details and Save vendor. Use New bill, New order or Record payment to start work for this vendor.",
+        "Use the Documents tab to attach agreements, registration certificates or a cancelled cheque."
+      ],
+      "result": "The Statement tab shows each bill and payment with the balance owed after each entry.",
+      "tips": ["Delete vendor works only for a vendor with no bills, payments, orders, quotations or opening balance. For any other vendor click Switch off: its history stays but it cannot be used on new orders, bills or payments. Switch on brings it back.", "A vendor we still owe money to cannot be switched off."]
+    },
+    {
+      "title": "Raise a purchase request",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Requests > New request",
+      "route": "/purchases/requests",
+      "steps": [
+        "Open Purchases > Purchase Requests and click New request.",
+        "Enter What is needed (for example 5 laptops for new joiners), the Request date and Needed by, and optionally a Project.",
+        "Add the items: Description, Qty, Unit and Estimated rate (for example 5 x ₹65,000). Click Add item for more.",
+        "Add Notes and click Save request.",
+        "Click Submit on the request when it is ready."
+      ],
+      "result": "The request is numbered (for example T2N/PR/26/2411/00001) and becomes Submitted.",
+      "tips": ["A draft or rejected request can be edited and submitted again. It can be deleted only while no quotation or order is attached."]
+    },
+    {
+      "title": "Approve or reject a purchase request and turn it into an order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Requests",
+      "route": "/purchases/requests?status=submitted",
+      "steps": [
+        "Click the Submitted chip.",
+        "Click Approve, or Reject and type the reason.",
+        "Click Quotations (N) to record and compare vendor quotations for the request.",
+        "When approved, click Create order, choose the vendor under Order from and click Create order."
+      ],
+      "result": "A draft purchase order is created with the request's items and opens. The request becomes Converted to order and shows View order.",
+      "tips": ["Check the rates and GST on the draft order before issuing it."]
+    },
+    {
+      "title": "Record and compare vendor quotations",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Quotations > Record quotation",
+      "route": "/purchases/quotations",
+      "steps": [
+        "Open Purchases > Quotations (or Quotations (N) on a request) and click Record quotation.",
+        "Choose the Vendor and, to compare, the Purchase request.",
+        "Enter the Quotation date, Valid until, Vendor's quotation number, Delivery time (days) and Payment terms.",
+        "Enter the Items quoted: description, HSN/SAC, Qty, Unit, Rate, Disc % and GST %. Totals appear below.",
+        "Click Save quotation.",
+        "Opened from a request, the table Compare quotations shows each vendor's taxable value, GST, total, Above lowest, delivery and validity, with the cheapest marked Lowest."
+      ],
+      "result": "The quotation is numbered (for example T2N/VQ/26/2411/00001) with status Received.",
+      "tips": ["Record at least two quotations to compare them. A quotation past its Valid until date shows Expired."]
+    },
+    {
+      "title": "Accept or reject a vendor quotation and create the order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Quotations",
+      "route": "/purchases/quotations",
+      "steps": [
+        "Find the quotation (chips: Received, Accepted, Rejected, Expired).",
+        "Click Accept, or Reject and type the reason. Click Edit to correct a Received quotation.",
+        "Click Create order."
+      ],
+      "result": "A draft purchase order opens with the quoted items; its reference is the vendor's quotation number and its delivery date is set from the delivery days. A received quotation is accepted automatically, and its purchase request becomes Converted to order.",
+      "tips": ["An expired quotation cannot be accepted or ordered; ask the vendor for a new one."]
+    },
+    {
+      "title": "Create a purchase order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Orders > New purchase order",
+      "route": "/purchases/orders/new",
+      "steps": [
+        "Open Purchases > Purchase Orders and click New purchase order (or + New > Purchase order).",
+        "Choose the Vendor and set the Order date and Delivery by.",
+        "Enter the Reference (quotation no.), Project (optional) and Deliver to address.",
+        "Enter the items: Description, HSN/SAC, Qty, Unit, Rate, Disc % and GST % (for example 5 laptops at ₹62,000, 18%). Totals show CGST and SGST or IGST.",
+        "Add Terms and conditions and Notes (printed under the totals).",
+        "Click Save as draft, or Save and issue."
+      ],
+      "result": "A draft has no number. Issuing gives the next number (for example T2N/PO/26/2411/00001) and a PDF, and the order becomes Issued.",
+      "tips": ["Only a draft can be edited. If issuing fails, the order stays a draft and the reason is shown.", "Save and issue does not issue an order an approval rule covers: it is saved as a draft for you to send for approval."]
+    },
+    {
+      "title": "Send a purchase order for approval and issue it",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Orders > open the draft",
+      "route": "/purchases/orders",
+      "steps": [
+        "Open the draft order and click Send for approval.",
+        "Follow the Approval badge. Approvers decide it in Approvals > Pending My Approval; you see \"Waiting for approval. The approvers decide it in the Approvals module\".",
+        "When it shows Approved, click Issue.",
+        "If it was rejected, it is back in Draft with the approver's note: edit and send again."
+      ],
+      "result": "When no approval rule covers the amount, it is approved straight away. An approved order is issued with its number and PDF.",
+      "tips": ["When an approval rule covers the order (by default, orders above ₹50,000), the draft shows \"An approval rule covers this order\" and has no Issue button: it must be sent for approval first. Orders no rule covers can be issued straight from the draft."]
+    },
+    {
+      "title": "Download or print a purchase order",
+      "who": "Anyone with purchases.view",
+      "where": "Purchases > Purchase Orders > open an issued order",
+      "route": "/purchases/orders",
+      "steps": [
+        "Open the issued order.",
+        "Click Download PDF for the letterhead copy, or Print copy for pre-printed paper.",
+        "Use Export CSV on the Purchase Orders list to download the list."
+      ],
+      "result": "The PDF carries the order number, vendor, items, GST and terms.",
+      "tips": []
+    },
+    {
+      "title": "Email a purchase order to the vendor",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (purchases.manage)",
+      "where": "Purchases > Purchase Orders > open an issued order > Email to vendor",
+      "route": "/purchases/orders",
+      "steps": [
+        "Open the issued order and click Email to vendor.",
+        "Check the Send by email window: To is the vendor's email address, the Subject is for example \"Purchase order T2N/PO/26/2411/00001 from Example Ventures\", the message is addressed to the vendor's contact person with the order number, date, total and delivery date, and the order PDF is shown under Attached.",
+        "Add anyone under Copy to, change the wording if needed and click Send email.",
+        "Read the result and click Done."
+      ],
+      "result": "The vendor receives the order PDF. The message is listed under Administration > Sent emails and under \"Sent before\" in the window.",
+      "tips": [
+        "Email to vendor appears once the order is issued (not on drafts or cancelled orders).",
+        "Add the vendor's email address on the vendor (Purchases > Vendors > Edit) so it is filled in automatically.",
+        "If email is not set up on the server the message is saved, not delivered; download the PDF and send it yourself."
+      ]
+    },
+    {
+      "title": "Receive goods against an order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Orders > open the order > Receive goods",
+      "route": "/purchases/orders",
+      "steps": [
+        "Open the issued order and click Receive goods.",
+        "Set Received on and type the delivery challan number in Notes.",
+        "For each item type the quantity Receiving now (the hint shows what is still expected).",
+        "Click Record receipt."
+      ],
+      "result": "The order becomes Partially received or Received. The items table shows Received / billed for each line, and the receipt is listed under Goods received.",
+      "tips": ["You cannot receive more than is still expected on a line, or before the order date."]
+    },
+    {
+      "title": "Close or cancel an order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Orders > open the order",
+      "route": "/purchases/orders",
+      "steps": [
+        "To finish an order that will not be fully delivered, click Close and give the reason (a reason is needed unless it is fully received).",
+        "To cancel an order that is still draft, pending, approved or issued, click Cancel order and give the reason.",
+        "Click Delete to remove a draft."
+      ],
+      "result": "Closed and Cancelled orders take no more receipts. The reason is shown on the order.",
+      "tips": ["An order with goods received cannot be cancelled; close it instead. An order with a bill cannot be cancelled until the bill is voided."]
+    },
+    {
+      "title": "Enter a vendor bill (with ITC and TDS)",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Bills > New bill",
+      "route": "/purchases/bills/new",
+      "steps": [
+        "Open Purchases > Bills and click New bill (or + New > Vendor bill).",
+        "Choose the Vendor. Its TDS section and rate fill in.",
+        "Enter the Vendor's bill number exactly as printed and the Bill date. Leave Due date empty to use the vendor's payment terms.",
+        "Choose Input tax credit: Eligible: claim input tax credit, Ineligible: no credit claimed, or Blocked credit (Section 17(5)).",
+        "Choose the Default expense account (Purchases (5000) if left alone) and a Project if needed.",
+        "Enter the items; on each line you may choose a different Account.",
+        "Under TDS deducted (optional) check the Section and Rate (%). For example a ₹50,000 professional fee at 18% GST with 194J 10%: total ₹59,000, TDS withheld ₹5,000, Net payable to vendor ₹54,000.",
+        "Click Save as draft, or Save and record.",
+        "Attach the vendor's invoice under Scanned bill and documents on the bill page."
+      ],
+      "result": "Recording gives the next number (for example T2N/BILL/26/2411/00001) and posts the bill: the expense is debited, input GST is debited to the GST input accounts when the credit is eligible (otherwise the GST is added to the cost), the vendor is credited with the net payable and TDS payable with the TDS. Above an approval limit the bill is sent for approval instead and is numbered and posted only once approved.",
+      "tips": [
+        "The same vendor bill number cannot be entered twice for one vendor.",
+        "TDS is worked out on the taxable value, before GST."
+      ]
+    },
+    {
+      "title": "Bill a purchase order",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Purchase Orders > open the order > Convert to bill",
+      "route": "/purchases/orders",
+      "steps": [
+        "Open an issued, partly or fully received, or closed order and click Convert to bill.",
+        "The draft bill opens with the quantities still to be billed (received goods if some arrived, otherwise the ordered quantity).",
+        "Replace the Vendor's bill number with the number on the vendor's invoice, check the lines and click Save and record."
+      ],
+      "result": "The bill is linked to the order (shown as Purchase order) and listed under Bills against this order.",
+      "tips": ["A line cannot be billed for more than was ordered."]
+    },
+    {
+      "title": "Follow a bill waiting for approval",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Bills > Pending approval chip",
+      "route": "/purchases/bills?status=pending_approval",
+      "steps": [
+        "Click the Pending approval chip and open the bill.",
+        "The notice says it is not numbered or posted until approved. Follow the approval badge.",
+        "To change it, click Take back; it returns to Draft. Edit and click Record bill to send it again.",
+        "A rejected bill returns to Draft with the approver's note."
+      ],
+      "result": "When approved, the bill is numbered and posted to the books.",
+      "tips": []
+    },
+    {
+      "title": "Find, edit, delete or void bills",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (viewing: purchases.view)",
+      "where": "Purchases > Bills",
+      "route": "/purchases/bills",
+      "steps": [
+        "Use the chips All, Draft, Pending approval, Unpaid, Overdue, Partially paid, Paid or Void, and Search by our number, the vendor's bill number or vendor.",
+        "Click Export CSV for a list with taxable value, GST, TDS, net payable and balance.",
+        "Open a draft to Edit, Record bill or Delete it.",
+        "To cancel a recorded bill, click Void, type the reason and click Void bill."
+      ],
+      "result": "Voiding reverses the bill's entry in the books.",
+      "tips": ["A recorded bill cannot be edited: void it and enter it again. A bill with payments applied cannot be voided until those payments are voided."]
+    },
+    {
+      "title": "Pay a vendor and apply the payment to bills",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Payments > Record payment",
+      "route": "/purchases/payments?new=1",
+      "steps": [
+        "Open Purchases > Payments and click Record payment (or Record payment on a bill or vendor page).",
+        "Choose the Vendor and enter the Amount paid (for example ₹54,000) and Payment date.",
+        "Choose the Mode: Bank transfer (NEFT/RTGS/IMPS), Cash, UPI or Cheque. For anything but cash choose Paid from (empty uses the default bank account).",
+        "Enter the Reference (UTR, cheque no.).",
+        "Under Apply to bills type the amount for each bill, or click Pay oldest first.",
+        "Add Notes and click Record payment."
+      ],
+      "result": "The payment is numbered (for example T2N/VPY/26/2411/00001), applied to the bills and posted: what the vendor is owed goes down and the bank (or cash) goes down. Anything not applied stays as an advance with the vendor. Above an approval limit it is sent for approval instead: no number, nothing applied or posted until approved.",
+      "tips": ["Opened from a bill, the amount and allocation for that bill are filled in."]
+    },
+    {
+      "title": "Apply a vendor advance to bills",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Payments > Apply advance",
+      "route": "/purchases/payments",
+      "steps": [
+        "Find the recorded payment with an amount in Unapplied and click Apply advance.",
+        "Type the amount to apply to each bill.",
+        "Click Apply."
+      ],
+      "result": "The bills' balances go down and the advance is moved onto them in the books.",
+      "tips": []
+    },
+    {
+      "title": "Follow, void or delete a vendor payment",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Purchases > Payments > open the payment",
+      "route": "/purchases/payments",
+      "steps": [
+        "Use the chips All, Pending approval, Recorded, Void pending approval, Rejected or Void, and open the payment.",
+        "For a payment waiting for approval click Take back to withdraw it.",
+        "To cancel a recorded payment click Void payment (or Void in the list), type the reason and click Void payment. To cancel a void request, click Withdraw the void request.",
+        "A rejected payment can be removed with Delete; record a new payment if it is still due."
+      ],
+      "result": "Voiding reverses the entry in the books and the bills it settled become unpaid again. Above an approval limit the void waits for approval and the payment stays recorded until then.",
+      "tips": []
+    },
+    {
+      "title": "Check payables ageing and what falls due",
+      "who": "Anyone with purchases.view",
+      "where": "Purchases > Payables Ageing",
+      "route": "/purchases/ageing",
+      "steps": [
+        "Open Purchases > Payables Ageing and set As of (today by default).",
+        "Read the total by age and the vendors you owe most.",
+        "In the table read each vendor's amounts by days past due, the Total and Advance paid. Click Export CSV to download it.",
+        "Read Due in the next 30 days for the bills falling due each day and the amount already overdue."
+      ],
+      "result": "Use it to plan payments for the coming weeks.",
+      "tips": []
+    }
+  ],
+  "statuses": [
+    {"name": "Request: Draft / Submitted / Approved / Rejected / Converted to order", "meaning": "A purchase request is prepared, sent for a decision, approved or rejected, and finally turned into an order."},
+    {"name": "Quotation: Received / Accepted / Rejected / Expired", "meaning": "A vendor quotation as recorded, chosen, turned down, or past its Valid until date."},
+    {"name": "Order: Draft", "meaning": "Being prepared; no number yet."},
+    {"name": "Order: Pending approval", "meaning": "Sent for approval; decided in the Approvals module."},
+    {"name": "Order: Approved", "meaning": "Approved and ready to issue."},
+    {"name": "Order: Issued", "meaning": "Numbered and sent to the vendor; goods can be received and billed. The Open chip shows issued orders still running."},
+    {"name": "Order: Partially received / Received", "meaning": "Some or all ordered quantities have arrived."},
+    {"name": "Order: Closed / Cancelled", "meaning": "Finished early (with a reason) or called off."},
+    {"name": "Bill: Draft", "meaning": "Entered but not recorded; no number, not in the books."},
+    {"name": "Bill: Pending approval", "meaning": "Above an approval limit; numbered and posted only once approved."},
+    {"name": "Bill: Unpaid / Partially paid / Overdue / Paid", "meaning": "A recorded bill and how much of it is still owed; Overdue means past its due date with a balance."},
+    {"name": "Bill: Void", "meaning": "Cancelled; the books entry reversed."},
+    {"name": "Payment: Pending approval / Rejected / Recorded / Void pending approval / Void", "meaning": "Whether a vendor payment is waiting, refused, in the books, waiting for a void decision, or cancelled."},
+    {"name": "Vendor: Active / Inactive", "meaning": "Whether the vendor can be used on new documents."}
+  ],
+  "routines": {
+    "daily": [
+      "Enter vendor bills received today and attach the scanned invoice.",
+      "Record goods received against orders.",
+      "Record payments made to vendors and apply them to bills."
+    ],
+    "weekly": [
+      "Open Payables Ageing and plan payments from Due in the next 30 days.",
+      "Approve or reject submitted purchase requests.",
+      "Check orders that are past Delivery by and follow up with the vendor."
+    ],
+    "monthly": [
+      "Make sure every bill for the month is recorded (clear the Draft and Pending approval chips) before GST returns.",
+      "Apply any vendor advances to bills.",
+      "Close orders that will not be delivered in full.",
+      "Compare vendor payments with the bank statement during bank reconciliation."
+    ],
+    "yearly": [
+      "Review vendors' TDS sections and rates, payment terms and bank details.",
+      "Ask regular vendors for fresh quotations."
+    ]
+  },
+  "common_problems": [
+    {"problem": "The vendor says the purchase order never arrived.", "fix": "Ask an administrator to check Administration > Sent emails for that order: a Failed row shows the reason, \"Saved, not delivered\" means email is not set up. Check the vendor's email address and send it again."},
+    {"problem": "\"A bill with this number has already been entered for this vendor.\"", "fix": "The bill is already in the system. Search the Bills list by the vendor's bill number."},
+    {"problem": "No GST is charged on the bill.", "fix": "The vendor is unregistered. If they are registered, edit the vendor, choose Registered (has a GSTIN) and enter the GSTIN."},
+    {"problem": "IGST appears instead of CGST and SGST (or the other way round).", "fix": "Check the vendor's State (place of supply) and the company's state."},
+    {"problem": "The bill or payment has no number.", "fix": "It is waiting for approval. Follow the approval badge, or click Take back to change it."},
+    {"problem": "Void bill says payments are applied.", "fix": "Void the payments applied to the bill first, then void the bill."},
+    {"problem": "Convert to bill says everything has been billed.", "fix": "All received (or ordered) quantities are already on bills. Receive more goods first, or check Bills against this order."},
+    {"problem": "Cancel order is refused.", "fix": "Goods were received (close the order instead) or a bill is booked against it (void the bill first)."},
+    {"problem": "Delete vendor is refused.", "fix": "The vendor has bills, payments, orders, quotations or an opening balance and must be kept. Click Switch off on the vendor's page instead."},
+    {"problem": "A draft purchase order has no Issue button.", "fix": "An approval rule covers its amount. Click Send for approval; once it is approved, Issue appears."}
+  ],
+  "connected": [
+    "Accounting: recorded bills, vendor payments, applied advances and vendor opening balances post to the books automatically; voiding reverses them.",
+    "GST & Tax: recorded bills feed the purchase register and input tax credit; TDS withheld on bills is credited to TDS payable for the TDS returns.",
+    "Approvals: purchase orders, vendor bills and vendor payments above a rule wait for approval.",
+    "Projects: requests, orders and bills can be tagged to a project for its costs.",
+    "Company: bank accounts, the company's state, letterhead and numbering come from the Company module.",
+    "Reports: Vendor Outstanding and the executive dashboard read purchase figures."
+  ]
+}

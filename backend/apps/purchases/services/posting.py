@@ -64,7 +64,10 @@ def expense_accounts(company):
 
 
 def money_account_for(company, payment):
-    """Where the money left from: the chosen bank's ledger account, else cash for cash payments, else the default bank."""
+    """Where the money left from: a specific ledger account from a bank statement line, else the chosen bank's ledger
+    account, else cash for cash payments, else the default bank."""
+    if payment.bank_ledger_account_id:
+        return payment.bank_ledger_account
     if payment.paid_from_id:
         return chart.ledger_for_bank(company, payment.paid_from)
     return chart.system_account(company, "cash" if payment.mode == payment.Mode.CASH else "bank")

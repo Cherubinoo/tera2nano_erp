@@ -25,7 +25,7 @@ It is a set of connected modules, not separate programs. A won deal becomes a cu
 
 *Figures in examples (₹, GST at 18%, approval limits) are examples or the editable starting rules. Your company's own settings apply.*
 
-*Filing with the government (GST, TDS, MCA, income tax), bank feeds, payment gateways and email delivery are not part of the system. It records and prepares; you file and pay elsewhere.*
+*Filing with the government (GST, TDS, MCA, income tax), live bank feeds and payment gateways are not part of the system (bank statements are imported from a file instead). It records and prepares; you file and pay elsewhere. Email is: once the mail server is set up, invoices, quotations, purchase orders, payslips, payment reminders and invitation links are emailed from the app.*
 
 ## The process from end to end
 
@@ -116,7 +116,7 @@ flowchart LR
    - What happens: Winning the deal links the account to an existing customer (same GSTIN or name) or creates a new numbered customer. Customers can also be added by hand.
    - Data that moves: The CRM account gets the sales customer's id; a new customer record is created in Sales if needed.
 5. **Invoice** (Sales; screen: Sales, Invoices and Notes, `/sales/documents`)
-   - What happens: An invoice is written with GST split by place of supply and issued: it gets a number and a PDF, and is posted to the books. Recurring profiles repeat it on a schedule; the Reminders screen lists unpaid invoices to chase (recorded in the system, nothing is emailed).
+   - What happens: An invoice is written with GST split by place of supply and issued: it gets a number and a PDF, and is posted to the books. Recurring profiles repeat it on a schedule; the Reminders screen lists unpaid invoices to chase and emails the reminders (by hand or automatically once a day). The invoice PDF can be emailed to the customer from its page.
    - Data that moves: Issuing posts a journal entry: debit Accounts receivable, credit Sales and GST payable.
    - Related screens: Recurring invoices (`/sales/recurring`), Reminders (`/sales/reminders`)
 6. **Payment received** (Sales; screen: Sales, Payments Received, `/sales/payments`)
@@ -245,7 +245,7 @@ Each row of the table is derived from the list of flows below it, so the table, 
 | Reports | - | Accounting, Sales, Purchases, People (HR), Partners, Projects, GST & Tax | No | No | No | `reports.view` |
 | Documents | - | Sales, Purchases, People (HR), Partners, Workplace | No | No | No | `documents.issue` `documents.view_confidential` `documents.view_restricted` `company.manage` |
 | Company | Compliance, Sales, Purchases, Accounting, People (HR), Partners, Workplace | - | No | No | No | `company.view` `company.manage` `finance.manage` |
-| Administration | Roles and permissions apply to every module. | Every module writes its changes to the change history. | No | No | No | `users.manage` `users.view_activity` `audit.view` |
+| Administration | Roles and permissions apply to every module. | Every module writes its changes to the change history. | No | No | No | `users.manage` `users.invite` `users.view_activity` `audit.view` `email.manage` |
 
 ### The flows
 
@@ -337,7 +337,8 @@ Each row of the table is derived from the list of flows below it, so the table, 
 - **Change history.** Every module writes its creates, changes, voids and decisions to one append-only change history, shown in Administration (needs audit.view). Sensitive values such as full bank account numbers are not copied into it.
 - **Numbering.** Every reference number is generated from the rules in Company, Document Numbering (for example T2N/INV/26/1115/00001). Nobody types a number, and a voided number is never reused.
 - **Permissions.** Every screen and every action is checked on the server against the role's permissions; the screens only hide what the server would refuse. Administration shows and edits the permission matrix.
-- **Not connected.** No email, SMS or push messages are sent by any module (reminders, circulars and approvals show inside the system). There is no bank feed, payment gateway, government portal filing or calendar sync.
+- **Email.** Once the mail server is set up on the server (Administration, Email settings), invoices and credit notes, quotations and letters, purchase orders, payslips, payment reminders and invitation links are emailed from their pages with the PDF attached. Every message, sent or failed, is listed under Administration, Sent emails, where a failed one can be sent again. Without a mail server, messages are saved on the server but not delivered, and the app says so.
+- **Not connected.** No SMS or push messages are sent, and approvals, circulars and compliance reminders show inside the system only (they are not emailed). There is no live bank feed (statements are imported from a file), payment gateway, government portal filing or calendar sync.
 
 ## Module guides
 
@@ -353,7 +354,7 @@ Leads are scored and checked for duplicates, qualified leads are converted into 
 
 #### Who uses it
 
-Partners and the Managing Partner work the pipeline (they can change records). The Project Manager can look but not change. Finance, HR and Employee roles have no CRM access by default.
+The Managing Partner and Partner (who hold every permission) work the pipeline and can change records. The Project Manager can look but not change. Finance, HR and Employee roles have no CRM access by default.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
@@ -468,14 +469,14 @@ Issuing an invoice, credit note or debit note posts it to the books in the same 
 
 #### Who uses it
 
-The Finance Manager and Managing Partner create customers and invoices, issue and void them, and record payments. Partners and Project Managers can view. Quotations are issued by anyone holding the documents.issue permission, which every role has by default.
+The Finance Manager and both partner roles create customers and invoices, issue and void them, and record payments. Project Managers can view. Quotations are issued by anyone holding the documents.issue permission, which every role has by default.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `sales.view` | View customers, invoices, payments and sales reports | Admin, Managing Partner, Partner, Finance Manager, Project Manager |
-| `sales.manage` | Add and edit customers and draft invoices; record payments | Admin, Managing Partner, Finance Manager |
-| `sales.issue` | Issue and void invoices, proforma invoices, credit and debit notes | Admin, Managing Partner, Finance Manager |
-| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Finance Manager |
+| `sales.manage` | Add and edit customers and draft invoices; record payments | Admin, Managing Partner, Partner, Finance Manager |
+| `sales.issue` | Issue and void invoices, proforma invoices, credit and debit notes | Admin, Managing Partner, Partner, Finance Manager |
+| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Partner, Finance Manager |
 | `documents.issue` | Issue letters, quotations, minutes and operations documents | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee |
 
 #### Key screens
@@ -582,7 +583,7 @@ The Finance Manager and Managing Partner create customers and invoices, issue an
 - GST: CGST and SGST halves for same-state supply, IGST otherwise, from the customer's state or GSTIN and the company's registered state. Rates must be a currently applicable GST rate.
 - Posting: issuing and voiding invoices and notes, and recording and voiding payments, post to or reverse in the ledger in the same transaction.
 - Credit notes are applied to their own invoice straight away, up to what is still owed.
-- Recurring invoices are created by Create now, by the per-profile generate button, or by a daily command (generate_recurring_invoices) that has to be scheduled on the server. Each run date is created once only, and up to 12 missed runs per profile are caught up per call.
+- Recurring invoices are created on their own once a day (the first time anyone opens the app that day, and by the daily jobs command if it is scheduled on the server), or straight away by Create now and the per-profile Run now. Each run date is created once only, and up to 12 missed runs per profile are caught up per call.
 - Reminders are worked out from the books each time the page opens; an invoice is reminded at most once per rule and only the latest due rule is offered.
 - Every change is written to the change history.
 
@@ -592,11 +593,11 @@ Receivables Ageing (current, 1 to 30, 31 to 60, 61 to 90 and over 90 days overdu
 
 #### Good to know
 
-- Reminders are recorded in the system only. No email or message is sent; you copy the text or open it in your own mail program.
-- There is no payment-gateway or bank-feed link: payments are entered by hand.
+- Reminders, invoices and credit notes are emailed only when the mail server is set up (Administration, Email settings). Without it a reminder is recorded and you copy the text or open it in your own mail program. Automatic reminders go only to customers with an email address, once per reminder step.
+- There is no payment-gateway or live bank-feed link: payments are entered by hand, or created from an imported bank statement line in Accounting > Bank reconciliation.
 - An invoice started from a quotation copies the items, GST rates, notes and terms and keeps a link back to it. The customer is the customer record you choose (the form offers to add one when none matches), so GST on the invoice follows that customer, not the quotation.
 - Payment receipts themselves are never held for approval (the money has arrived); only voiding one above a rule waits.
-- The recurring-invoice daily command is not scheduled for you; without it, use Create now.
+- On a day nobody opens the app, recurring invoices wait until the next visit unless the daily jobs command (manage.py run_daily_jobs) is scheduled on the server.
 
 ### Purchases
 
@@ -610,13 +611,13 @@ Recording a bill posts it to the books (expense, input GST and what you owe), an
 
 #### Who uses it
 
-The Finance Manager and Managing Partner manage purchases. Partners and Project Managers can view. Vendor payments need a second permission, finance.manage, in the approval rules.
+The Finance Manager and both partner roles manage purchases. Project Managers can view. Vendor payments need a second permission, finance.manage, in the approval rules.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `purchases.view` | View vendors, purchase orders, bills and vendor payments | Admin, Managing Partner, Partner, Finance Manager, Project Manager |
-| `purchases.manage` | Create and change vendors, purchase requests, orders, bills and vendor payments | Admin, Managing Partner, Finance Manager |
-| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Finance Manager |
+| `purchases.manage` | Create and change vendors, purchase requests, orders, bills and vendor payments | Admin, Managing Partner, Partner, Finance Manager |
+| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Partner, Finance Manager |
 
 #### Key screens
 
@@ -624,7 +625,7 @@ The Finance Manager and Managing Partner manage purchases. Partners and Project 
 - **Vendors** (`/purchases/vendors`): Vendor records with GST treatment, TDS section, bank details (masked) and opening balance.
 - **Purchase Requests** (`/purchases/requests`): Internal requests to buy something.
 - **Quotations (from vendors)** (`/purchases/quotations`): Record and compare the quotations vendors send you.
-- **Purchase Orders** (`/purchases/orders`): Orders with approval, PDF, goods received and bill creation.
+- **Purchase Orders** (`/purchases/orders`): Orders with approval, PDF, emailing to the vendor, goods received and bill creation.
 - **Bills** (`/purchases/bills`): Vendor bills: draft, record, void.
 - **Payments** (`/purchases/payments`): Payments to vendors and the bills they settle.
 - **Payables Ageing** (`/purchases/ageing`): What you owe, grouped by how overdue it is.
@@ -734,7 +735,7 @@ The Finance Manager and Managing Partner manage purchases. Partners and Project 
 - GST on bill lines is split into CGST, SGST or IGST by the vendor's state; TDS is the taxable value times the chosen rate.
 - Posting: recording a bill, a payment, or a vendor opening balance posts to the ledger in the same transaction; voiding reverses it.
 - Payments settle the oldest bills first; a bill raised from a purchase order cannot bill more of an item than was ordered.
-- A purchase order PDF is created on issue.
+- A purchase order PDF is created on issue. Email to vendor sends it to the email address of the vendor (when the mail server is set up).
 - Approval requests are created for orders, bills and payments only when an active rule covers the amount.
 
 #### Reports and exports
@@ -743,7 +744,7 @@ Payables Ageing (current, 1 to 30, 31 to 60, 61 to 90, over 90 days), a payment 
 
 #### Good to know
 
-- There is no bank or payment-gateway connection: payments are entered by hand, and no payment instruction is sent anywhere.
+- There is no bank or payment-gateway connection: payments are entered by hand (or created from an imported bank statement line in Accounting > Bank reconciliation), and no payment instruction is sent anywhere.
 - Purchase requests are approved by a person with purchases.manage on the request itself; they do not go through the Approvals inbox (orders, bills and payments do).
 - Attachments can be added to vendors, bills, orders, quotations, requests and payments, but the screens currently show the attachment box on vendors and bills only.
 - TDS is calculated and posted to TDS payable; depositing it is recorded in GST & Tax (TDS challan), not here.
@@ -754,24 +755,26 @@ Payables Ageing (current, 1 to 30, 31 to 60, 61 to 90, over 90 days), a payment 
 
 #### What it is used for
 
-Accounting holds the double-entry books of the LLP. Every money event from the other modules arrives here as a balanced journal entry, and here you add what has no module of its own: expenses and income, bank transfers, opening balances, manual journals, fixed assets with depreciation, and budgets.
+Accounting holds the double-entry books of the LLP. Every money event from the other modules arrives here as a balanced journal entry, and here you add what has no module of its own: expenses and income, bank transfers, opening balances, manual journals, fixed assets with depreciation, and budgets. Bank statements are imported here and matched line by line to the books.
 
 The chart of accounts, journal, ledger and the four financial statements (trial balance, profit and loss, balance sheet and cash flow) all read from the same journal lines, so they cannot disagree with Sales, Purchases, People or Partners.
 
 #### Who uses it
 
-The Finance Manager and Managing Partner record entries, reconcile bank accounts and edit the chart of accounts. Partners can view the books and statements.
+The Finance Manager and both partner roles record entries, reconcile bank accounts and edit the chart of accounts.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `accounting.view` | View the books: ledger, journal, trial balance and financial statements | Admin, Managing Partner, Partner, Finance Manager |
-| `accounting.manage` | Record expenses, income and journal entries; reconcile bank accounts; edit the chart of accounts | Admin, Managing Partner, Finance Manager |
+| `accounting.manage` | Record expenses, income and journal entries; reconcile bank accounts; edit the chart of accounts | Admin, Managing Partner, Partner, Finance Manager |
 
 #### Key screens
 
 - **Accounting Dashboard** (`/accounting`): Cash and bank, receivables, payables, income and expense for the financial year.
 - **Expenses and Income** (`/accounting/vouchers`): Money paid out or received outside invoices, with optional GST.
-- **Bank and Cash** (`/accounting/bank`): Balances per cash or bank account, transfers between them, and reconciliation against the statement.
+- **Bank and Cash** (`/accounting/bank`): Balances per cash or bank account, transfers between them, and reconciliation by ticking lines (for cash, or a bank without a statement file).
+- **Bank reconciliation** (`/accounting/bank-reconciliation`): Each bank account with its statement balance, lines to match and the date it is reconciled up to; Match lines and Reconciliation open from here.
+- **Import statement** (`/accounting/bank-import`): Upload the bank statement as CSV, Excel (.xlsx or .xls), PDF or OFX, check the columns, and import its lines (lines already imported are skipped).
 - **Journal** (`/accounting/journal`): Every entry in the books, newest first; add a manual entry or reverse one.
 - **New journal entry** (`/accounting/journal/new`): Manual entry: debits must equal credits.
 - **Fixed Assets** (`/accounting/assets`): Asset register, monthly depreciation run, sales and write-offs.
@@ -789,11 +792,16 @@ The Finance Manager and Managing Partner record entries, reconcile bank accounts
    - *Example:* ₹10,000 internet bill plus 18% GST same-state: debit Internet ₹10,000, CGST input ₹900, SGST input ₹900; credit bank ₹11,800.
 4. **Record other income.** Same screen, New income: debit the bank or cash account, credit the income account, plus output GST when applicable. Income is never held for approval.
 5. **Move money between accounts.** Bank and Cash, then Transfer: for example bank to cash.
-6. **Reconcile the bank.** Bank and Cash, then Reconcile on an account: enter the statement date and closing balance and tick every line that appears on the statement until the balances agree. A reconciliation can be undone.
-7. **Post a manual journal when nothing else fits.** Journal, New entry: a narration is required, debits must equal credits, and it gets a number (T2N/JV/…). A posted entry is never edited; reverse it instead.
-8. **Run depreciation.** Fixed Assets: add categories (straight line, or written-down value at the income-tax rate), add assets (purchase can be posted from here or flagged as already in the books), then run the monthly depreciation: preview first, run once per asset and month, reversible. Sell, scrap or write off an asset to post the gain or loss.
-9. **Plan with budgets.** Budgets: choose the financial year, add account and project lines, phase them evenly or month by month, activate it. Expenses over the active budget show a warning, never a block.
-10. **Read the statements.** Financial Reports: trial balance, profit and loss, balance sheet and cash flow for any period, all read straight from the journal, each with CSV download.
+6. **Import the bank statement.** Import statement: choose the bank account and the CSV, Excel, PDF or OFX file from your bank. The columns (date, narration, reference, withdrawal, deposit or a single amount with Dr/Cr, balance) are guessed from the headings and remembered for next time; Check shows rows read, lines to import, lines already imported and rows with problems before anything is saved.
+7. **Match each line.** Bank reconciliation, Match lines: each statement line shows suggested entries from the books (same amount on a nearby date first, then a reference, invoice number or name found in the narration) marked Sure, Likely or Possible. Accept one, accept all sure matches at once, find the entry yourself (one line can match several entries, or several lines one entry), or Ignore the line with a reason. A match can be undone until the period is reconciled.
+   - *Example:* A deposit of ₹1,18,000 with "NEFT-UTR123-ACME" is offered the ₹1,18,000 payment received from Acme the day before as a Sure match.
+8. **Create what is missing from the line.** Create entry on a line records it with the normal screens' rules: a customer payment against open invoices, a vendor payment against open bills, an expense, other income, a bank charge or a transfer between your own accounts, then matches it. A vendor payment or expense above an approval rule waits for approval first.
+   - *Example:* SMS charges of ₹17.70: Create entry, Bank charge. The books: debit Bank charges ₹17.70; credit bank ₹17.70.
+9. **Reconcile the month.** Bank reconciliation, Reconciliation: the report starts from the balance in the books, takes off deposits not yet in the bank, adds back cheques not yet presented, adjusts for statement lines not in the books, and compares the result with the statement balance. When every line is matched or ignored and the difference is zero, Mark reconciled up to the date. Export CSV or Print keeps the report. Cash accounts are still ticked by hand in Bank and Cash, then Reconcile.
+10. **Post a manual journal when nothing else fits.** Journal, New entry: a narration is required, debits must equal credits, and it gets a number (T2N/JV/…). A posted entry is never edited; reverse it instead.
+11. **Run depreciation.** Fixed Assets: add categories (straight line, or written-down value at the income-tax rate), add assets (purchase can be posted from here or flagged as already in the books), then run the monthly depreciation: preview first, run once per asset and month, reversible. Sell, scrap or write off an asset to post the gain or loss.
+12. **Plan with budgets.** Budgets: choose the financial year, add account and project lines, phase them evenly or month by month, activate it. Expenses over the active budget show a warning, never a block.
+13. **Read the statements.** Financial Reports: trial balance, profit and loss, balance sheet and cash flow for any period, all read straight from the journal, each with CSV download.
 
 #### Statuses and what each means
 
@@ -876,11 +884,11 @@ The Finance Manager and Managing Partner record entries, reconcile bank accounts
 
 #### Reports and exports
 
-Trial balance, profit and loss, balance sheet and cash flow (CSV each); asset register, depreciation by financial year and disposals; budget vs actual; the ledger of any account. Reports (module) adds Annual Revenue and Cash-Flow Analysis.
+Trial balance, profit and loss, balance sheet and cash flow (CSV each); bank reconciliation statement per bank account (CSV and print); asset register, depreciation by financial year and disposals; budget vs actual; the ledger of any account. Reports (module) adds Annual Revenue and Cash-Flow Analysis.
 
 #### Good to know
 
-- There is no bank feed or statement import: reconciliation is done by ticking lines against a statement you read yourself.
+- There is no live bank feed: statements are imported from the file your bank gives you (CSV, Excel .xlsx/.xls, a text-based PDF, or OFX; a scanned or photographed PDF cannot be read).
 - The expense screen has no project field yet, so expenses entered here are not tagged to a project in the screens (invoices, bills, payments received and budgets can be).
 - Asset sales post their proceeds net: GST on the sale must be recorded with a manual journal.
 - The books need a chartered accountant's review of the chart, posting rules and GST treatment before they are used for filing.
@@ -897,12 +905,12 @@ Filing itself happens on the government portals. This module prepares the figure
 
 #### Who uses it
 
-The Finance Manager and Managing Partner record filings and payments. Partners can view.
+The Finance Manager and both partner roles record filings and payments.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `tax.view` | View GST registers, returns, TDS and tax records | Admin, Managing Partner, Partner, Finance Manager |
-| `tax.manage` | Record GST returns, tax payments, TDS and advance tax | Admin, Managing Partner, Finance Manager |
+| `tax.manage` | Record GST returns, tax payments, TDS and advance tax | Admin, Managing Partner, Partner, Finance Manager |
 
 #### Key screens
 
@@ -1013,12 +1021,12 @@ Money is never stored in Projects. Revenue and cost come from the ledger lines t
 
 #### Who uses it
 
-The Project Manager and Managing Partner create and manage projects. Partners, the Finance Manager and the HR Manager can view.
+The Project Manager and both partner roles create and manage projects. The Finance Manager and the HR Manager can view.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `projects.view` | View projects, budgets and milestones | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager |
-| `projects.manage` | Create and change projects, budgets and milestones | Admin, Managing Partner, Project Manager |
+| `projects.manage` | Create and change projects, budgets and milestones | Admin, Managing Partner, Partner, Project Manager |
 
 #### Key screens
 
@@ -1139,13 +1147,13 @@ Payroll computes provident fund, ESI and professional tax, goes through approval
 
 #### Who uses it
 
-The HR Manager and Managing Partner manage employees, attendance and leave; the HR Manager, Finance Manager and Managing Partner can see salaries and run payroll. Anyone signed in can use the My pages.
+The HR Manager and both partner roles manage employees, attendance and leave; the HR Manager, Finance Manager and both partner roles can see salaries and run payroll. Anyone signed in can use the My pages.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `hr.view` | View the employee directory and departments | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager |
-| `hr.manage` | Manage employee records, attendance and leave | Admin, Managing Partner, HR Manager |
-| `hr.payroll` | See salaries; prepare and run payroll | Admin, Managing Partner, Finance Manager, HR Manager |
+| `hr.manage` | Manage employee records, attendance and leave | Admin, Managing Partner, Partner, HR Manager |
+| `hr.payroll` | See salaries; prepare and run payroll | Admin, Managing Partner, Partner, Finance Manager, HR Manager |
 
 #### Key screens
 
@@ -1173,7 +1181,7 @@ The HR Manager and Managing Partner manage employees, attendance and leave; the 
 5. **Lock and send for approval.** Review the payslips, lock the run (this checks nobody's deductions exceed their pay), then submit it. Starting rule: the Managing Partner approves every payroll run.
 6. **Post to the books.** Once approved, Post. One journal entry is written: debit salaries, employer PF and employer ESI; credit salaries payable (net pay), PF payable, ESI payable, professional tax payable, TDS payable, employee advances and other deductions.
 7. **Pay the salaries.** Mark the run paid with the date and the bank account. This posts debit salaries payable, credit bank. A bank transfer file (CSV) can be downloaded for your bank.
-8. **Give out payslips.** Each employee can download their payslip PDF from My Payslips.
+8. **Give out payslips.** Each employee can download their payslip PDF from My Payslips. Payroll staff can also email each payslip from the run (Email next to PDF), to the work or personal email of the employee.
 
 #### Statuses and what each means
 
@@ -1279,12 +1287,12 @@ Every transaction posts to the books. A drawing or capital withdrawal above the 
 
 #### Who uses it
 
-The Managing Partner records transactions and profit shares. Partners and the Finance Manager can view. The partners themselves are the partner records kept in Company.
+Both partner roles record transactions and profit shares. The Finance Manager can view. The partners themselves are the partner records kept in Company.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `partners.view` | View partner capital, profit sharing, loans and withdrawals | Admin, Managing Partner, Partner, Finance Manager |
-| `partners.manage` | Record partner capital, loans, withdrawals and profit sharing | Admin, Managing Partner |
+| `partners.manage` | Record partner capital, loans, withdrawals and profit sharing | Admin, Managing Partner, Partner |
 
 #### Key screens
 
@@ -1377,12 +1385,12 @@ You decide who must approve what by writing rules: for a kind of record and an a
 
 #### Who uses it
 
-Everyone signed in sees the requests waiting for them and the requests they sent. The Managing Partner, Partner, Finance Manager, HR Manager and Project Manager can see every request and the analytics (approvals.view). Only the Managing Partner (and Admin) can change the rules and reassign a step (approvals.manage).
+Everyone signed in sees the requests waiting for them and the requests they sent. The Managing Partner, Partner, Finance Manager, HR Manager and Project Manager can see every request and the analytics (approvals.view). Both partner roles (and Admin) can change the rules and reassign a step (approvals.manage). Holding every permission does not let anyone approve their own request: only an administrator who is the one possible approver may, and the history says so. A step set to the Partner role needs every partner except the requester.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `approvals.view` | See every approval request, not only your own | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager |
-| `approvals.manage` | Set the approval rules | Admin, Managing Partner |
+| `approvals.manage` | Set the approval rules | Admin, Managing Partner, Partner |
 
 #### Key screens
 
@@ -1506,12 +1514,12 @@ The calendar of a financial year is generated from a catalogue of obligations wi
 
 #### Who uses it
 
-The Finance Manager and Managing Partner record filings and manage the calendar; Partners can view. Each calendar item is assigned to a role by default (for example LLP forms to the Managing Partner).
+The Finance Manager and both partner roles record filings and manage the calendar. Each calendar item is assigned to a role by default (for example LLP forms to the Managing Partner).
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `compliance.view` | View the compliance calendar and filing records | Admin, Managing Partner, Partner, Finance Manager |
-| `compliance.manage` | Record filings and manage the compliance calendar | Admin, Managing Partner, Finance Manager |
+| `compliance.manage` | Record filings and manage the compliance calendar | Admin, Managing Partner, Partner, Finance Manager |
 
 #### Key screens
 
@@ -1619,12 +1627,12 @@ Minutes of a meeting and issued circulars are generated as numbered PDFs on the 
 
 #### Who uses it
 
-Everyone can see their own tasks and the announcements; the roles with workplace.view (every role by default) can see meetings, tasks and circulars. The Managing Partner, HR Manager and Project Manager schedule meetings, publish announcements and circulars, and manage assets and visitors.
+Everyone can see their own tasks and the announcements; the roles with workplace.view (every role by default) can see meetings, tasks and circulars. Both partner roles, the HR Manager and the Project Manager schedule meetings, publish announcements and circulars, and manage assets and visitors.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `workplace.view` | View meetings, tasks, announcements and circulars | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee |
-| `workplace.manage` | Schedule meetings, assign tasks, publish announcements and circulars | Admin, Managing Partner, HR Manager, Project Manager |
+| `workplace.manage` | Schedule meetings, assign tasks, publish announcements and circulars | Admin, Managing Partner, Partner, HR Manager, Project Manager |
 
 #### Key screens
 
@@ -1813,14 +1821,14 @@ Other modules use the same document service: quotations, invoices, purchase orde
 
 #### Who uses it
 
-Every role can issue documents (documents.issue). Confidential records are visible to the Managing Partner, Partners and the Finance Manager; restricted ones only to the Managing Partner and Admin. Changing and verifying company documents needs company.manage.
+Every role can issue documents (documents.issue). Confidential records are visible to both partner roles and the Finance Manager; restricted ones to both partner roles and Admin. Changing and verifying company documents needs company.manage.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `documents.issue` | Issue letters, quotations, minutes and operations documents | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee |
 | `documents.view_confidential` | View confidential documents | Admin, Managing Partner, Partner, Finance Manager |
-| `documents.view_restricted` | View restricted documents | Admin, Managing Partner |
-| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | Admin, Managing Partner |
+| `documents.view_restricted` | View restricted documents | Admin, Managing Partner, Partner |
+| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | Admin, Managing Partner, Partner |
 
 #### Key screens
 
@@ -1916,13 +1924,13 @@ Nothing here is assumed. Registration numbers are never filled in for you, GST t
 
 #### Who uses it
 
-Everyone can see the company overview (company.view). The Managing Partner and Admin change details (company.manage). The Finance Manager and Managing Partner change bank accounts (finance.manage).
+Everyone can see the company overview (company.view). Both partner roles and Admin change details (company.manage). The Finance Manager and both partner roles change bank accounts (finance.manage).
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
 | `company.view` | View company details | Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee |
-| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | Admin, Managing Partner |
-| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Finance Manager |
+| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | Admin, Managing Partner, Partner |
+| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | Admin, Managing Partner, Partner, Finance Manager |
 
 #### Key screens
 
@@ -2007,33 +2015,42 @@ The overview checklist shows what is missing. The change history can be filtered
 
 #### What it is used for
 
-Administration controls who can sign in and what they can do. You add users, give each a role, switch them off, and adjust the permission matrix that says which role holds which permission. The login history and the user-management activity are kept for review, and the Change History shows what was changed across the system and by whom.
+Administration controls who can sign in and what they can do. You add users or invite them with a link, give each a role, switch them off, and adjust the permission matrix that says which role holds which permission. The login history and the user-management activity are kept for review, and the Change History shows what was changed across the system and by whom.
 
 #### Who uses it
 
-Only Admin manages users and the permission matrix by default (users.manage). The Managing Partner can view login history and activity (users.view_activity) and the Change History (audit.view). Nobody else sees this module.
+Admin and both partner roles hold every permission, so they manage users and the permission matrix (users.manage), see login history and activity (users.view_activity) and the Change History (audit.view), and can invite members (users.invite). The HR Manager can invite employees and project managers only and sees just the Invite members page. Nobody else sees this module.
 
 | Permission | What it allows | Roles that hold it by default |
 | --- | --- | --- |
-| `users.manage` | Manage users, roles and the permission matrix | Admin |
-| `users.view_activity` | View login history and user-management activity | Admin, Managing Partner |
-| `audit.view` | View the company change history | Admin, Managing Partner |
+| `users.manage` | Manage users, roles and the permission matrix | Admin, Managing Partner, Partner |
+| `users.invite` | Invite new members with a one-time link (the access role is chosen by the person inviting) | Admin, Managing Partner, Partner, HR Manager |
+| `users.view_activity` | View login history and user-management activity | Admin, Managing Partner, Partner |
+| `audit.view` | View the company change history | Admin, Managing Partner, Partner |
+| `email.manage` | Set up email (sender name, reply-to, signature, test email); see every sent email and send failed ones again | Admin, Managing Partner, Partner |
 
 #### Key screens
 
+- **Invite members** (`/company/invite`): Create one-time invitation links, see who was invited and who joined, withdraw a link or make a new one.
 - **Users and Access** (`/company/access`): Tabs for Users, Role permissions, Login history and Changes.
 - **Change History** (`/company/history`): An append-only record of changes, filterable by record type, category, action and date.
+- **Email settings** (`/company/email`): Whether the mail server is set up, the sender name, reply-to address and signature, automatic payment reminders, and a test email.
+- **Sent emails** (`/company/sent-emails`): Every email sent or tried, with search and filters, the reason for failed ones and Send again.
 - **Roles and access (this guide)** (`/guide/roles`): The default permissions of each role.
 
 #### Step-by-step workflow
 
 1. **Add a user.** Users, New user: username, name, email, role and a password (checked against the password rules). The user signs in with the username.
-2. **Choose the role.** Seven roles exist: Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager and Employee. A role decides which modules and actions the person sees; the server enforces it on every request.
-3. **Adjust permissions (if needed).** Role permissions shows the matrix. Tick or untick a permission for a role and save with a reason. The Admin role always holds everything and cannot be reduced, so nobody can be locked out. Reset returns the permissions to their defaults.
-4. **Switch a user off.** Switch off a user who has left, with an optional reason. They can no longer sign in; their history stays. The last active administrator cannot be switched off.
-5. **Reset a password.** Set a new password for a user; it is checked against the password rules.
-6. **Review sign-ins.** Login history lists every sign-in attempt and sign-out: successful, wrong password, switched-off account, sign-out.
-7. **Review changes.** Changes shows user-management activity. Change History shows the audit record across the system.
+2. **Invite someone with a link.** Invite members, Create invite link. Only Admin, the partners and the HR Manager can. Choose the access role (Admin: any; partners: any except Admin; HR Manager: Employee or Project Manager only), optionally the person's name and email and a note, and how many days the link is valid (1 to 30, default 7). The link is shown once: use Email this link to email it from the app (the message can be edited first; the list of sent emails never shows the link itself), or copy it. The person opens the link, enters their name, a username and password, mobile, personal email and their role in the company (their job title, which grants no access), and optionally department, date of birth, address and an emergency contact. The link works once. You can revoke it or make a new one at any time; staff roles also get a People record.
+   - *Example:* HR invites a new site engineer as Employee for 7 days; they join, sign in, and appear under People.
+3. **Choose the role.** Seven roles exist: Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager and Employee. A role decides which modules and actions the person sees; the server enforces it on every request.
+4. **Adjust permissions (if needed).** Role permissions shows the matrix. Tick or untick a permission for a role and save with a reason. The Admin, Managing Partner and Partner columns are locked: they always hold everything and cannot be reduced, so nobody can be locked out. Reset returns the permissions to their defaults.
+5. **Switch a user off.** Switch off a user who has left, with an optional reason. They can no longer sign in; their history stays. The last active administrator cannot be switched off.
+6. **Reset a password.** Set a new password for a user; it is checked against the password rules.
+7. **Review sign-ins.** Login history lists every sign-in attempt and sign-out: successful, wrong password, switched-off account, sign-out.
+8. **Review changes.** Changes shows user-management activity. Change History shows the audit record across the system.
+9. **Set up email.** Your IT person enters the mail server in the server settings (EMAIL_HOST and the other EMAIL_ values). Then Email settings shows Email is set up; fill the sender name, reply-to address and signature and send a test email. Sent emails lists every message; a failed one shows its reason and can be sent again.
+   - *Example:* The test email arrives from "Example Ventures Accounts"; a reminder that failed because of a mistyped address is corrected and sent again.
 
 #### Statuses and what each means
 
@@ -2075,81 +2092,86 @@ Only Admin manages users and the permission matrix by default (users.manage). Th
 - Saving permissions or changing a user writes an audit entry with the reason.
 - Every module writes its creates, changes, voids and decisions to the same append-only change history.
 - Sensitive values such as full bank account numbers and personal contact details are never copied into the history.
+- Every email the app sends is logged with its recipients, subject, message, attachment names and result. A failed send never undoes the work that asked for it (an invoice stays issued, a reminder stays recorded).
+- With automatic payment reminders on, a daily job emails the reminders that are due, once per reminder step, to customers with an email address.
 
 #### Reports and exports
 
-Login history and activity are on screen. Change History is paged and filterable; there is no export.
+Login history and activity are on screen. Change History is paged and filterable; there is no export. Sent emails is searchable and paged.
 
 #### Good to know
 
 - The change history lists what changed and who did it; it cannot be edited or deleted.
 - Sign-in is by username and password only; there is no two-step verification or single sign-on.
+- Email is sent through one mail server set in the server settings; its password is never stored in the app. Without it, messages are saved on the server but not delivered. An invitation email cannot be sent again from Sent emails, because the one-time link is not kept.
 - The Change History screen suggests company record types in its filter, but accepts any record type typed in (for example vendor_bill).
 
 ## Roles and access
 
 Default permissions from the permission matrix in `backend/apps/accounts/access.py`. An administrator can change any role except Admin in Users and Access, so check that screen for what is in force.
 
-- **Admin** (34 of 34 permissions): Holds every permission and cannot be reduced. By default the only role that manages users and the permission matrix.
-- **Managing Partner** (33 of 34 permissions): Holds every permission except managing users. Typically signs off the large approvals and runs the business end to end.
-- **Partner** (16 of 34 permissions): Can view sales, the books, purchases, tax, people, projects, partners, approvals, compliance, workplace and reports, and work the CRM. Cannot change records elsewhere.
-- **Finance Manager** (22 of 34 permissions): Runs the money side: sales, purchases, the books, tax and compliance filings, payroll figures and approvals. Cannot change company details or run CRM.
-- **HR Manager** (10 of 34 permissions): Runs people: employees, attendance, leave and payroll, plus workplace management. Can view projects and reports.
-- **Project Manager** (12 of 34 permissions): Runs delivery: projects, plus workplace management. Can view sales, purchases, people, CRM and reports.
-- **Employee** (3 of 34 permissions): Sees the company details and the workplace, issues documents, and uses their own pages (profile, attendance, leave, payslips, tasks).
+- **Admin** (36 of 36 permissions): Holds every permission and cannot be reduced. Manages users, the permission matrix and invitations.
+- **Managing Partner** (36 of 36 permissions): Holds every permission, today and for every module added later, and cannot be reduced: a partner can never be locked out. Signs off the large approvals and runs the business end to end. Can invite members, with any access role except Admin.
+- **Partner** (36 of 36 permissions): Holds every permission, exactly like the Managing Partner, and cannot be reduced. The approval rules still apply: a partner cannot approve their own request, and a rule that names the Partner role asks every partner to agree. Can invite members, with any access role except Admin.
+- **Finance Manager** (22 of 36 permissions): Runs the money side: sales, purchases, the books, tax and compliance filings, payroll figures and approvals. Cannot change company details or run CRM.
+- **HR Manager** (11 of 36 permissions): Runs people: employees, attendance, leave and payroll, plus workplace management. Can view projects and reports. Can invite new employees and project managers with a link.
+- **Project Manager** (12 of 36 permissions): Runs delivery: projects, plus workplace management. Can view sales, purchases, people, CRM and reports.
+- **Employee** (3 of 36 permissions): Sees the company details and the workplace, issues documents, and uses their own pages (profile, attendance, leave, payslips, tasks).
 
 | Permission | What it allows | Admin | Managing Partner | Partner | Finance Manager | HR Manager | Project Manager | Employee |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **Company** |  |  |  |  |  |  |  |  |
 | `company.view` | View company details | yes | yes | yes | yes | yes | yes | yes |
-| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | yes | yes | - | - | - | - | - |
+| `company.manage` | Change company details: profile, addresses, tax, branding, numbering, policies | yes | yes | yes | - | - | - | - |
 | **Finance** |  |  |  |  |  |  |  |  |
-| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | yes | yes | - | yes | - | - | - |
+| `finance.manage` | Change bank accounts; issue invoices and credit notes; verify bank details | yes | yes | yes | yes | - | - | - |
 | **Documents** |  |  |  |  |  |  |  |  |
 | `documents.issue` | Issue letters, quotations, minutes and operations documents | yes | yes | yes | yes | yes | yes | yes |
 | `documents.view_confidential` | View confidential documents | yes | yes | yes | yes | - | - | - |
-| `documents.view_restricted` | View restricted documents | yes | yes | - | - | - | - | - |
+| `documents.view_restricted` | View restricted documents | yes | yes | yes | - | - | - | - |
 | **Sales** |  |  |  |  |  |  |  |  |
 | `sales.view` | View customers, invoices, payments and sales reports | yes | yes | yes | yes | - | yes | - |
-| `sales.manage` | Add and edit customers and draft invoices; record payments | yes | yes | - | yes | - | - | - |
-| `sales.issue` | Issue and void invoices, proforma invoices, credit and debit notes | yes | yes | - | yes | - | - | - |
+| `sales.manage` | Add and edit customers and draft invoices; record payments | yes | yes | yes | yes | - | - | - |
+| `sales.issue` | Issue and void invoices, proforma invoices, credit and debit notes | yes | yes | yes | yes | - | - | - |
 | **Accounting** |  |  |  |  |  |  |  |  |
 | `accounting.view` | View the books: ledger, journal, trial balance and financial statements | yes | yes | yes | yes | - | - | - |
-| `accounting.manage` | Record expenses, income and journal entries; reconcile bank accounts; edit the chart of accounts | yes | yes | - | yes | - | - | - |
+| `accounting.manage` | Record expenses, income and journal entries; reconcile bank accounts; edit the chart of accounts | yes | yes | yes | yes | - | - | - |
 | **Purchases** |  |  |  |  |  |  |  |  |
 | `purchases.view` | View vendors, purchase orders, bills and vendor payments | yes | yes | yes | yes | - | yes | - |
-| `purchases.manage` | Create and change vendors, purchase requests, orders, bills and vendor payments | yes | yes | - | yes | - | - | - |
+| `purchases.manage` | Create and change vendors, purchase requests, orders, bills and vendor payments | yes | yes | yes | yes | - | - | - |
 | **Tax** |  |  |  |  |  |  |  |  |
 | `tax.view` | View GST registers, returns, TDS and tax records | yes | yes | yes | yes | - | - | - |
-| `tax.manage` | Record GST returns, tax payments, TDS and advance tax | yes | yes | - | yes | - | - | - |
+| `tax.manage` | Record GST returns, tax payments, TDS and advance tax | yes | yes | yes | yes | - | - | - |
 | **People** |  |  |  |  |  |  |  |  |
 | `hr.view` | View the employee directory and departments | yes | yes | yes | yes | yes | yes | - |
-| `hr.manage` | Manage employee records, attendance and leave | yes | yes | - | - | yes | - | - |
-| `hr.payroll` | See salaries; prepare and run payroll | yes | yes | - | yes | yes | - | - |
+| `hr.manage` | Manage employee records, attendance and leave | yes | yes | yes | - | yes | - | - |
+| `hr.payroll` | See salaries; prepare and run payroll | yes | yes | yes | yes | yes | - | - |
 | **Projects** |  |  |  |  |  |  |  |  |
 | `projects.view` | View projects, budgets and milestones | yes | yes | yes | yes | yes | yes | - |
-| `projects.manage` | Create and change projects, budgets and milestones | yes | yes | - | - | - | yes | - |
+| `projects.manage` | Create and change projects, budgets and milestones | yes | yes | yes | - | - | yes | - |
 | **Approvals** |  |  |  |  |  |  |  |  |
 | `approvals.view` | See every approval request, not only your own | yes | yes | yes | yes | yes | yes | - |
-| `approvals.manage` | Set the approval rules | yes | yes | - | - | - | - | - |
+| `approvals.manage` | Set the approval rules | yes | yes | yes | - | - | - | - |
 | **Compliance** |  |  |  |  |  |  |  |  |
 | `compliance.view` | View the compliance calendar and filing records | yes | yes | yes | yes | - | - | - |
-| `compliance.manage` | Record filings and manage the compliance calendar | yes | yes | - | yes | - | - | - |
+| `compliance.manage` | Record filings and manage the compliance calendar | yes | yes | yes | yes | - | - | - |
 | **Partners** |  |  |  |  |  |  |  |  |
 | `partners.view` | View partner capital, profit sharing, loans and withdrawals | yes | yes | yes | yes | - | - | - |
-| `partners.manage` | Record partner capital, loans, withdrawals and profit sharing | yes | yes | - | - | - | - | - |
+| `partners.manage` | Record partner capital, loans, withdrawals and profit sharing | yes | yes | yes | - | - | - | - |
 | **Workplace** |  |  |  |  |  |  |  |  |
 | `workplace.view` | View meetings, tasks, announcements and circulars | yes | yes | yes | yes | yes | yes | yes |
-| `workplace.manage` | Schedule meetings, assign tasks, publish announcements and circulars | yes | yes | - | - | yes | yes | - |
+| `workplace.manage` | Schedule meetings, assign tasks, publish announcements and circulars | yes | yes | yes | - | yes | yes | - |
 | **CRM** |  |  |  |  |  |  |  |  |
 | `crm.view` | View leads, deals and activities | yes | yes | yes | - | - | yes | - |
 | `crm.manage` | Create and change leads, deals and activities | yes | yes | yes | - | - | - | - |
 | **Reports** |  |  |  |  |  |  |  |  |
 | `reports.view` | Open the reports and analytics pages (each report still needs its own module's permission) | yes | yes | yes | yes | yes | yes | - |
 | **Administration** |  |  |  |  |  |  |  |  |
-| `audit.view` | View the company change history | yes | yes | - | - | - | - | - |
-| `users.manage` | Manage users, roles and the permission matrix | yes | - | - | - | - | - | - |
-| `users.view_activity` | View login history and user-management activity | yes | yes | - | - | - | - | - |
+| `audit.view` | View the company change history | yes | yes | yes | - | - | - | - |
+| `users.manage` | Manage users, roles and the permission matrix | yes | yes | yes | - | - | - | - |
+| `users.view_activity` | View login history and user-management activity | yes | yes | yes | - | - | - | - |
+| `users.invite` | Invite new members with a one-time link (the access role is chosen by the person inviting) | yes | yes | yes | - | yes | - | - |
+| `email.manage` | Set up email (sender name, reply-to, signature, test email); see every sent email and send failed ones again | yes | yes | yes | - | - | - | - |
 
 ## Glossary
 
@@ -2184,7 +2206,7 @@ Default permissions from the permission matrix in `backend/apps/accounts/access.
 - **PF (provident fund).** Employee and employer contributions, a percentage of the earned basic salary up to the wage ceiling unless the employee is on full-basic PF.
 - **Professional tax.** A state tax on salaries, taken from each employee by slab.
 - **Proforma invoice.** A preview invoice that is numbered but is not an accounting event: it posts nothing to the books.
-- **Reconciliation (bank).** Ticking the lines in the books that appear on the bank statement until the statement balance and the books agree.
+- **Reconciliation (bank).** Checking the books against the bank statement: each statement line is matched to its entry in the books (or the entry is created from it), and what is left over (cheques not yet presented, deposits in transit) explains the difference between the two balances.
 - **Reversal / void.** Cancelling a posted record by posting the mirror image rather than deleting it, so history stays complete.
 - **Section 17(5).** The part of the GST law that blocks input credit on certain purchases. A bill can be marked Blocked.
 - **SLM and WDV (depreciation).** Straight-line method spreads an asset's cost evenly (the Companies Act way). Written-down value charges a percentage of the remaining value each year (the income-tax block rate).

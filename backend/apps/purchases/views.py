@@ -430,7 +430,7 @@ def order_dict(o, *, detail=True):
         lines = []
         for i, line in enumerate(o.record.get("lines", [])):
             lines.append({**line, "index": i, "received": plain_number(got.get(i, ZERO)), "billed": plain_number(billed.get(i, ZERO))})
-        out.update({"approval_managed": orders.approval_managed(),
+        out.update({"approval_managed": orders.approval_managed(), "needs_approval": orders.needs_approval(o),
                     "form": o.form, "record": {**o.record, "lines": lines}, "delivery_address": o.delivery_address,
                     "cancel_reason": o.cancel_reason, "approved_at": o.approved_at,
                     "approved_by": o.approved_by.get_username() if o.approved_by_id else "",

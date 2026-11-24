@@ -7,7 +7,7 @@ from apps.accounting.models import Account, BankReconciliation, JournalEntry, Jo
 from apps.accounting.services import chart, posting
 from apps.accounts.models import Role
 from apps.company.models import CompanyProfile, CompanyProfileAuditEvent, CompanyTaxSettings, FinancialYear
-from apps.company.tests.base import API, GSTIN, CompanyTestMixin, client_for, make_user
+from apps.company.tests.base import API, GSTIN, CompanyTestMixin, client_for, make_user, viewer_client
 
 A = "/api/v1/accounting"
 S = "/api/v1/sales"
@@ -406,9 +406,11 @@ class JournalTests(Base):
         self.assertEqual(self.fin.post(f"{A}/opening-balances/", {"rows": []}).status_code, 400)  # no date
 
     def test_only_people_who_manage_accounting_may_post_opening_balances(self):
-        partner = client_for(make_user("part", Role.PARTNER))
-        self.assertEqual(partner.post(f"{A}/opening-balances/", {"date": "2026-04-01", "rows": []}).status_code, 403)
-        self.assertEqual(partner.get(f"{A}/opening-balances/").status_code, 200)
+        viewer = viewer_client("viewer", "accounting.view")  # may read the books, may not post
+        self.assertEqual(viewer.post(f"{A}/opening-balances/", {"date": "2026-04-01", "rows": []}).status_code, 403)
+        self.assertEqual(viewer.get(f"{A}/opening-balances/").status_code, 200)
+        partner = client_for(make_user("part", Role.PARTNER))  # a partner holds every permission
+        self.assertNotEqual(partner.post(f"{A}/opening-balances/", {"date": "2026-04-01", "rows": []}).status_code, 403)
         self.assertEqual(self.api_staff.get(f"{A}/opening-balances/").status_code, 403)
         self.assertEqual(self.anon.get(f"{A}/opening-balances/").status_code, 401)
 
@@ -585,7 +587,7 @@ class StatementTests(Base):
 class PermissionTests(Base):
     def test_roles(self):
         self.expense()
-        partner = client_for(make_user("part", Role.PARTNER))
+        partner = viewer_client("viewer", "accounting.view")  # view-only: a partner role now holds every permission
         for path in ("dashboard/", "accounts/", "journal/", "vouchers/", "bank/", "reports/trial-balance/", "reports/profit-loss/",
                      "reports/balance-sheet/", "reports/cash-flow/"):
             self.assertEqual(self.api_staff.get(f"{A}/{path}").status_code, 403, path)

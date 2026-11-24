@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "apps.workplace",
     "apps.crm",
     "apps.reports",
+    "apps.emails",
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,34 @@ PRIVATE_MEDIA_ROOT = Path(os.environ.get("PRIVATE_MEDIA_ROOT") or BASE_DIR / "pr
 if "test" in sys.argv:  # never write test uploads into the real private store
     PRIVATE_MEDIA_ROOT = Path(tempfile.mkdtemp(prefix="t2n_test_media_"))
     PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]  # tests only: keeps user setup fast
+# Daily jobs (recurring invoices, and anything else registered in apps/company/daily.py) run once a day on their own: the
+# first time someone opens the app each day. A scheduled `python manage.py run_daily_jobs` does the same without waiting
+# for a visitor; set DAILY_JOBS_ON_REQUEST=false to rely on the schedule alone. Never during tests.
+DAILY_JOBS_ON_REQUEST = env_bool("DAILY_JOBS_ON_REQUEST", True) and "test" not in sys.argv
+# ---------------------------------------------------------------------------
+# Email. With EMAIL_HOST set, messages go out through that SMTP server. Without it (development) each message is written
+# as a file into EMAIL_FILE_PATH instead and the app says plainly that email is not set up: messages are saved, not
+# delivered. The password is read from the environment only; it is never stored in the database or shown in the app.
+# Tests always use Django's in-memory backend (the test runner switches to it).
+# ---------------------------------------------------------------------------
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "").strip()
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT") or 587)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", not EMAIL_USE_SSL) and not EMAIL_USE_SSL  # the two cannot both be on
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT") or 20)  # seconds; a slow mail server must not hang the page
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "").strip() or EMAIL_HOST_USER or "erp@localhost"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Optional: the address people use to open the app (for example https://erp.example.com). Used in links inside emails
+# (invitation links); when empty, the address the sender is using in their browser is used.
+APP_BASE_URL = os.environ.get("APP_BASE_URL", "").strip().rstrip("/")
+if EMAIL_HOST:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = str(Path(os.environ.get("EMAIL_FILE_PATH") or BASE_DIR / "sent_emails"))
+
 MAX_UPLOAD_BYTES = int(os.environ.get("MAX_UPLOAD_BYTES", 10 * 1024 * 1024))
 DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
@@ -144,7 +173,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.TokenAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["apps.core.renderers.DecimalSafeJSONRenderer"],
-    "DEFAULT_THROTTLE_RATES": {"login": "10/min"},
+    "DEFAULT_THROTTLE_RATES": {"login": "10/min", "invite_public": "10/min"},
     "EXCEPTION_HANDLER": "apps.core.exceptions.api_exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }

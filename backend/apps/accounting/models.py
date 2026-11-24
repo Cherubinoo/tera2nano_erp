@@ -10,6 +10,7 @@ from django.db.models import Q
 
 from apps.company.models import CompanyBankAccount, CompanyProfile, FinancialYear
 from apps.core.models import UUIDModel
+from apps.core.storage import UploadTo, private_storage
 
 
 class Account(UUIDModel):
@@ -157,6 +158,8 @@ class JournalLine(UUIDModel):
     party_type = models.CharField(max_length=20, blank=True)
     party_id = models.CharField(max_length=64, blank=True)
     reconciliation = models.ForeignKey("BankReconciliation", null=True, blank=True, on_delete=models.PROTECT, related_name="lines")
+    # The bank statement line(s) this book line was matched to (see BankMatch); empty while it is not yet seen on a statement.
+    bank_match = models.ForeignKey("BankMatch", null=True, blank=True, on_delete=models.SET_NULL, related_name="journal_lines")
     # The project this line belongs to (apps.projects.Project id), so project profit and loss comes straight from the books.
     project_id = models.UUIDField(null=True, blank=True, db_index=True)
 
@@ -227,6 +230,108 @@ class BankReconciliation(UUIDModel):
 
     class Meta:
         ordering = ["-statement_date", "-created_at"]
+
+
+# --------------------------------------------------------------------------- bank statements and matching
+
+class BankStatement(UUIDModel):
+    """A statement file uploaded for one bank account. The file is kept privately; its rows become BankStatementLines when
+    imported. A statement stays a draft between the upload and the column-mapping step."""
+
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Uploaded, not imported yet"
+        IMPORTED = "imported", "Imported"
+
+    class Format(models.TextChoices):
+        CSV = "csv", "CSV"
+        XLSX = "xlsx", "Excel"
+        XLS = "xls", "Excel (.xls)"
+        PDF = "pdf", "PDF"
+        OFX = "ofx", "OFX"
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.PROTECT, related_name="bank_statements")
+    account = models.ForeignKey(Account, on_delete=models.PROTECT, related_name="statements")
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
+    format = models.CharField(max_length=4, choices=Format.choices)
+    original_filename = models.CharField(max_length=255)
+    file = models.FileField(upload_to=UploadTo("bank-statements"), storage=private_storage, max_length=255)
+    file_size = models.PositiveBigIntegerField(default=0)
+    checksum_sha256 = models.CharField(max_length=64)
+    # The column mapping used (remembered for the account's next statement): {"header_row": 0, "date": 0, ...}.
+    mapping = models.JSONField(default=dict, blank=True)
+    period_start = models.DateField(null=True, blank=True)
+    period_end = models.DateField(null=True, blank=True)
+    closing_balance = models.DecimalField(max_digits=16, decimal_places=2, null=True, blank=True)
+    rows_read = models.PositiveIntegerField(default=0)
+    imported_count = models.PositiveIntegerField(default=0)
+    duplicate_count = models.PositiveIntegerField(default=0)
+    skipped_count = models.PositiveIntegerField(default=0)   # blank, heading and total rows
+    problems = models.JSONField(default=list, blank=True)    # [{"row": 12, "reason": "..."}]
+    imported_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class BankMatch(UUIDModel):
+    """Statement line(s) and book line(s) that are the same money: one line to one entry, one deposit to several payments,
+    several lines to one entry. A match with no statement line marks book lines as cleared before the imported statements."""
+
+    class Kind(models.TextChoices):
+        SUGGESTED = "suggested", "Suggestion accepted"
+        MANUAL = "manual", "Matched by hand"
+        CREATED = "created", "Entry made from the statement line"
+        CLEARED = "cleared", "Cleared before the imported statements"
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.PROTECT, related_name="bank_matches")
+    account = models.ForeignKey(Account, on_delete=models.PROTECT, related_name="bank_matches")
+    kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.MANUAL)
+    note = models.CharField(max_length=300, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name_plural = "bank matches"
+
+
+class BankStatementLine(UUIDModel):
+    """One transaction on a bank statement. Amount is signed: positive money in (deposit), negative money out (withdrawal)."""
+
+    class Status(models.TextChoices):
+        UNMATCHED = "unmatched", "To match"
+        MATCHED = "matched", "Matched"
+        IGNORED = "ignored", "Ignored"
+
+    company = models.ForeignKey(CompanyProfile, on_delete=models.PROTECT, related_name="+")
+    account = models.ForeignKey(Account, on_delete=models.PROTECT, related_name="statement_lines")
+    statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, related_name="lines")
+    row_number = models.PositiveIntegerField()  # the row in the file (1 = first row), for the import summary
+    seq = models.PositiveIntegerField(default=0)  # position in date order within the statement (files may run newest first)
+    date = models.DateField()
+    description = models.CharField(max_length=500, blank=True)
+    reference = models.CharField(max_length=120, blank=True)
+    amount = models.DecimalField(max_digits=16, decimal_places=2)
+    balance = models.DecimalField(max_digits=16, decimal_places=2, null=True, blank=True)
+    # Same date, amount, narration and reference (plus the occurrence number) = the same line, so re-importing an
+    # overlapping statement never adds it twice.
+    fingerprint = models.CharField(max_length=80)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.UNMATCHED)
+    match = models.ForeignKey(BankMatch, null=True, blank=True, on_delete=models.SET_NULL, related_name="statement_lines")
+    ignore_reason = models.CharField(max_length=300, blank=True)
+    # Set when "reconciled up to" a date covered this line; it can then no longer be unmatched or changed.
+    reconciliation = models.ForeignKey(BankReconciliation, null=True, blank=True, on_delete=models.SET_NULL, related_name="statement_lines")
+    # The record made from this line ("vendor_payment", id) when it could not be matched at once (it waits for approval).
+    created_source = models.CharField(max_length=20, blank=True)
+    created_source_id = models.CharField(max_length=64, blank=True)
+
+    class Meta:
+        ordering = ["date", "seq"]
+        constraints = [
+            models.UniqueConstraint(fields=["account", "fingerprint"], name="one_statement_line_per_fingerprint"),
+            models.CheckConstraint(condition=~Q(amount=0), name="statement_line_not_zero"),
+        ]
+        indexes = [models.Index(fields=["account", "status"]), models.Index(fields=["account", "date"])]
 
 
 # --------------------------------------------------------------------------- fixed assets

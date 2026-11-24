@@ -1,7 +1,7 @@
 // The user guide's content, in one place. The Guide pages render it, scripts/build-guide-docs.mjs turns it into docs/MODULE_GUIDE.md,
 // and the browser test checks every link in it against the real routes. Names, icons and one-line purposes come from ../../moduleMeta.js.
 //
-// ACCURACY RULE: write only what the code does. Where something is not connected (no email, no bank feed) say so plainly.
+// ACCURACY RULE: write only what the code does. Where something is not connected (no bank feed, no SMS) say so plainly.
 // To add a module guide: add an entry to guideModulesA.js or guideModulesB.js (same shape as the others), plus a MODULE_META entry.
 import { MODULE_META } from '../../moduleMeta.js';
 import { MODULES_A } from './guideModulesA.js';
@@ -22,7 +22,7 @@ export const OVERVIEW = {
   ],
   notes: [
     'Figures in examples (₹, GST at 18%, approval limits) are examples or the editable starting rules. Your company\'s own settings apply.',
-    'Filing with the government (GST, TDS, MCA, income tax), bank feeds, payment gateways and email delivery are not part of the system. It records and prepares; you file and pay elsewhere.',
+    'Filing with the government (GST, TDS, MCA, income tax), live bank feeds and payment gateways are not part of the system (bank statements are imported from a file instead). It records and prepares; you file and pay elsewhere. Email is: once the mail server is set up, invoices, quotations, purchase orders, payslips, payment reminders and invitation links are emailed from the app.',
   ],
 };
 
@@ -53,7 +53,7 @@ export const FLOW_STEPS = [
     what: 'Winning the deal links the account to an existing customer (same GSTIN or name) or creates a new numbered customer. Customers can also be added by hand.',
     data: 'The CRM account gets the sales customer\'s id; a new customer record is created in Sales if needed.' },
   { id: 'invoice', lane: 'main', title: 'Invoice', module: 'sales', to: '/sales/documents', screen: 'Sales, Invoices and Notes',
-    what: 'An invoice is written with GST split by place of supply and issued: it gets a number and a PDF, and is posted to the books. Recurring profiles repeat it on a schedule; the Reminders screen lists unpaid invoices to chase (recorded in the system, nothing is emailed).',
+    what: 'An invoice is written with GST split by place of supply and issued: it gets a number and a PDF, and is posted to the books. Recurring profiles repeat it on a schedule; the Reminders screen lists unpaid invoices to chase and emails the reminders (by hand or automatically once a day). The invoice PDF can be emailed to the customer from its page.',
     data: 'Issuing posts a journal entry: debit Accounts receivable, credit Sales and GST payable.',
     extras: [{ label: 'Recurring invoices', to: '/sales/recurring' }, { label: 'Reminders', to: '/sales/reminders' }] },
   { id: 'payment', lane: 'main', title: 'Payment received', module: 'sales', to: '/sales/payments', screen: 'Sales, Payments Received',
@@ -235,7 +235,8 @@ export const CROSS_CUTTING = [
   { title: 'Change history', text: 'Every module writes its creates, changes, voids and decisions to one append-only change history, shown in Administration (needs audit.view). Sensitive values such as full bank account numbers are not copied into it.' },
   { title: 'Numbering', text: 'Every reference number is generated from the rules in Company, Document Numbering (for example T2N/INV/26/1115/00001). Nobody types a number, and a voided number is never reused.' },
   { title: 'Permissions', text: 'Every screen and every action is checked on the server against the role\'s permissions; the screens only hide what the server would refuse. Administration shows and edits the permission matrix.' },
-  { title: 'Not connected', text: 'No email, SMS or push messages are sent by any module (reminders, circulars and approvals show inside the system). There is no bank feed, payment gateway, government portal filing or calendar sync.' },
+  { title: 'Email', text: 'Once the mail server is set up on the server (Administration, Email settings), invoices and credit notes, quotations and letters, purchase orders, payslips, payment reminders and invitation links are emailed from their pages with the PDF attached. Every message, sent or failed, is listed under Administration, Sent emails, where a failed one can be sent again. Without a mail server, messages are saved on the server but not delivered, and the app says so.' },
+  { title: 'Not connected', text: 'No SMS or push messages are sent, and approvals, circulars and compliance reminders show inside the system only (they are not emailed). There is no live bank feed (statements are imported from a file), payment gateway, government portal filing or calendar sync.' },
 ];
 
 export const GLOSSARY = [
@@ -270,7 +271,7 @@ export const GLOSSARY = [
   { term: 'PF (provident fund)', meaning: 'Employee and employer contributions, a percentage of the earned basic salary up to the wage ceiling unless the employee is on full-basic PF.' },
   { term: 'Professional tax', meaning: 'A state tax on salaries, taken from each employee by slab.' },
   { term: 'Proforma invoice', meaning: 'A preview invoice that is numbered but is not an accounting event: it posts nothing to the books.' },
-  { term: 'Reconciliation (bank)', meaning: 'Ticking the lines in the books that appear on the bank statement until the statement balance and the books agree.' },
+  { term: 'Reconciliation (bank)', meaning: 'Checking the books against the bank statement: each statement line is matched to its entry in the books (or the entry is created from it), and what is left over (cheques not yet presented, deposits in transit) explains the difference between the two balances.' },
   { term: 'Reversal / void', meaning: 'Cancelling a posted record by posting the mirror image rather than deleting it, so history stays complete.' },
   { term: 'Section 17(5)', meaning: 'The part of the GST law that blocks input credit on certain purchases. A bill can be marked Blocked.' },
   { term: 'SLM and WDV (depreciation)', meaning: 'Straight-line method spreads an asset\'s cost evenly (the Companies Act way). Written-down value charges a percentage of the remaining value each year (the income-tax block rate).' },
@@ -281,11 +282,11 @@ export const GLOSSARY = [
 
 // One short line per role: how that role is used in practice (the table shows the exact permissions).
 export const ROLE_NOTES = {
-  admin: 'Holds every permission and cannot be reduced. By default the only role that manages users and the permission matrix.',
-  managing_partner: 'Holds every permission except managing users. Typically signs off the large approvals and runs the business end to end.',
-  partner: 'Can view sales, the books, purchases, tax, people, projects, partners, approvals, compliance, workplace and reports, and work the CRM. Cannot change records elsewhere.',
+  admin: 'Holds every permission and cannot be reduced. Manages users, the permission matrix and invitations.',
+  managing_partner: 'Holds every permission, today and for every module added later, and cannot be reduced: a partner can never be locked out. Signs off the large approvals and runs the business end to end. Can invite members, with any access role except Admin.',
+  partner: 'Holds every permission, exactly like the Managing Partner, and cannot be reduced. The approval rules still apply: a partner cannot approve their own request, and a rule that names the Partner role asks every partner to agree. Can invite members, with any access role except Admin.',
   finance_manager: 'Runs the money side: sales, purchases, the books, tax and compliance filings, payroll figures and approvals. Cannot change company details or run CRM.',
-  hr_manager: 'Runs people: employees, attendance, leave and payroll, plus workplace management. Can view projects and reports.',
+  hr_manager: 'Runs people: employees, attendance, leave and payroll, plus workplace management. Can view projects and reports. Can invite new employees and project managers with a link.',
   project_manager: 'Runs delivery: projects, plus workplace management. Can view sales, purchases, people, CRM and reports.',
   employee: 'Sees the company details and the workplace, issues documents, and uses their own pages (profile, attendance, leave, payslips, tasks).',
 };
@@ -300,7 +301,7 @@ export const MODULE_ORDER = Object.entries(MODULE_META)
   .sort((a, b) => a[1].order - b[1].order)
   .map(([key]) => key);
 
-export const RESERVED_KEYS = ['integration', 'glossary', 'roles'];
+export const RESERVED_KEYS = ['integration', 'glossary', 'roles', 'operate'];
 
 const flowsFrom = (key) => FLOWS.filter((f) => f.from === key);
 const flowsTo = (key) => FLOWS.filter((f) => f.to === key);

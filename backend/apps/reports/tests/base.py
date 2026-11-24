@@ -18,7 +18,7 @@ ALL_REPORTS = {"revenue", "project-profitability", "partner-capital", "salary", 
 EXPECTED = {
     Role.ADMIN: ALL_REPORTS,
     Role.MANAGING_PARTNER: ALL_REPORTS,
-    Role.PARTNER: ALL_REPORTS - {"salary"},
+    Role.PARTNER: ALL_REPORTS,  # a partner holds every permission
     Role.FINANCE_MANAGER: ALL_REPORTS,
     Role.HR_MANAGER: {"salary", "project-profitability"},
     Role.PROJECT_MANAGER: {"receivables", "vendor-outstanding", "project-profitability"},

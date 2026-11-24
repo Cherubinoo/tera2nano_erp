@@ -68,9 +68,25 @@ for (const key of Object.keys(MODULE_META)) {
 }
 for (const key of data.RESERVED_KEYS) if (data.guideFor(key)) problems.push(`"${key}" is reserved and cannot be a module guide key`);
 
+// operating manual: every task route must exist too
+const { OPERATE_ORDER } = await import(pathToFileURL(path.join(src, 'modules', 'guide', 'operateMeta.js')).href);
+const opDir = path.join(src, 'modules', 'guide', 'operate');
+let opRoutes = 0;
+for (const f of fs.readdirSync(opDir).filter((x) => x.endsWith('.json'))) {
+  const c = JSON.parse(fs.readFileSync(path.join(opDir, f), 'utf8'));
+  if (!OPERATE_ORDER.includes(c.key)) problems.push(`operate/${f}: key "${c.key}" is not listed in operateMeta.js`);
+  for (const t of c.tasks || []) {
+    if (!t.route) continue;
+    opRoutes += 1;
+    const clean = t.route.split(/[?#]/)[0];
+    if (!clean.startsWith('/')) problems.push(`operate/${f} "${t.title}": "${t.route}" is not an absolute path`);
+    else if (!matches(clean)) problems.push(`operate/${f} "${t.title}": "${t.route}" matches no route`);
+  }
+}
+
 const links = data.allLinks().length;
 if (problems.length) {
   console.error(`${problems.length} problem(s):\n- ${problems.join('\n- ')}`);
   process.exit(1);
 }
-console.log(`guide check OK: ${links} links match ${routes.size} routes; ${data.FLOWS.length} flows, ${data.FLOW_STEPS.length} steps, ${data.MODULE_GUIDES.length} module guides.`);
+console.log(`guide check OK: ${links} links and ${opRoutes} manual task routes match ${routes.size} routes; ${data.FLOWS.length} flows, ${data.FLOW_STEPS.length} steps, ${data.MODULE_GUIDES.length} module guides.`);

@@ -74,8 +74,11 @@ def _plan(vendor, amount, allocations, auto_allocate):
 
 @transaction.atomic
 def record_payment(company, actor, *, vendor, date, amount, mode, reference="", paid_from=None, notes="", allocations=None,
-                   auto_allocate=False, project_id=None):
-    """Record money paid to a vendor and apply it to bills. Whatever is not applied stays as the vendor's advance."""
+                   auto_allocate=False, project_id=None, bank_ledger_account=None):
+    """Record money paid to a vendor and apply it to bills. Whatever is not applied stays as the vendor's advance.
+    `bank_ledger_account` is for bank-statement matching only: it posts straight to that ledger account instead of the
+    usual paid_from lookup, for a bank account with no Company Bank Account record of its own. It still posts once approved
+    if the payment is held for approval."""
     vendor = Vendor.objects.select_for_update().get(pk=vendor.pk)
     amount = amount_from(amount)
     if mode not in VendorPayment.Mode.values:
@@ -89,7 +92,8 @@ def record_payment(company, actor, *, vendor, date, amount, mode, reference="", 
     hold = api is not None and api.requires_approval(company, "payment", amount)
     payment = VendorPayment.objects.create(
         company=company, vendor=vendor, date=date, amount=amount, mode=mode, reference=text(reference, "reference", 100, label="Reference"),
-        paid_from=paid_from, notes=text(notes, "notes", 300, label="Notes"), project_id=project_id, created_by=actor,
+        paid_from=paid_from, bank_ledger_account=bank_ledger_account, notes=text(notes, "notes", 300, label="Notes"),
+        project_id=project_id, created_by=actor,
         number="" if hold else numbering.allocate_number(company, DocType.VENDOR_PAYMENT, actor=actor, on_date=date).reference_number)
     if hold:
         # Not numbered, applied to any bill or posted until it is approved (see `approve`).

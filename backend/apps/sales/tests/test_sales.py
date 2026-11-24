@@ -482,7 +482,7 @@ class ReportTests(SalesBase):
 class PermissionTests(SalesBase):
     def test_roles(self):
         inv = self.invoice()
-        employee, partner = self.api_staff, client_for(make_user("part", Role.PARTNER))
+        employee, partner = self.api_staff, client_for(make_user("part", Role.PROJECT_MANAGER))  # views sales, cannot manage
         for client in (employee,):
             for path in ("dashboard/", "customers/", "documents/", "payments/", "reports/receivables/"):
                 self.assertEqual(client.get(f"{S}/{path}").status_code, 403, path)

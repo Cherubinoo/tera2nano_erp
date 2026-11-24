@@ -33,7 +33,7 @@ class RoleTests(CompanyTestMixin, TestCase):
 
     def test_default_powers_per_role(self):
         expect = {  # is_company_admin, is_finance
-            "admin": (True, True), "managing_partner": (True, True), "partner": (False, False),
+            "admin": (True, True), "managing_partner": (True, True), "partner": (True, True),
             "finance_manager": (False, True), "hr_manager": (False, False), "project_manager": (False, False),
             "employee": (False, False),
         }
@@ -116,6 +116,32 @@ class MatrixTests(CompanyTestMixin, TestCase):
         self.assertEqual(set(self.matrix()["matrix"]["admin"]), set(access.CODES))
         self.assertFalse(RolePermission.objects.filter(role="admin").exists())
         self.assertEqual(self.api.get(f"{AUTH}/access/").status_code, 200)
+
+    def test_both_partner_roles_always_hold_every_permission(self):
+        for role in ("managing_partner", "partner"):
+            self.assertEqual(set(access.DEFAULT_MATRIX[role]), set(access.CODES), role)
+            self.assertEqual(set(access.codes_for_role(role)), set(access.CODES), role)
+            self.assertTrue(client_for(make_user(f"p_{role}", role)).get(f"{AUTH}/access/").status_code == 200, role)
+        # a saved decision cannot take anything away, and the matrix page shows these columns as locked
+        self.assertEqual(self.save({"partner": [], "managing_partner": ["company.view"]}).status_code, 200)
+        self.assertFalse(RolePermission.objects.filter(role__in=["partner", "managing_partner"]).exists())
+        for role in ("managing_partner", "partner"):
+            self.assertEqual(set(self.matrix()["matrix"][role]), set(access.CODES), role)
+        self.assertEqual({r["value"] for r in self.matrix()["roles"] if r["locked"]}, {"admin", "managing_partner", "partner"})
+        # even a stale row written straight into the table (before this rule) has no effect
+        RolePermission.objects.create(role="partner", code="users.manage", granted=False)
+        access.matrix_changed()
+        self.assertIn("users.manage", access.codes_for_role("partner"))
+        self.assertTrue(make_user("p_stale", "partner").has_code("users.manage"))
+        self.assertIn("partner", access.roles_with("users.invite"))
+
+    def test_a_code_added_later_reaches_the_partners(self):
+        from unittest import mock
+        extra = access.PERMISSIONS + [("future.manage", "A future module", "Future")]
+        with mock.patch.object(access, "PERMISSIONS", extra), mock.patch.object(access, "CODES", [p[0] for p in extra]),                 mock.patch.object(access, "_ALL", frozenset(p[0] for p in extra)):
+            self.assertIn("future.manage", access.codes_for_role("partner"))
+            self.assertIn("future.manage", access.effective_matrix()["managing_partner"])
+            self.assertNotIn("future.manage", access.effective_matrix()["finance_manager"])
 
     def test_validation(self):
         bad = [({"nobody": []}, "Unknown roles"), ({"employee": ["made.up"]}, "unknown permissions"),
@@ -227,16 +253,12 @@ class UserManagementTests(CompanyTestMixin, TestCase):
         self.assertEqual(only.status_code, 200)
 
     def test_the_last_administrator_cannot_be_switched_off_or_demoted_by_a_managing_user(self):
-        self.save_matrix_for_managing_partner()
-        mp = make_user("mp", "managing_partner")
+        mp = make_user("mp", "managing_partner")  # holds users.manage like every partner
         c = client_for(mp)
         for admin in (self.admin, self.admin2):
             self.assertEqual(c.patch(f"{AUTH}/users/{admin.id}/", {"is_active": False}).status_code, 200
                              if admin is self.admin else 400)
         self.assertTrue(User.objects.get(pk=self.admin2.pk).is_active)
-
-    def save_matrix_for_managing_partner(self):
-        self.api.put(f"{AUTH}/access/", {"matrix": {"managing_partner": ["company.view", "users.manage"]}, "change_reason": "Test"})
 
     def test_set_password(self):
         u = self.create().json()
@@ -302,7 +324,10 @@ class LoginHistoryTests(CompanyTestMixin, TestCase):
         self.assertEqual(self.api_finance.get(f"{AUTH}/activity/").status_code, 403)
         mp = client_for(make_user("mp", "managing_partner"))
         self.assertEqual(mp.get(f"{AUTH}/login-history/").status_code, 200)
-        self.assertEqual(mp.get(f"{AUTH}/users/").status_code, 403)  # may watch, not manage
+        self.assertEqual(mp.get(f"{AUTH}/users/").status_code, 200)  # the partners hold every permission
+        hr = client_for(make_user("hrm", "hr_manager"))
+        self.assertEqual(hr.get(f"{AUTH}/login-history/").status_code, 403)
+        self.assertEqual(hr.get(f"{AUTH}/users/").status_code, 403)
         self.assertEqual(self.anon.get(f"{AUTH}/login-history/").status_code, 401)
 
     def test_activity_lists_user_and_permission_changes(self):

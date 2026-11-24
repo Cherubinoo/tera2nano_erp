@@ -38,7 +38,7 @@ class PermissionMatrixTests(ReportsBase):
         want = {
             Role.ADMIN: {"revenue", "expenses", "profit", "cash", "receivables", "payables", "headcount", "deals"},
             Role.MANAGING_PARTNER: {"revenue", "expenses", "profit", "cash", "receivables", "payables", "headcount", "deals"},
-            Role.PARTNER: {"revenue", "expenses", "profit", "cash", "receivables", "payables", "headcount", "deals"},
+            Role.PARTNER: {"revenue", "expenses", "profit", "cash", "receivables", "payables", "headcount", "deals"},  # all access, same as the Managing Partner
             Role.FINANCE_MANAGER: {"revenue", "expenses", "profit", "cash", "receivables", "payables", "headcount"},
             Role.HR_MANAGER: {"headcount"},
             Role.PROJECT_MANAGER: {"receivables", "payables", "headcount", "deals"},

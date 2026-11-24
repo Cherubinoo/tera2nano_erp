@@ -200,7 +200,7 @@ class StandaloneAndPermissionTests(BudgetApprovalBase):
     def test_permissions_and_404s(self):
         self.change(budget="80000")
         rid = self.rev().pk
-        for who in (self.hr, self.partner):
+        for who in (self.hr,):  # a partner holds projects.manage, so only people who cannot manage are refused
             self.assertEqual(who.post(f"{P}/budget-changes/{rid}/withdraw/").status_code, 403)
             self.assertEqual(who.patch(f"{P}/projects/{self.p['id']}/", {"budget": "1"}, format="json").status_code, 403)
         self.assertEqual(self.partner.get(f"{P}/projects/{self.p['id']}/budget-changes/").status_code, 200)   # projects.view

@@ -1,0 +1,397 @@
+{
+  "key": "crm",
+  "title": "CRM",
+  "purpose": "CRM is where you track people and companies that might buy from you, from the first enquiry to a won order. A lead is converted into a contact, an account (the company) and usually a deal; deals move through pipeline stages on a board until they are won or lost. Winning a deal links or creates the sales customer, and Create quotation opens a quotation already filled in from the deal.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Everything in CRM: leads, import, conversion, contacts, accounts, deals, activities, products and CRM Settings (permissions crm.view and crm.manage)."},
+    {"role": "Project Manager", "does": "Views leads, contacts, accounts, deals, activities and CRM Reports (crm.view) and can export CSV files; cannot create or change anything."},
+    {"role": "Finance Manager, HR Manager, Employee", "does": "No CRM access by default. An Admin can grant crm.view or crm.manage under Administration > Users and Access > Role permissions."}
+  ],
+  "before_you_start": [
+    "Ask an Admin to check CRM > CRM Settings: the pipeline stages (Qualification 10%, Needs Analysis 25%, Proposal/Quotation 50%, Negotiation 75%, Closed Won, Closed Lost), the lead sources and the lost reasons are ready-made and can be changed.",
+    "Optionally add your products and services with their prices and GST rates under CRM Settings > Products, so deal line items can be picked from a list.",
+    "Lead and deal numbers are given automatically, for example T2N-LD-26-2411-0001 for a lead and T2N-DL-26-2411-0001 for a deal.",
+    "Every lead, contact, account and deal can have an Owner. Owners are chosen from the company's users."
+  ],
+  "tasks": [
+    {
+      "title": "Read the CRM Dashboard",
+      "who": "Anyone with CRM access",
+      "where": "CRM > CRM Dashboard",
+      "route": "/crm",
+      "steps": [
+        "Open the CRM tile on the launcher; the CRM Dashboard opens.",
+        "Read the tiles: Open pipeline, Weighted forecast (amount x stage probability), Win rate, Won in 12 months, Open leads and My activities. Click a tile to open the matching list.",
+        "Look at the Sales funnel, Pipeline by stage, Lead sources, Won and lost deals, Top owners and Forecast by month.",
+        "Use New lead, New deal or New activity at the top to start work."
+      ],
+      "result": "Nothing is changed. The figures update as leads, deals and activities change.",
+      "tips": ["My activities turns red when you have overdue activities."]
+    },
+    {
+      "title": "Add a lead",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Leads > New lead",
+      "route": "/crm/leads?new=1",
+      "steps": [
+        "Open CRM > Leads and click New lead (or + New > Lead from the top bar).",
+        "Fill in Company (for example Sunrise Packaging) and/or Contact person (for example Meera Nair). At least one of the two is needed.",
+        "Add Email and Phone if you have them.",
+        "Choose the Source (for example Referral), type what they are Interested in (for example IT solutions) and the Estimated value (INR), for example 2,50,000.",
+        "Choose Status (New, Contacted, Qualified, Nurturing or Unqualified) and Rating (Hot, Warm or Cold).",
+        "Fill in Industry, City, State, Owner and Notes as needed.",
+        "Click Save lead."
+      ],
+      "result": "The lead gets its number (for example T2N-LD-26-2411-0001) and its page opens. A score out of 100 is worked out from the source, the estimated value, completed calls and meetings, and whether email and phone are known.",
+      "tips": [
+        "If the system finds a lead, contact or account with the same email, phone or company, it shows \"This looks like a record you already have.\" with links. Open the existing record instead, or click Save anyway.",
+        "Converted is not offered as a status; use Convert instead."
+      ]
+    },
+    {
+      "title": "Import leads from a CSV file",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Leads > Import CSV",
+      "route": "/crm/leads",
+      "steps": [
+        "Open CRM > Leads and click Import CSV.",
+        "Click Download template to get a sample file. Its columns are company_name, contact_name, email, phone, source, industry, product_interest, estimated_value, status, rating, city, state and notes.",
+        "Fill in your rows in Excel and save as CSV (at most 1 MB and 1000 rows).",
+        "Choose who the leads go to under Assign imported leads to (Me by default).",
+        "Under CSV file choose your file. The system checks every row and shows Rows, Ready, Duplicates and Errors, with a Result for each row.",
+        "If you also want the duplicate rows, tick Import the duplicate rows as well.",
+        "Click Import N leads."
+      ],
+      "result": "Only rows marked Ready (and duplicates, if ticked) are saved; each gets its own lead number. Nothing is saved until you click Import.",
+      "tips": [
+        "The file needs a company_name or contact_name column. Common headings such as Company, Mobile or Amount are recognised.",
+        "Fix rows marked Error in the file and import them again."
+      ]
+    },
+    {
+      "title": "Find, filter and export leads",
+      "who": "Anyone with CRM access",
+      "where": "CRM > Leads",
+      "route": "/crm/leads",
+      "steps": [
+        "Open CRM > Leads.",
+        "Click a status chip to filter: All, Open, New, Contacted, Qualified, Nurturing, Unqualified or Converted. Each shows its count.",
+        "Type in Search (company, contact, email, phone or ID), choose Source, Rating or Owner (Me, Unassigned or a person) and click Search.",
+        "Click a row to open the lead.",
+        "Click Export CSV to download the leads shown by the status and owner filters."
+      ],
+      "result": "The foot of the list shows the number of leads and their total estimated value.",
+      "tips": ["Open means every lead that is not converted and not unqualified."]
+    },
+    {
+      "title": "Assign, change status or delete many leads at once",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Leads",
+      "route": "/crm/leads",
+      "steps": [
+        "Tick the leads you want (or the box in the heading to select the whole page).",
+        "In the bar that appears choose Assign to… and click Assign, or choose Set status… and click Set status.",
+        "To remove them click Delete and confirm.",
+        "Click Clear to unselect."
+      ],
+      "result": "A message says how many leads were changed. Converted leads are left alone and are never deleted.",
+      "tips": ["Deleted leads cannot be brought back."]
+    },
+    {
+      "title": "Work a lead: edit, change status, log activity",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Leads > open a lead",
+      "route": "/crm/leads",
+      "steps": [
+        "Open the lead. The tiles show Lead score, Estimated value, Source and Owner.",
+        "Use the status dropdown in the header to change the status, for example from New to Contacted.",
+        "Click Edit to correct details and Save lead.",
+        "Click Log activity to record a call, meeting, task, note or email.",
+        "Open the Timeline tab to see activities and changes, and the Overview tab for the score breakdown.",
+        "Click Delete to remove a lead you no longer need."
+      ],
+      "result": "Completed calls, meetings and logged emails raise the score (5 points each, up to 30). A suggested rating appears: Hot from 60 points, Warm from 30.",
+      "tips": ["Possible duplicates are listed at the top of the lead page."]
+    },
+    {
+      "title": "Convert a lead into a contact, account and deal",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Leads > open a lead > Convert",
+      "route": "/crm/leads",
+      "steps": [
+        "Open the lead and click Convert.",
+        "Keep Also create a deal ticked if there is a real opportunity.",
+        "Check the Deal name, Amount (INR) (filled from the estimated value), Expected close, Starting stage (First stage if left empty) and Deal owner.",
+        "Click Convert lead."
+      ],
+      "result": "A contact and an account are created (an existing active account with the same company name is reused, and a contact with the same email at that account is reused). A deal is created if ticked, numbered for example T2N-DL-26-2411-0001. The lead becomes Converted, links to the new records, and its activities now also show on the contact, account and deal. No sales customer is created yet.",
+      "tips": [
+        "An Unqualified lead cannot be converted; change its status first.",
+        "A converted lead cannot be edited, moved back or deleted; it is kept as history."
+      ]
+    },
+    {
+      "title": "Add or edit an account",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Accounts > New account",
+      "route": "/crm/accounts",
+      "steps": [
+        "Open CRM > Accounts and click New account.",
+        "Enter Account name (for example Sunrise Packaging Pvt Ltd), and optionally Industry, Website, Email, Phone, GSTIN (15 characters, for example 29ABCDE1234F1Z5), City, State, Owner, Address and Notes.",
+        "Click Save account.",
+        "To change it later open the account and click Edit."
+      ],
+      "result": "The account page shows tabs for Overview, Contacts, Deals, Activities, Quotations and Documents, and tiles for Open deals, Won deals, Contacts and Sales customer.",
+      "tips": [
+        "Filter the list with the chips Active / Switched off and Any / Customers / Not yet customers.",
+        "Fill in GSTIN, address and state before a deal is won: they are copied to the sales customer."
+      ]
+    },
+    {
+      "title": "Switch off or delete an account",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Accounts > open an account",
+      "route": "/crm/accounts",
+      "steps": [
+        "Open the account.",
+        "Click Switch off to hide it from new deals (Switch on brings it back).",
+        "Click Delete only for an account created by mistake, and confirm."
+      ],
+      "result": "A switched-off account cannot get new deals. Only an account with no deals and no customer link can be deleted.",
+      "tips": []
+    },
+    {
+      "title": "Add contacts",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Contacts > New contact (or New contact on an account)",
+      "route": "/crm/contacts?new=1",
+      "steps": [
+        "Open CRM > Contacts and click New contact, or open an account and click New contact.",
+        "Enter Name, and optionally Designation, Email, Phone, Account and Owner.",
+        "Tick Primary contact of the account if this is the main person.",
+        "Click Save contact."
+      ],
+      "result": "The contact appears on the account's Contacts tab. The contact page has Overview, Deals and Timeline tabs, and New deal, Log activity, Edit and Delete buttons.",
+      "tips": ["Deleting a contact does not break deals that name them."]
+    },
+    {
+      "title": "Create a deal",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Deals > New deal",
+      "route": "/crm/deals?new=1",
+      "steps": [
+        "Open CRM > Deals and click New deal (or New deal on an account or contact).",
+        "Enter the Deal name (for example Sunrise ERP rollout).",
+        "Search for and choose the Account, then choose the Contact.",
+        "Enter Amount (INR), for example 4,80,000, and Expected close.",
+        "Choose the Stage (First stage if empty). Leave Probability (%) empty to use the stage's probability.",
+        "Fill in Source, Owner, Next step, Competitor and Notes as needed.",
+        "Click Save deal."
+      ],
+      "result": "The deal is numbered (for example T2N-DL-26-2411-0002) and its page opens, showing Amount, Probability with the weighted value, Stage and Expected close.",
+      "tips": ["A new deal always starts in an open stage. A switched-off account cannot be chosen."]
+    },
+    {
+      "title": "Move deals through the pipeline",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Deals > Board",
+      "route": "/crm/deals",
+      "steps": [
+        "Open CRM > Deals. The Board tab shows one column per stage with the count and value.",
+        "Drag a card to another column, or click Move to… on the card and pick the stage.",
+        "On a deal page you can also click a stage in the stage path at the top.",
+        "Use the List tab to see deals as a table with Sort by, Stage and Status filters."
+      ],
+      "result": "The probability follows the new stage and the move is written to the Stage history tab with the days spent in the previous stage. The board shows open deals, value and weighted value at the top.",
+      "tips": [
+        "Closed Won and Closed Lost columns show deals closed in the last 90 days.",
+        "Overdue cards (past the expected close date) are marked Overdue."
+      ]
+    },
+    {
+      "title": "Add line items and products to a deal",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Deals > open a deal > Line items tab",
+      "route": "/crm/deals",
+      "steps": [
+        "Open an open deal and click the Line items tab.",
+        "Click Add line. Choose a Product from your catalogue (it fills Description, Rate and GST %) or keep Custom item and type them yourself.",
+        "Enter Qty, Rate and GST %, for example 2 x ₹1,20,000 at 18%.",
+        "Add more lines and click Save line items."
+      ],
+      "result": "The deal amount becomes the total before GST (₹2,40,000 in the example); the tile also shows the total with GST. These lines are copied into the quotation when you click Create quotation.",
+      "tips": ["Once a deal has line items its amount cannot be typed directly; change the items instead. At most 50 lines."]
+    },
+    {
+      "title": "Mark a deal won (creates the sales customer)",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Deals > open a deal > Mark won",
+      "route": "/crm/deals",
+      "steps": [
+        "Open the deal and click Mark won (or drag it to Closed Won).",
+        "In the Deal won window read which sales customer is linked.",
+        "Click Create quotation to start the quotation, Open deal to stay on the deal, or Close."
+      ],
+      "result": "The deal becomes Won with today's date. The system links the account's sales customer: the one already linked, an active customer with the same GSTIN or name, or a new customer created from the account (numbered for example T2N-CUS-26-2411-0001) with the primary contact's name, email and phone. The customer appears in Sales > Customers.",
+      "tips": [
+        "If the account's details are not valid for a customer (for example a wrong GSTIN), winning fails with a message; fix the account first.",
+        "If no customer is linked, a Link customer button appears on the won deal.",
+        "A won deal cannot be deleted and its account cannot be changed. If it was won by mistake, use Move to… to put it back in an open stage."
+      ]
+    },
+    {
+      "title": "Mark a deal lost",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Deals > open a deal > Mark lost",
+      "route": "/crm/deals",
+      "steps": [
+        "Open the deal and click Mark lost (or drag it to Closed Lost).",
+        "Choose Why was it lost? from the list (for example Price too high) or Other reason… and type it.",
+        "Optionally fill in Went to (competitor) and a Note.",
+        "Click Move to Closed Lost."
+      ],
+      "result": "The deal becomes Lost with today's date and the reason shows on the deal and in CRM Reports under Why deals are lost.",
+      "tips": ["To reopen a lost deal, click Move to… and pick an open stage."]
+    },
+    {
+      "title": "Create a quotation from a deal",
+      "who": "Admin, Managing Partner, Partner (any CRM user with the documents permission can issue it)",
+      "where": "CRM > Deals > open a deal > Create quotation",
+      "route": "/crm/deals",
+      "steps": [
+        "Open the deal (any deal that is not lost) and click Create quotation.",
+        "The Sales Quotations page opens with a note \"Started from the CRM deal…\". Check what was filled in: Customer name, Address (with Kind attention: and the contact's name), Customer GSTIN, Customer state, Subject (the deal name), the key detail Deal reference (the deal number) and the items (the deal's line items, or one line for the deal amount).",
+        "Correct anything, complete the rest of the quotation and click Issue quotation (see the Sales chapter)."
+      ],
+      "result": "The issued quotation is linked back to the deal and listed on the deal's Quotations card and the account's Quotations tab.",
+      "tips": ["Address and GSTIN come from the linked sales customer if there is one, otherwise from the CRM account."]
+    },
+    {
+      "title": "Plan and complete activities",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > Activities",
+      "route": "/crm/activities",
+      "steps": [
+        "Open CRM > Activities and click New activity (or Log activity on a lead, contact, account or deal).",
+        "Choose the Type (Task, Call, Meeting, Note or Email (logged)), type the Subject and set the Due date (required for a task), Time, Priority and Owner.",
+        "If you started from the Activities page, choose Related to (type) and the record.",
+        "Add Details and click Save activity.",
+        "When it is done click Complete, type the Outcome (optional) and click Mark completed. Use Reopen to undo."
+      ],
+      "result": "Activities show on the related record's timeline. Completed calls, meetings and logged emails add to a lead's score.",
+      "tips": [
+        "Use the chips Today, Overdue, Upcoming, All open, Completed and My activities to plan your day.",
+        "Email (logged) only records an email you sent elsewhere; the system does not send email.",
+        "Export CSV downloads the activities list."
+      ]
+    },
+    {
+      "title": "Attach documents to a lead, deal or account",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Lead, deal or account page > Documents tab",
+      "route": "",
+      "steps": [
+        "Open the lead, deal or account.",
+        "Click the Documents tab.",
+        "Add the file, for example a signed order, proposal or NDA."
+      ],
+      "result": "The file is kept with the record for everyone with CRM access to see.",
+      "tips": []
+    },
+    {
+      "title": "Use CRM reports and export data",
+      "who": "Anyone with CRM access",
+      "where": "CRM > CRM Reports",
+      "route": "/crm/reports",
+      "steps": [
+        "Open CRM > CRM Reports.",
+        "Under Export to CSV choose What (Leads, Deals or Activities), a Status, Created from and Created to, and click Download CSV.",
+        "Read the Funnel, Lead conversion by source, Sales team, Why deals are lost, Ageing of open deals and Forecast by expected close month."
+      ],
+      "result": "The CSV opens in Excel; cells that start like a formula are made safe.",
+      "tips": []
+    },
+    {
+      "title": "Set up pipeline stages, sources and lost reasons",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > CRM Settings",
+      "route": "/crm/settings",
+      "steps": [
+        "Open CRM > CRM Settings.",
+        "Pipeline stages tab: click Add stage, enter Name, Probability (%) and Colour, and click Save stage. Use Up and Down to change the order, Edit, Switch off or Delete.",
+        "Lead sources tab: type a New source and click Add. Use Rename, Switch off or Delete.",
+        "Lost reasons tab: add, rename, switch off or delete reasons in the same way."
+      ],
+      "result": "New stages appear on the board between the first open stage and Won/Lost. The won stage is always 100% and the lost stage 0%.",
+      "tips": [
+        "A stage with deals or deal history cannot be deleted; switch it off instead.",
+        "A source used by leads, or a reason used by deals, can be switched off but not deleted."
+      ]
+    },
+    {
+      "title": "Keep the product catalogue",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "CRM > CRM Settings > Products",
+      "route": "/crm/settings",
+      "steps": [
+        "Open CRM > CRM Settings and click the Products tab.",
+        "Click Add product or service.",
+        "Enter Name (for example Annual support), Code, Unit price (INR) (for example 60,000), GST % (for example 18) and Description.",
+        "Click Save. Use Edit, Switch off or Delete on each row."
+      ],
+      "result": "Active products are offered when adding line items to a deal.",
+      "tips": ["A product used on a deal cannot be deleted; switch it off instead."]
+    }
+  ],
+  "statuses": [
+    {"name": "Lead: New", "meaning": "Just added; nobody has contacted them yet."},
+    {"name": "Lead: Contacted", "meaning": "First contact made."},
+    {"name": "Lead: Qualified", "meaning": "A real opportunity; ready to convert."},
+    {"name": "Lead: Nurturing", "meaning": "Interested but not ready yet; keep in touch."},
+    {"name": "Lead: Unqualified", "meaning": "Not a fit. Cannot be converted until the status is changed."},
+    {"name": "Lead: Converted", "meaning": "Turned into a contact, account and possibly a deal. Locked as history."},
+    {"name": "Rating: Hot / Warm / Cold", "meaning": "How promising the lead is. The system suggests Hot from 60 points and Warm from 30 points of score."},
+    {"name": "Deal: Open", "meaning": "In one of the open pipeline stages; its probability counts towards the weighted forecast."},
+    {"name": "Deal: Won", "meaning": "Moved to Closed Won. The sales customer is linked or created."},
+    {"name": "Deal: Lost", "meaning": "Moved to Closed Lost with a reason."},
+    {"name": "Activity: Open / Completed", "meaning": "Whether the task, call or meeting has been done. Open ones are grouped as Today, Overdue or Upcoming."},
+    {"name": "Account: Prospect / Customer / Switched off", "meaning": "Prospect has no sales customer yet; Customer is linked to one (after a won deal); Switched off cannot get new deals."}
+  ],
+  "routines": {
+    "daily": [
+      "Open CRM > Activities > Today and Overdue and complete or reschedule each one.",
+      "Add new enquiries as leads the same day.",
+      "Log every call and meeting so lead scores stay accurate."
+    ],
+    "weekly": [
+      "Review the Deals board: move deals that progressed and update expected close dates of overdue deals.",
+      "Filter Leads by Open and follow up on Contacted and Nurturing leads.",
+      "Convert Qualified leads."
+    ],
+    "monthly": [
+      "Read CRM Reports: conversion by source, team results and why deals were lost.",
+      "Check the Forecast by expected close month with the partners.",
+      "Export leads and deals to CSV if you keep monthly records."
+    ],
+    "yearly": [
+      "Review pipeline stages, lead sources and lost reasons in CRM Settings.",
+      "Update product prices in the catalogue."
+    ]
+  },
+  "common_problems": [
+    {"problem": "I cannot see the CRM tile.", "fix": "Your role has no CRM permission (Finance Manager, HR Manager and Employee have none by default). Ask an Admin to grant crm.view or crm.manage."},
+    {"problem": "Buttons such as New lead or Convert are missing.", "fix": "You can only view CRM (crm.view). Ask a partner or administrator to make changes or grant crm.manage."},
+    {"problem": "Saving a lead shows \"This looks like a record you already have.\"", "fix": "Open the existing record from the links, or click Save anyway if it really is a different lead."},
+    {"problem": "Convert fails with \"An unqualified lead cannot be converted.\"", "fix": "Change the lead's status (for example to Qualified) and convert again."},
+    {"problem": "Mark won fails with \"The account cannot become a customer yet…\"", "fix": "Open the account, correct the details named in the message (for example the GSTIN) and mark the deal won again."},
+    {"problem": "The deal amount cannot be changed.", "fix": "The deal has line items; edit them on the Line items tab and the amount follows."},
+    {"problem": "A stage, source, reason or product cannot be deleted.", "fix": "It is in use. Switch it off instead."},
+    {"problem": "The import says \"No known column headings\".", "fix": "Use Download template and keep its first row of headings."}
+  ],
+  "connected": [
+    "Sales: winning a deal links or creates the customer in Sales > Customers.",
+    "Sales: Create quotation opens Sales > Quotations filled in from the deal, and the issued quotation is linked back to the deal and account.",
+    "Company: lead, deal and customer numbers follow Company > Document Numbering.",
+    "Reports: CRM figures feed the CRM Dashboard and CRM Reports."
+  ]
+}

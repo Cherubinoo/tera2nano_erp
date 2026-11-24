@@ -1,7 +1,7 @@
 """Purchase orders: draft, approval, issue (PDF on the letterhead), receiving goods, closing and cancelling.
 
     draft -> pending_approval -> approved -> issued -> partially_received -> received -> closed
-         +----------------------------------+  a draft can also be issued directly when nobody needs approval
+         +----------------------------------+  a draft can also be issued directly when no approval rule covers it
     cancelled: from any state before goods arrive and a bill is booked.
 
 `approve` and `reject` are plain service functions: the approvals module calls them from its handlers, and a person with the
@@ -91,6 +91,12 @@ def _approvals():
 def approval_managed():
     """Whether decisions must go through the shared approvals workflow."""
     return _approvals() is not None
+
+
+def needs_approval(order):
+    """Does an active approval rule cover this order? Then a draft must be approved before it can be issued."""
+    api = _approvals()
+    return api is not None and hasattr(api, "requires_approval") and api.requires_approval(order.company, "purchase_order", order.grand_total)
 
 
 @transaction.atomic
@@ -230,6 +236,9 @@ def issue(order, actor):
         raise ValidationError({"vendor": "This vendor is switched off."})
     if order.grand_total <= 0:
         raise ValidationError({"items": "The total must be more than zero."})
+    if order.status == Status.DRAFT and needs_approval(order):
+        # An approval rule covers this order: it has to be sent for approval and approved before it can be issued.
+        raise ValidationError("An approval rule covers this order. Send it for approval first; it can be issued once approved.")
     order.record = work_out(order.company, order.vendor, order.form)  # prices as they stand today
     order.taxable_total, order.tax_total, order.grand_total = (pricing.totals_of(order.record)[k] for k in
                                                                ("taxable_total", "tax_total", "grand_total"))

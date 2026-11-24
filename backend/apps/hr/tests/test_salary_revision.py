@@ -200,7 +200,7 @@ class StandaloneAndPermissionTests(RevisionBase):
     def test_every_role_against_the_actions_and_404s(self):
         self.raise_to()
         rid = self.rev().pk
-        allowed = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER, Role.HR_MANAGER}
+        allowed = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER, Role.HR_MANAGER}
         for role in (Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER, Role.HR_MANAGER, Role.PROJECT_MANAGER, Role.EMPLOYEE):
             c = client_for(make_user(f"u_{role}", role))
             for verb in ("approve", "reject"):

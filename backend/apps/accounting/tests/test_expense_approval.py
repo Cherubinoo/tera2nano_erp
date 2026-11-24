@@ -276,7 +276,7 @@ class StandaloneAndPermissionTests(ExpenseApprovalBase):
 
     def test_every_role_against_the_expense_actions(self):
         v = self.pending()
-        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
         for role in ALL_ROLES:
             c = client_for(make_user(f"u_{role}", role))
             if self.get(v)["status"] == "draft":
@@ -285,7 +285,7 @@ class StandaloneAndPermissionTests(ExpenseApprovalBase):
             who = ((400,) if role in manage else (403,))
             self.assertIn(c.patch(f"{A}/vouchers/{v['id']}/", {"notes": "n"}).status_code, who, role)
             self.assertIn(c.delete(f"{A}/vouchers/{v['id']}/").status_code, who, role)
-            self.assertEqual(c.get(f"{A}/vouchers/{v['id']}/").status_code, 200 if role in manage | {Role.PARTNER} else 403, role)
+            self.assertEqual(c.get(f"{A}/vouchers/{v['id']}/").status_code, 200 if role in manage else 403, role)
             for verb in ("record", "approve", "reject", "withdraw"):       # withdraw last: it takes the expense back to a draft
                 code = c.post(f"{A}/vouchers/{v['id']}/{verb}/", {"change_reason": "x"}).status_code
                 if role in manage:

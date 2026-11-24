@@ -334,6 +334,9 @@ class VendorPayment(UUIDModel):
     mode = models.CharField(max_length=8, choices=Mode.choices, default=Mode.BANK)
     reference = models.CharField(max_length=100, blank=True)  # UTR, cheque number, UPI reference
     paid_from = models.ForeignKey(CompanyBankAccount, null=True, blank=True, on_delete=models.PROTECT, related_name="+")
+    # Set only when this payment was created from a bank statement line on a ledger account with no Company Bank Account of
+    # its own (and not the default bank account): posts straight to this ledger account instead of through paid_from.
+    bank_ledger_account = models.ForeignKey("accounting.Account", null=True, blank=True, on_delete=models.PROTECT, related_name="+")
     notes = models.CharField(max_length=300, blank=True)
     project_id = models.UUIDField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.RECORDED)

@@ -524,7 +524,7 @@ export function QuotationsManager() {
         <Notice type="success">
           <p><strong>Quotation issued.</strong> ID: <code>{issued.reference_number}</code></p>
           <div className="row-actions"><Downloads doc={issued} onError={(e) => notify(e.message, 'error')} /></div>
-          <p className="hint">Use "Print PDF" on pre-printed letterhead paper, or "Letterhead PDF" to print or send on plain paper.</p>
+          <p className="hint">Use "Print PDF" on pre-printed letterhead paper, "Letterhead PDF" to print on plain paper, or "Email" to send the letterhead PDF to the customer.</p>
         </Notice>
       )}
 

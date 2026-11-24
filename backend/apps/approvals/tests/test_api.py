@@ -107,7 +107,8 @@ class RuleApiTests(ApprovalBase):
 
     def test_only_managers_change_rules_and_viewers_read_them(self):
         self.assertEqual(self.c["mp"].post(f"{A}/rules/", self.body()).status_code, 201)
-        for who in ("finance", "hr", "staff", "p1"):
+        self.assertEqual(self.c["p1"].post(f"{A}/rules/", self.body()).status_code, 201)  # a partner holds every permission
+        for who in ("finance", "hr", "staff", "pm"):
             self.assertEqual(self.c[who].post(f"{A}/rules/", self.body()).status_code, 403, who)
         self.assertEqual(self.c["finance"].get(f"{A}/rules/").status_code, 200)
         self.assertEqual(self.c["staff"].get(f"{A}/rules/").status_code, 403)

@@ -1,14 +1,16 @@
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import Launcher from './Launcher';
 import Layout from './Layout';
+import Join from './Join';
 import Login from './Login';
 import Wizard from './Wizard';
 import { AuthProvider, LookupsProvider, useAuth } from './context';
 import {
-  AccessPage, AddressesPage, BankPage, BasicInfoPage, BrandingPage, ContactsPage, DocumentsPage, FinancialYearsPage, HistoryPage, HomePage,
+  AccessPage, AddressesPage, InvitePage, BankPage, BasicInfoPage, BrandingPage, ContactsPage, DocumentsPage, FinancialYearsPage, HistoryPage, HomePage,
   LegalPage, LetterheadTemplatesPage, LettersPage, MinutesPage, NumberingPage, OperationsPage, OverviewPage, PartnersPage, PoliciesPage, QuotationsPage, TaxPage,
 } from './pages';
 import QuotationDetailPage from './pages/QuotationDetail';
+import { EmailSettingsPage, SentEmailsPage } from './pages/Email';
 import { CustomerDetailPage, CustomersPage } from './pages/sales/Customers';
 import DocumentDetail from './pages/sales/DocumentDetail';
 import DocumentForm from './pages/sales/DocumentForm';
@@ -21,6 +23,9 @@ import Reminders from './pages/sales/Reminders';
 import SalesHome from './pages/sales/SalesHome';
 import AccountingHome from './pages/accounting/AccountingHome';
 import { BankPage as BankCashPage, ReconcilePage } from './pages/accounting/Bank';
+import BankImportPage from './pages/accounting/BankImport';
+import BankMatchPage from './pages/accounting/BankMatch';
+import { BankReconciliationPage, BankRecHub } from './pages/accounting/BankRec';
 import { AccountLedgerPage, ChartPage } from './pages/accounting/ChartOfAccounts';
 import { JournalDetailPage, JournalNewPage, JournalPage } from './pages/accounting/Journal';
 import { BalanceSheet, CashFlow, ProfitLoss, ReportsHub, TrialBalance } from './pages/accounting/Reports';
@@ -56,6 +61,7 @@ export default function App() {
       <ToastProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/join/:token" element={<Join />} />
           <Route element={<RequireAuth />}>
             <Route path="/setup" element={<Wizard />} />
             <Route path="/apps" element={<Launcher />} />
@@ -82,7 +88,10 @@ export default function App() {
               <Route path="policies" element={<PoliciesPage />} />
               <Route path="documents" element={<DocumentsPage />} />
               <Route path="history" element={<RequirePermission codes={['audit.view']}><HistoryPage /></RequirePermission>} />
+              <Route path="invite" element={<RequirePermission codes={['users.invite']}><InvitePage /></RequirePermission>} />
               <Route path="access" element={<RequirePermission codes={['users.manage', 'users.view_activity']}><AccessPage /></RequirePermission>} />
+              <Route path="email" element={<RequirePermission codes={['email.manage']}><EmailSettingsPage /></RequirePermission>} />
+              <Route path="sent-emails" element={<RequirePermission codes={['email.manage']}><SentEmailsPage /></RequirePermission>} />
             </Route>
             <Route path="/sales" element={<RequirePermission codes={['sales.view']}><Layout /></RequirePermission>}>
             <Route index element={<SalesHome />} />
@@ -118,6 +127,11 @@ export default function App() {
               <Route path="vouchers/:id" element={<VoucherDetail />} />
               <Route path="bank" element={<BankCashPage />} />
               <Route path="bank/:id/reconcile" element={<ReconcilePage />} />
+              <Route path="bank-reconciliation" element={<BankRecHub />} />
+              <Route path="bank-import" element={<BankImportPage />} />
+              <Route path="bank/:id/import" element={<BankImportPage />} />
+              <Route path="bank/:id/match" element={<BankMatchPage />} />
+              <Route path="bank/:id/reconciliation" element={<BankReconciliationPage />} />
               <Route path="assets" element={<FixedAssetsPage />} />
               <Route path="assets/new" element={<AssetForm />} />
               <Route path="assets/:id" element={<AssetDetail />} />

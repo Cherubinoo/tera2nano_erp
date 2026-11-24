@@ -1,0 +1,295 @@
+{
+  "key": "documents",
+  "title": "Documents",
+  "purpose": "The Documents module is where you write and issue official letters, minutes of meetings and operations documents on the company letterhead, each with its own unique ID and ready-to-print PDFs. It also keeps the company document repository (certificates, agreements, proofs) with version history and access levels. Separately, many records across the system (employees, vendors, projects, bills and more) have their own attachments section for supporting files.",
+  "who": [
+    {"role": "Every role (by default)", "does": "Can issue letters, minutes and operations documents (permission documents.issue) and download issued PDFs."},
+    {"role": "Admin, Managing Partner, Partner", "does": "Also void issued documents, add or change letterhead templates and operations, verify or reject repository documents, and store Restricted documents."},
+    {"role": "Finance Manager", "does": "Uploads documents to the repository, edits their details and uploads new versions; sees Confidential documents."},
+    {"role": "Other roles", "does": "See and download Internal repository documents only, unless an administrator grants more."}
+  ],
+  "before_you_start": [
+    "Set up the letterhead first under Company > Branding and Letterhead, so issued PDFs carry the right logo, address and footer.",
+    "An issued document can never be edited. Check spelling, dates and names before you click Issue.",
+    "Letterhead templates and the operations list are created automatically the first time they are opened (LHT-001 to LHT-008 and OPS-001 to OPS-010)."
+  ],
+  "tasks": [
+    {
+      "title": "Write and issue a letter",
+      "who": "Anyone with documents.issue",
+      "where": "Documents > Letters and Documents",
+      "route": "/company/letters",
+      "steps": [
+        "Open the Documents module and click Letters and Documents.",
+        "In \"New letter\", choose the Letterhead template, for example \"LHT-003 Employee & HR Letters\", or \"No template (standard letter numbering)\".",
+        "Choose the Document type: Business letter, Offer letter, Appointment letter, Experience letter, Project handover letter or Project completion certificate.",
+        "Check the Letter date.",
+        "Optionally type a Heading; if left empty the template's heading is used.",
+        "In \"To (one line per row)\" type the recipient, for example The Manager / Acme Industries / Chennai on separate lines.",
+        "Type the Subject.",
+        "Type the Letter text. Leave a blank line between paragraphs.",
+        "Click Issue letter, read the confirmation and click Issue letter again."
+      ],
+      "result": "A unique ID is allocated, for example LHT-003/26/2411/00001 (template, two-digit year, day and month, running number). The letter is saved exactly as written, PDFs are produced, and the issue is recorded in the change history. A green box shows the ID with download buttons.",
+      "tips": [
+        "Each template has its own counter, which restarts at 00001 every calendar year.",
+        "If the letter is wrong after issuing, ask an administrator to void it and issue a new one."
+      ]
+    },
+    {
+      "title": "Download or print an issued document",
+      "who": "Anyone who can open the page",
+      "where": "Documents > Letters and Documents (or Meeting Minutes / Operations) > issued list",
+      "route": "/company/letters",
+      "steps": [
+        "Find the document in the issued list at the bottom of the page.",
+        "Click Letterhead PDF to download the full version with letterhead artwork, for email or printing on plain paper.",
+        "Click Print PDF to download the plain version without letterhead artwork, for printing on pre-printed letterhead paper.",
+        "Click Open to print to open the plain version in a new browser tab and print it straight away.",
+        "Click Email to send the letterhead PDF from the app: type the recipient's address in To, check the subject and message (it ends with your company signature) and click Send email."
+      ],
+      "result": "Files are named after the ID, for example LHT-003-26-2411-00001.pdf and ...-print.pdf. Emailed documents are listed under Administration > Sent emails.",
+      "tips": ["Both PDFs have the same text in the same positions, so either can be used.", "Email needs the documents.issue permission and is not offered for void documents."]
+    },
+    {
+      "title": "Search the issued documents",
+      "who": "Anyone who can open the page",
+      "where": "Documents > Letters and Documents > Issued letters",
+      "route": "/company/letters",
+      "steps": [
+        "In \"Search by ID or heading\" type part of the ID (for example LHT-002/26) or a word from the heading.",
+        "Optionally pick a template in the Template box (or an operation in the Operation box on the Operations page).",
+        "Click Search."
+      ],
+      "result": "The list shows ID, Heading, Template, Date, Issued by and Status for matching documents.",
+      "tips": ["Clear the search box and click Search again to see everything."]
+    },
+    {
+      "title": "Void an issued document",
+      "who": "Admin, Managing Partner, Partner (company.manage)",
+      "where": "Documents > Letters and Documents / Meeting Minutes / Operations > issued list > Void",
+      "route": "",
+      "steps": [
+        "Find the issued document in the list.",
+        "Click Void.",
+        "Type the reason, for example \"Wrong recipient name\" (required).",
+        "Click Void document."
+      ],
+      "result": "The document and its ID are kept but marked void; the ID is never reused. The reason is recorded in the change history and the numbering register.",
+      "tips": ["Voiding cannot be undone. Issue a corrected document afterwards; it gets a new ID."]
+    },
+    {
+      "title": "Record and issue minutes of a meeting",
+      "who": "Anyone with documents.issue",
+      "where": "Documents > Meeting Minutes",
+      "route": "/company/minutes",
+      "steps": [
+        "Click Meeting Minutes.",
+        "Fill Meeting title (required) and Meeting date (required).",
+        "Optionally fill Start time, End time, Venue, Mode (In person, Online, Hybrid) and Minutes taken by.",
+        "In \"Minutes ID format\" keep \"Standard minutes numbering\" (for example T2N-MOM-0001) or choose a letterhead template.",
+        "Leave \"Existing meeting ID (optional)\" empty for a new meeting, or type the ID of an earlier meeting to add another set of minutes to it.",
+        "Under Attendees fill Attendee name, Designation / organisation and Attendance (Present, Absent, Apologies). Click Add attendee for more rows.",
+        "Type the Agenda, one item per line.",
+        "Under \"Discussion and decisions\" fill Heading, Discussion and Decision for each item; click Add item for more.",
+        "Under \"Action items\" fill Action, Owner and Due date; click Add action for more.",
+        "Optionally fill Next meeting, for example \"27 November 2026, 10:00\".",
+        "Click Issue minutes and confirm."
+      ],
+      "result": "A minutes ID and (unless you gave one) a new meeting ID are allocated. The minutes are saved exactly as written and cannot be edited. The PDFs leave blank space at the bottom right for the company seal. Issuing does not record any approval.",
+      "tips": [
+        "You need attendees, an agenda or at least one discussion item before you can issue.",
+        "Rows without a heading or action are ignored.",
+        "The end time must be after the start time."
+      ]
+    },
+    {
+      "title": "Issue an operations document",
+      "who": "Anyone with documents.issue",
+      "where": "Documents > Operations",
+      "route": "/company/operations",
+      "steps": [
+        "Click Operations.",
+        "Under \"1. Choose the operation\" click a card, for example \"OPS-003 Site Visit / Inspection Report\". Each card shows the next reference.",
+        "Optionally type a Heading; if empty the operation's heading is printed.",
+        "Check the Document date.",
+        "Under \"Details (optional)\" add label and value pairs, for example Project: Alpha, Location: Chennai.",
+        "Paste or type the Content. A blank line starts a new paragraph.",
+        "Under \"Sections (optional)\" add a Section heading and Section text for each part.",
+        "Click Issue document and confirm."
+      ],
+      "result": "A unique ID is allocated from the operation's own counter, for example OPS-003/26/2411/00001, and the PDFs are produced.",
+      "tips": ["You must paste content or add at least one section."]
+    },
+    {
+      "title": "Add or change an operation",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Documents > Operations > Manage operations",
+      "route": "/company/operations",
+      "steps": [
+        "Scroll to \"Manage operations\" and click Add operation (or Edit on an existing row).",
+        "Fill Operation ID in the form OPS-011, Operation name, and optionally Heading printed on the document, Description and Display order.",
+        "Tick Active and click Save.",
+        "To stop using an operation, click Deactivate and give a reason."
+      ],
+      "result": "The new operation appears as a card with its own counter.",
+      "tips": ["An operation's ID cannot change once documents have been issued on it."]
+    },
+    {
+      "title": "Manage letterhead templates",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Documents > Letterhead Templates",
+      "route": "/company/letterhead-templates",
+      "steps": [
+        "Click Letterhead Templates to see each template's ID, Name, Heading, Next reference, number Issued and Status.",
+        "Click Add template, fill Template ID (for example LHT-009), Template name, optional Heading printed on the letter, Description and Display order, and click Save.",
+        "Click Edit to rename a template or change its heading; confirm the changes.",
+        "Click Deactivate (with a reason) to hide a template from new letters, or Reactivate to bring it back."
+      ],
+      "result": "Active templates appear in the Letterhead template list when writing letters and minutes.",
+      "tips": ["Other roles can click View to see a template's details but cannot change it."]
+    },
+    {
+      "title": "Upload a company document to the repository",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (finance.manage)",
+      "where": "Documents > Company Documents > Upload document",
+      "route": "/company/documents",
+      "steps": [
+        "Click Company Documents, then Upload document.",
+        "Choose the File: PDF, PNG or JPEG up to 10 MB.",
+        "Choose the Document type, for example \"GST registration certificate\" or \"LLP agreement\".",
+        "Check the Title (filled from the file name).",
+        "Choose the Access classification: Internal, Confidential (finance and admins) or Restricted (admins only). It starts on Confidential.",
+        "Optionally fill Expiry date, Related partner, Related tax registration, Related bank account, Related address and Notes.",
+        "Click Upload."
+      ],
+      "result": "The document is stored privately as version 1 with Verification \"Unverified\". The upload is recorded in the change history.",
+      "tips": ["Only administrators can store Restricted documents."]
+    },
+    {
+      "title": "Upload a new version of a document",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Documents > Company Documents > New version",
+      "route": "/company/documents",
+      "steps": [
+        "Find the document and click New version.",
+        "Choose the new file and check the details.",
+        "Click Upload."
+      ],
+      "result": "The new file becomes the current version (for example v2); the older version is kept in the history.",
+      "tips": ["Use this when a certificate is renewed, instead of uploading a separate document."]
+    },
+    {
+      "title": "See versions and download older copies",
+      "who": "Anyone who can see the document",
+      "where": "Documents > Company Documents > Versions",
+      "route": "/company/documents",
+      "steps": [
+        "Click Versions on the document's row.",
+        "Read each version's number, upload time, uploader and checksum. The newest is marked Current.",
+        "Click Download next to any version.",
+        "Click Close."
+      ],
+      "result": "Downloads of Confidential and Restricted documents are recorded in the change history.",
+      "tips": []
+    },
+    {
+      "title": "Edit document details",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Documents > Company Documents > Edit",
+      "route": "/company/documents",
+      "steps": [
+        "Click Edit on the document's row.",
+        "Change the Title, Access classification, Expiry date, related records or Notes. (The document type cannot be changed here.)",
+        "Click Save and give a reason if asked."
+      ],
+      "result": "The details are updated and recorded in the change history. The file itself is not changed.",
+      "tips": ["Only administrators can move a document into or out of Restricted."]
+    },
+    {
+      "title": "Verify or reject a repository document",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Documents > Company Documents > Verify / Reject",
+      "route": "/company/documents",
+      "steps": [
+        "Open the document with Download and check it against the original.",
+        "Click Verify and confirm, or click Reject and confirm."
+      ],
+      "result": "The Verification column changes to Verified or Rejected; the decision is recorded.",
+      "tips": ["Repository documents are what you pick as the supporting document for a tax registration or bank account; those records cannot be marked verified until one is attached."]
+    },
+    {
+      "title": "Filter and download repository documents",
+      "who": "Anyone who can open the page",
+      "where": "Documents > Company Documents",
+      "route": "/company/documents",
+      "steps": [
+        "Choose a type in \"Filter by type\", or \"All types\".",
+        "Check the Expiry column; expired documents show a red Expired badge.",
+        "Click Download to save a file."
+      ],
+      "result": "You only see documents classified for your role.",
+      "tips": []
+    },
+    {
+      "title": "Attach a file to a record",
+      "who": "Anyone with the manage permission of that record's module",
+      "where": "The record's documents section, for example HR > Employees > (employee) > Documents tab",
+      "route": "",
+      "steps": [
+        "Open the record, for example an employee, vendor, vendor bill, project, partner, CRM lead, deal or account, tax filing or payment, meeting, circular, office asset, fixed asset, contract or compliance filing.",
+        "Go to its documents section (its title varies, for example \"Scanned bill and documents\" or \"Challan receipt\").",
+        "Choose the File (PDF, PNG or JPEG).",
+        "Optionally type a Name (the file name is used if empty) and an Expires date.",
+        "Click Attach file."
+      ],
+      "result": "The file is listed with Name, Added date and uploader, Expires and Size. The upload is recorded in the change history.",
+      "tips": ["Give ID proofs, insurance and certificates an expiry date to see when they lapse (a red Expired badge appears)."]
+    },
+    {
+      "title": "Download or remove an attachment",
+      "who": "View: the module's view permission. Remove: its manage permission",
+      "where": "The record's documents section",
+      "route": "",
+      "steps": [
+        "Click Download to save the file.",
+        "To delete it, click Remove and then Remove again in the confirmation."
+      ],
+      "result": "A removed file is deleted permanently; the removal is recorded in the change history.",
+      "tips": []
+    }
+  ],
+  "statuses": [
+    {"name": "Issued", "meaning": "The document was issued and is valid."},
+    {"name": "void", "meaning": "Cancelled by an administrator with a reason; the ID is kept and never reused."},
+    {"name": "superseded", "meaning": "Replaced by a newer issued document."},
+    {"name": "Unverified / Verified / Rejected", "meaning": "Repository document check status set by an administrator."},
+    {"name": "Current", "meaning": "The latest version of a repository document."},
+    {"name": "Expired", "meaning": "The document's or attachment's expiry date has passed."},
+    {"name": "Internal", "meaning": "Any signed-in user may see it."},
+    {"name": "Confidential (finance and admins)", "meaning": "Only roles with documents.view_confidential may see it (Finance Manager, partners, admin by default)."},
+    {"name": "Restricted (admins only)", "meaning": "Only roles with documents.view_restricted may see it (admin and partners by default)."},
+    {"name": "Active / Inactive", "meaning": "Whether a letterhead template or operation can be used for new documents."}
+  ],
+  "routines": {
+    "daily": ["Issue letters and operations documents as needed; download the Print PDF for pre-printed paper."],
+    "weekly": ["Issue minutes of the week's meetings soon after they are held."],
+    "monthly": ["Check Company Documents for Expired badges and upload renewed versions."],
+    "yearly": ["Review letterhead templates and operations; deactivate unused ones."]
+  },
+  "common_problems": [
+    {"problem": "\"Your role may not issue documents.\"", "fix": "Ask an administrator to give your role \"Issue letters, quotations, minutes and operations documents\" in Administration > Users and Access."},
+    {"problem": "A mistake was found after issuing.", "fix": "Issued documents cannot be edited. Ask an administrator to Void it with a reason, then issue a corrected one."},
+    {"problem": "\"This letterhead template is switched off.\"", "fix": "Choose another template, or ask an administrator to Reactivate it under Letterhead Templates."},
+    {"problem": "Upload refused: \"Only PDF, PNG or JPEG files are accepted.\" or larger than 10 MB.", "fix": "Save the file as PDF, PNG or JPEG and reduce its size, then try again."},
+    {"problem": "No Upload document button.", "fix": "Uploading to the repository needs a finance or administrator role."},
+    {"problem": "A document others mention is not in my list.", "fix": "It is Confidential or Restricted and your role cannot see it."}
+  ],
+  "connected": [
+    "Uses the company profile, addresses, contacts, signatories, policies and branding from the Company module to build each PDF.",
+    "Uses Document Numbering for standard letter and minutes numbers; templates and operations have their own counters.",
+    "Repository documents can be linked as supporting documents for tax registrations, bank accounts and signatories in Company.",
+    "Attachments appear on records in HR, Purchases, Projects, Partners, CRM, Tax, Compliance, Workplace and Accounting (fixed assets).",
+    "Every issue, void, upload, download of confidential files and attachment change is written to Administration > Change History."
+  ]
+}

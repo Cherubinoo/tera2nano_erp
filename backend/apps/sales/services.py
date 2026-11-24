@@ -354,8 +354,10 @@ def open_receivables(customer, *, lock=False):
 
 @transaction.atomic
 def record_payment(company, actor, *, customer, date, amount, mode, reference="", deposit_account=None, notes="",
-                   allocations=None, auto_allocate=False, project_id=None):
-    """Record money received and apply it to invoices. Anything not applied stays as the customer's advance."""
+                   allocations=None, auto_allocate=False, project_id=None, bank_ledger_account=None):
+    """Record money received and apply it to invoices. Anything not applied stays as the customer's advance.
+    `bank_ledger_account` is for bank-statement matching only: it posts straight to that ledger account instead of the
+    usual deposit_account lookup, for a bank account with no Company Bank Account record of its own."""
     amount = amount_from(amount)
     project_id = resolve_project(company, project_id)
     if mode not in Payment.Mode.values:
@@ -387,7 +389,8 @@ def record_payment(company, actor, *, customer, date, amount, mode, reference=""
             raise ValidationError({"allocations": "More is applied to invoices than the payment amount."})
     payment = Payment.objects.create(
         company=company, customer=customer, date=date, amount=amount, mode=mode, reference=(reference or "").strip()[:100],
-        deposit_account=deposit_account, notes=(notes or "").strip()[:300], created_by=actor, project_id=project_id,
+        deposit_account=deposit_account, bank_ledger_account=bank_ledger_account, notes=(notes or "").strip()[:300],
+        created_by=actor, project_id=project_id,
         reference_code=numbering.allocate_number(company, DocType.PAYMENT, actor=actor, on_date=date).reference_number)
     for doc, use in plan:
         PaymentAllocation.objects.create(payment=payment, document=doc, amount=use)

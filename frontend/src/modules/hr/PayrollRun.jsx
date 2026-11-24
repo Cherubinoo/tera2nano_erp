@@ -6,6 +6,7 @@ import { money, num, plain, today } from '../../format';
 import { asList, useLoad } from '../../hooks';
 import { Badge, Dialog, ErrorBox, Field, FormErrors, Loading, Notice, fmtDate, useConfirm, useReasonDialog, useToast } from '../../ui';
 import { ApprovalStatus } from '../approvals/ApprovalBadge';
+import { EmailButton } from '../../components/Email';
 import { FormDialog, H, StatusBadge, Tile, days, options, useData } from './common';
 
 // One payslip: the earnings and deductions table, and (while the run is a draft) the inputs that can be adjusted.
@@ -191,7 +192,8 @@ export default function PayrollRun() {
               <td className="num" data-label="Gross">{plain(s.gross)}</td><td className="num" data-label="Deductions">{plain(s.total_deductions)}</td>
               <td className="num" data-label="Net pay"><strong>{plain(s.net_pay)}</strong></td>
               <td className="hr-row-actions"><button type="button" className="btn btn-small" onClick={(e) => { e.stopPropagation(); setSlip(s.id); }}>{a.edit ? 'Open and adjust' : 'Open'}</button>
-                {a.bank_file && <button type="button" className="btn btn-small" onClick={(e) => { e.stopPropagation(); downloadFile(`${H}/payroll/payslips/${s.id}/pdf/`, 'payslip.pdf').catch((err) => notify(err.message, 'error')); }}>PDF</button>}</td>
+                {a.bank_file && <button type="button" className="btn btn-small" onClick={(e) => { e.stopPropagation(); downloadFile(`${H}/payroll/payslips/${s.id}/pdf/`, 'payslip.pdf').catch((err) => notify(err.message, 'error')); }}>PDF</button>}
+                {a.bank_file && <span onClick={(e) => e.stopPropagation()} role="presentation"><EmailButton kind="payslip" id={s.id} perm="hr.payroll" small label="Email" title={`Email payslip to ${s.employee.name}`} /></span>}</td>
             </tr>
           ))}</tbody>
         </table></div>

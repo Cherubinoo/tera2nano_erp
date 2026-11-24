@@ -1,0 +1,545 @@
+{
+  "key": "accounting",
+  "title": "Accounting",
+  "purpose": "Accounting holds the company's books: the chart of accounts, every journal entry, cash and bank balances, fixed assets and budgets. Invoices, payments, vendor bills, payroll and partner transactions post here by themselves; in this module you record the money that moves outside those documents (expenses and other income), make manual journal entries, import bank statements and match them to the books, reconcile the bank and read the financial statements. Every report (trial balance, ledger, profit and loss, balance sheet, cash flow) is read straight from the posted entries.",
+  "who": [
+    {"role": "Admin, Managing partner, Partner", "does": "Hold every permission: record, reverse, reconcile, run depreciation, manage budgets and read every report."},
+    {"role": "Finance manager", "does": "Day-to-day bookkeeper by default (accounting.view and accounting.manage): records expenses and income, posts journal entries, reconciles bank accounts, enters opening balances, manages fixed assets and budgets."},
+    {"role": "HR manager, Project manager, Employee", "does": "No access to the Accounting module by default. An admin can grant accounting.view (read only) or accounting.manage in Administration > Users and Access."}
+  ],
+  "before_you_start": [
+    "Open the Accounting tile from the module launcher. The left menu shows: Accounting Dashboard, Expenses and Income, Bank and Cash, Bank reconciliation, Import statement, Journal, Fixed Assets, Budgets, Chart of Accounts, Opening balances, Financial Reports.",
+    "Pages that change the books (Record expense, New journal entry, Reconcile, Transfer, Import statement, Accept, Create entry and similar buttons) appear only for people holding accounting.manage. Opening balances needs accounting.manage even to open.",
+    "Make sure the company's financial years are set in Company > Financial Year Settings. Nothing can be posted with a date inside a locked financial year.",
+    "Expense and income numbers, journal references and fixed asset codes come from Company > Document Numbering.",
+    "GST can only be entered on an expense or income when GST is switched on for the company (Company > Tax Configuration).",
+    "The first time, use Chart of Accounts > Set up the books so all standard accounts exist."
+  ],
+  "tasks": [
+    {
+      "title": "Set up the books (standard accounts)",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Chart of Accounts > Set up the books",
+      "route": "/accounting/accounts",
+      "steps": [
+        "Open Accounting > Chart of Accounts.",
+        "Click Set up the books.",
+        "Read the message and click Set up."
+      ],
+      "result": "Any missing standard accounts are created, and any invoice, credit note or payment made before the books existed is posted. A message says how many accounts were created and how many documents and payments were posted. Anything already posted is left alone, so it is safe to run again.",
+      "tips": ["Accounts marked System are the ones the software posts to; they cannot be switched off."]
+    },
+    {
+      "title": "Add, edit or switch off an account",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Chart of Accounts > New account",
+      "route": "/accounting/accounts",
+      "steps": [
+        "Open Accounting > Chart of Accounts.",
+        "Click New account.",
+        "Enter the Account code (letters and digits, for example 5250) and the Account name (for example Internet charges).",
+        "Choose the Kind of account, for example Operating expense under Expenses, or Bank under Assets.",
+        "Optionally add a Description, then click Save.",
+        "To change an account later, click Edit on its row. To stop using an account, click Switch off (Switch on brings it back)."
+      ],
+      "result": "The account appears in its group (Assets, Liabilities, Equity, Income, Expenses) and can be used in entries straight away. Switched-off accounts are hidden unless you tick Show switched-off accounts, and cannot be used in new entries.",
+      "tips": [
+        "An account that already has entries, or one the system posts to, keeps its kind; only the code, name and description can change.",
+        "Each account code can be used only once."
+      ]
+    },
+    {
+      "title": "Enter opening balances",
+      "who": "Finance manager or partner (needs accounting.manage)",
+      "where": "Accounting > Opening balances",
+      "route": "/accounting/opening-balances",
+      "steps": [
+        "Open Accounting > Opening balances (also reachable from Chart of Accounts > Opening balances).",
+        "In Balances as at, choose the date, usually the day before your first transaction (for example 31-03-2026 when you start on 1 April).",
+        "For each balance-sheet account that does not start at zero, type the amount in Debit or Credit. Example: Bank account Debit 4,50,000; Partners' capital Credit 5,00,000. Use Find an account to search by code or name.",
+        "Check the Totals table: Total debit, Total credit and Difference.",
+        "Click Post opening balances and confirm."
+      ],
+      "result": "One journal entry (source Opening balance) is posted. If debits and credits differ, the difference goes to the Opening balance adjustments account so the books always balance. The page then shows a notice with a link to the entry instead of the form.",
+      "tips": [
+        "Assets normally have a debit balance; liabilities and capital a credit balance. Typing on one side clears the other side of that row.",
+        "Opening balances are entered once. To change them, open the entry in the Journal and Reverse it; the form opens again."
+      ]
+    },
+    {
+      "title": "Record an expense",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Expenses and Income > Record expense",
+      "route": "/accounting/vouchers?new=expense",
+      "steps": [
+        "Open Accounting > Expenses and Income and stay on the Expenses tab (or click Record expense on the Accounting Dashboard).",
+        "Click Record expense.",
+        "Enter the Date and choose the Expense account, for example Office rent.",
+        "Fill Paid to (for example Sharma Properties) and choose Paid from (the cash or bank account).",
+        "Enter Amount (before GST), for example 25,000.",
+        "If GST applies, choose GST: Same state (CGST + SGST) or Other state (IGST), then the GST rate (for example 18%). The line under the form shows the total, here Total 29,500.00 (GST 4,500.00).",
+        "Enter the Bill or receipt number, pick a Project if the cost belongs to one, and add Notes if needed.",
+        "Click Save to record it now, or Keep as draft to finish it later."
+      ],
+      "result": "On Save the expense gets the next expense number and is posted to the books (Dr expense account and GST input, Cr the cash or bank account). If an approval rule covers an expense of this size, it is not numbered or posted; it shows Pending approval and goes to the approvers. A draft stays unnumbered and outside the books.",
+      "tips": [
+        "While you type, a yellow notice warns if the expense takes the account past its line in the active budget. It is only a warning; you can still save.",
+        "The project tag lets the cost show in that project's profit and loss.",
+        "If GST is not switched on for the company, the GST fields do not appear."
+      ]
+    },
+    {
+      "title": "Finish, edit or delete a draft expense",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Expenses and Income > Draft chip > Open",
+      "route": "/accounting/vouchers",
+      "steps": [
+        "Open Accounting > Expenses and Income and click the Draft chip.",
+        "Click Open on the expense.",
+        "Click Edit to change it and then Save changes.",
+        "Click Record expense when it is ready, or Delete to remove the draft."
+      ],
+      "result": "Record expense numbers and posts it, or sends it for approval if a rule applies. Delete removes the draft completely (only drafts can be deleted).",
+      "tips": ["A draft that was rejected by an approver shows the approver's note at the top. Correct it and record it again."]
+    },
+    {
+      "title": "Follow an expense through approval",
+      "who": "Finance manager (preparer); approvers set in the Approvals module",
+      "where": "Accounting > Expenses and Income > Pending approval chip > Open",
+      "route": "/accounting/vouchers",
+      "steps": [
+        "Open Accounting > Expenses and Income and click Pending approval.",
+        "Open the expense. The header shows the approval badge (click it to open the approval request).",
+        "Approvers decide from the approvals bell in the top bar or the Approvals module.",
+        "To change something before a decision, click Take back on the expense; it becomes a draft again."
+      ],
+      "result": "When approved, the expense is numbered and posted exactly like a directly recorded one. When rejected, it returns to Draft with the reason shown. If the request was closed elsewhere while the expense still waits, a Request approval button sends it again.",
+      "tips": ["Income is never held for approval; only expenses above a rule are."]
+    },
+    {
+      "title": "Record other income",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Expenses and Income > Other income tab > Record income",
+      "route": "/accounting/vouchers?new=income",
+      "steps": [
+        "Open Accounting > Expenses and Income and click the Other income tab.",
+        "Click Record income.",
+        "Enter Date, Income account (for example Interest income), Received from and Received in (bank or cash).",
+        "Enter Amount (before GST) and GST if output tax applies.",
+        "Enter the Receipt or UTR number, project if relevant, and Notes, then click Save."
+      ],
+      "result": "The income is numbered from the income series and posted at once (Dr bank or cash, Cr income account and any GST output).",
+      "tips": ["Use this only for money not covered by a customer invoice. Customer receipts against invoices belong in Sales > Payments Received."]
+    },
+    {
+      "title": "Void a recorded expense or income",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Expenses and Income > Void",
+      "route": "/accounting/vouchers",
+      "steps": [
+        "Find the entry in Expenses and Income (use Search for number, name, reference or notes).",
+        "Click Void on its row, or open it and click Void.",
+        "Type the reason and confirm Void."
+      ],
+      "result": "The journal entry it made is reversed and the record is kept with status Void and the reason. A recorded entry can never be edited; void it and enter it again.",
+      "tips": []
+    },
+    {
+      "title": "Search and filter expenses and income",
+      "who": "Anyone with accounting.view",
+      "where": "Accounting > Expenses and Income",
+      "route": "/accounting/vouchers",
+      "steps": [
+        "Choose the Expenses or Other income tab.",
+        "On Expenses, click a status chip: All, Draft, Pending approval, Recorded or Void (counts are shown in brackets).",
+        "Type in Search (number, name, reference or notes) and click Search."
+      ],
+      "result": "The list shows matching entries with the number of entries and the recorded total at the bottom. Open any row to see its account, project, who entered it and a link to its journal entry.",
+      "tips": []
+    },
+    {
+      "title": "Post a manual journal entry",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Journal > New journal entry",
+      "route": "/accounting/journal/new",
+      "steps": [
+        "Open Accounting > Journal and click New journal entry.",
+        "Enter the Date and What is it for? (for example Provision for audit fee FY 2025-26).",
+        "On each line choose an Account and type either a Debit or a Credit, with an optional Description. Example: Audit fees Debit 40,000; Audit fee payable Credit 40,000.",
+        "Click Add line for more lines; Remove deletes a line (at least two lines stay).",
+        "Watch the status: it must say Balanced.",
+        "Click Post entry."
+      ],
+      "result": "The entry is posted at once with the next journal reference and opens on its own page. A posted entry is never edited; if it is wrong, reverse it.",
+      "tips": [
+        "A line is either a debit or a credit, never both.",
+        "Switched-off accounts and dates in a locked financial year are refused."
+      ]
+    },
+    {
+      "title": "Find and reverse a journal entry",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Journal > (entry) > Reverse",
+      "route": "/accounting/journal",
+      "steps": [
+        "Open Accounting > Journal.",
+        "Search by reference or description, or pick a source in From (for example Expense, Payroll, Vendor bill), then click Search.",
+        "Click the entry to open it.",
+        "For a manual journal, transfer or opening balance entry, click Reverse, type the reason and confirm."
+      ],
+      "result": "A mirror entry is posted today; the original stays in the books marked Reversed, with links between the two. Entries posted automatically (invoice, expense, payroll and so on) have no Reverse button: void the source document instead, which reverses its entry.",
+      "tips": ["An entry that has already been reversed, or is itself a reversal, cannot be reversed."]
+    },
+    {
+      "title": "Transfer money between cash and bank",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Bank and Cash > Transfer",
+      "route": "/accounting/bank",
+      "steps": [
+        "Open Accounting > Bank and Cash.",
+        "Click Transfer (shown when there are at least two cash or bank accounts).",
+        "Choose From and To, enter the Amount (for example 20,000) and the Date.",
+        "Add Notes such as Cash deposited at the bank, then click Transfer."
+      ],
+      "result": "A Transfer journal entry is posted, moving the amount between the two accounts. Both balances update on the Bank and Cash page.",
+      "tips": []
+    },
+    {
+      "title": "Reconcile a bank or cash account by hand (ticking)",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Bank and Cash > Reconcile",
+      "route": "/accounting/bank",
+      "steps": [
+        "Open Accounting > Bank and Cash. Each tile shows the balance and how many lines are still to check. Use this for a cash account, or a bank account whose statement you are not importing; with a statement file, use Bank reconciliation instead.",
+        "Click Reconcile on the bank account.",
+        "Enter the Statement date and the Statement closing balance from the bank statement (negative if overdrawn).",
+        "Tick every line that appears on the statement (Money in and Money out columns).",
+        "Watch the strip: Already cleared, Ticked now, Books show and Difference to statement.",
+        "When the difference is zero, click Reconcile."
+      ],
+      "result": "The ticked lines are marked Reconciled (the badge also shows in the ledger) and the reconciliation is listed under Earlier reconciliations with its date, closing balance and number of lines.",
+      "tips": [
+        "The Reconcile button stays disabled until the difference is exactly zero.",
+        "A line dated after the statement date cannot be cleared on that statement.",
+        "Only the latest reconciliation can be undone: click Undo on it and its lines go back to unreconciled."
+      ]
+    },
+    {
+      "title": "Import a bank statement",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Import statement",
+      "route": "/accounting/bank-import",
+      "steps": [
+        "Download the statement from your bank's internet banking as CSV, Excel (.xlsx or .xls), a text-based PDF, or OFX. A scanned or photographed PDF cannot be read; download the statement as CSV or Excel instead.",
+        "Open Accounting > Import statement (or Bank reconciliation > Import on the account).",
+        "Choose the Bank account and the Statement file, then click Upload and read.",
+        "Check the columns. Row with the column names is found below the account details at the top of the file; Date, Description / narration, Reference / cheque no., Withdrawal (money out), Deposit (money in) and Balance are guessed from the headings. If the statement has one amount column, choose it under Single amount column and pick the Dr / Cr column if there is one.",
+        "Leave Dates are written on Day first for Indian statements (05/08/2026 is 5 August).",
+        "Click Check. The summary shows rows read, how many will be imported, how many were already imported, heading and total rows skipped, and each row with a problem and why. The first lines are listed with Money in, Money out and Balance.",
+        "If the figures look right, click Import N lines."
+      ],
+      "result": "The statement's lines are added to the bank account, ready to match. Import finished shows the summary and a Match the lines button. The file is kept privately and listed under Statements imported for this account, where it can be downloaded again.",
+      "tips": [
+        "Importing a statement that overlaps an earlier one is safe: lines already imported are skipped and counted as Already imported.",
+        "The column choices are remembered for the account, so the next statement from the same bank is set up for you.",
+        "A wrong import can be taken out with Remove while none of its lines is matched or ignored.",
+        "Lines dated on or before the date the account was last reconciled are not imported; undo that reconciliation first if a line is really missing.",
+        "Live bank feeds are not connected; statements always come from a file."
+      ]
+    },
+    {
+      "title": "Match statement lines to the books",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Bank reconciliation > Match lines",
+      "route": "/accounting/bank-reconciliation",
+      "steps": [
+        "Open Accounting > Bank reconciliation and click Match lines on the account. The To match chip lists the lines not matched yet.",
+        "Under each line are the suggested entries from the books with Sure match, Likely match or Possible match and the reasons (same amount, how many days apart, a reference or name found in the bank's narration).",
+        "Click Accept on the right suggestion. To accept every sure match at once, click Accept all sure matches.",
+        "If the suggestion is wrong or missing, click Find entry, search by reference, name or amount and tick the entry. Tick several entries when one bank line covers them (for example one deposit for two customer payments); Match is allowed when the Difference is zero.",
+        "When several statement lines make up one entry, tick the lines' boxes and click Match N selected lines together.",
+        "For a line that should not be matched (for example a bank error reversed the next day), click Ignore and give the reason."
+      ],
+      "result": "Matched lines move to the Matched chip, showing the entry they were matched to; ignored lines move to Ignored with the reason. Each match, undo and ignore is written to the company change history.",
+      "tips": [
+        "Undo match on the Matched chip puts the line back to match. It is not offered once the account is reconciled past that date.",
+        "Stop ignoring on the Ignored chip brings an ignored line back.",
+        "Ignored lines still appear in the reconciliation report as money on the statement that is not in the books."
+      ]
+    },
+    {
+      "title": "Create the missing entry from a statement line",
+      "who": "Finance manager or partner (customer payments also need sales.manage, vendor payments purchases.manage)",
+      "where": "Accounting > Bank reconciliation > Match lines > Create entry",
+      "route": "/accounting/bank-reconciliation",
+      "steps": [
+        "On Match lines, click Create entry on a line that has no entry in the books.",
+        "Choose what the line is. Money in: Customer payment, Other income or Transfer from my other account. Money out: Vendor payment, Expense, Bank charge or Transfer to my other account.",
+        "Customer payment: tick the open invoice(s) the money settles (invoices with the same amount are marked Same amount); the customer is set from the invoice. Choose only a customer to keep the money as an advance.",
+        "Vendor payment: tick the open bill(s) the payment settles, or choose only the vendor to keep it as an advance.",
+        "Expense, Other income or Bank charge: choose the account (Bank charges is chosen for you), who it was paid to or received from, and GST if it applies. The statement amount is taken as the total including GST.",
+        "Transfer: choose the other cash or bank account.",
+        "Click Record and match."
+      ],
+      "result": "The payment, expense, income or transfer is recorded on the line's date for its amount, posted to the books with its own number, and matched to the line straight away.",
+      "tips": [
+        "The usual rules apply: a vendor payment or expense above an approval rule waits for approval. The line then shows that an entry is waiting; once it is approved, it is offered as a Sure match on the line.",
+        "Undoing the match later leaves the entry in the books. Void it on its own page if it was wrong.",
+        "Customer and vendor payments can be created from a statement of any bank account, whether or not it is linked to a Company > Bank Accounts record. For one that is not linked, the payment posts straight to that account's ledger; for one that is, it shows the bank's name as usual."
+      ]
+    },
+    {
+      "title": "Reconcile the bank account for the month",
+      "who": "Finance manager or partner (anyone with accounting.view can read the report)",
+      "where": "Accounting > Bank reconciliation > Reconciliation",
+      "route": "/accounting/bank-reconciliation",
+      "steps": [
+        "Import the month's statement and match or ignore every line (see the tasks above).",
+        "Open Accounting > Bank reconciliation and click Reconciliation on the account.",
+        "Set As at to the statement's last date (End of last month fills it in) and click Show. From is optional and only changes the line counts.",
+        "Read the strip: Books, Statement (the closing balance from the imported statement), Difference and Lines to match.",
+        "Read the Bank reconciliation statement: Balance as per books, less money received in the books not yet shown by the bank, add payments made in the books not yet through the bank, add or less statement lines not in the books, Balance the bank should show, Balance as per bank statement and Difference.",
+        "If the statement file had no balance column, type the Closing balance on the statement and click Use this balance.",
+        "When Mark reconciled says everything is matched or ignored and the statement agrees with the books, click Mark reconciled up to (date) and confirm.",
+        "Click Export CSV or Print to keep the report with the month's papers."
+      ],
+      "result": "The account is marked reconciled up to that date (shown under Reconciled up to and on the Bank reconciliation page). The lines and matches up to that date are locked.",
+      "tips": [
+        "Entries in the books not yet shown by the bank lists cheques not yet presented and deposits in transit; they carry over to next month.",
+        "Entries dated before the first imported statement that already went through the bank can be ticked there and marked as already cleared.",
+        "A Difference that is not zero usually means a statement line is missing (import the full period) or the opening balance was never entered.",
+        "Only the latest reconciliation can be undone (Undo under Reconciled up to); that unlocks its lines again."
+      ]
+    },
+    {
+      "title": "Read an account's ledger",
+      "who": "Anyone with accounting.view",
+      "where": "Accounting > Chart of Accounts > (account name)",
+      "route": "/accounting/accounts",
+      "steps": [
+        "Open Accounting > Chart of Accounts (or Bank and Cash > Ledger for a bank account).",
+        "Click the account name.",
+        "Change From and To and click Show for another period.",
+        "Click Export CSV to download, or Print."
+      ],
+      "result": "You see the opening balance, every line with debit, credit and running balance, and the totals and closing balance. Click a reference to open its journal entry.",
+      "tips": []
+    },
+    {
+      "title": "Set up fixed asset categories",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Fixed Assets > Categories tab",
+      "route": "/accounting/assets?tab=categories",
+      "steps": [
+        "Open Accounting > Fixed Assets and click the Categories tab.",
+        "Click Add standard categories to create the common ones, or New category for your own.",
+        "For a new category enter the Name, choose Depreciation method: Straight line (Companies Act) with Useful life (years), or Written-down value (income-tax rate) with Rate (% a year).",
+        "Enter Residual value (% of cost) (up to 5% under the Companies Act).",
+        "Choose the Asset (cost) account, Accumulated depreciation account and Depreciation expense account.",
+        "For written-down value, tick Half-year rule if you follow the income-tax 180-day rule. Click Save."
+      ],
+      "result": "The category holds the depreciation terms and ledger accounts that new assets in it use.",
+      "tips": [
+        "A category with assets cannot be deleted; switch it off instead.",
+        "Once assets in a category have entries in the books, its ledger accounts cannot change."
+      ]
+    },
+    {
+      "title": "Add a fixed asset and post its purchase",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Fixed Assets > New fixed asset",
+      "route": "/accounting/assets/new",
+      "steps": [
+        "Open Accounting > Fixed Assets and click New fixed asset.",
+        "Enter Name (for example Dell laptop), Category, Purchase date and Put to use on (depreciation starts here; empty means the purchase date).",
+        "Enter Cost (including GST you cannot claim), for example 85,000, and optionally Serial number, Location, Project, Vendor, Vendor bill and Notes.",
+        "Check the Depreciation section (copied from the category; change it if this asset differs).",
+        "Under The books choose: Record the purchase now (then pick Paid from: a bank or cash account, or Accounts payable to pay the vendor later), It is already in the books, or Record it later.",
+        "Click Create asset."
+      ],
+      "result": "The asset code is numbered automatically. With Record the purchase now, a Fixed asset journal entry posts Dr Fixed asset, Cr the chosen account, dated the purchase date. With It is already in the books nothing is posted, so a vendor bill or opening balance is not counted twice. With Record it later the asset shows Not in the books and no depreciation is charged until you click Record purchase on its page.",
+      "tips": [
+        "Linking a vendor bill is only a reference; it does not post anything.",
+        "Use the Documents tab on the asset to attach the purchase invoice, warranty, insurance and handover papers."
+      ]
+    },
+    {
+      "title": "Edit, undo the purchase of, or delete an asset",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Fixed Assets > (asset)",
+      "route": "/accounting/assets",
+      "steps": [
+        "Open the asset from the Register tab.",
+        "Click Edit to change details, then Save changes.",
+        "Click Undo purchase (shown when the purchase is in the books and no depreciation has been posted), give a reason and confirm.",
+        "Click Delete (shown only while the purchase is not in the books) to remove the asset."
+      ],
+      "result": "Undo purchase reverses the purchase entry; the asset stays in the register as not yet in the books. Delete removes an asset with nothing posted.",
+      "tips": ["Once depreciation is posted, the cost, dates and depreciation terms are locked. Reverse the depreciation runs to change them."]
+    },
+    {
+      "title": "Run monthly depreciation",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Fixed Assets > Depreciation run tab",
+      "route": "/accounting/assets?tab=depreciation",
+      "steps": [
+        "Open Accounting > Fixed Assets. If months are due, a notice offers Run depreciation; or click the Depreciation run tab.",
+        "Check From month and To month (it starts with the first month not yet charged).",
+        "Click Preview to see each asset's charge, total depreciation and book value after.",
+        "Click Post depreciation (with the total shown on the button)."
+      ],
+      "result": "One Depreciation journal entry is posted per month (Dr depreciation expense, Cr accumulated depreciation). The runs are listed under Depreciation already posted with status posted. If nothing is due you are told every asset is already charged.",
+      "tips": [
+        "A month that has not started cannot be charged; at most 36 months can be run at a time.",
+        "To correct a month, click Reverse on its run and give a reason; the month can then be charged again."
+      ]
+    },
+    {
+      "title": "Sell, scrap or write off an asset",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Fixed Assets > (asset) > Sell, scrap or write off",
+      "route": "/accounting/assets",
+      "steps": [
+        "Open the asset and click Sell, scrap or write off.",
+        "Choose What happened: Sold, Scrapped or given away, or Written off (no proceeds).",
+        "Enter the Date. For a sale enter the Sale amount (before GST, for example 30,000), Money received in and Buyer; for scrap enter any Scrap value.",
+        "Check the figures box that shows what will be posted, then click Post disposal."
+      ],
+      "result": "The disposal is posted to the books, the asset status changes to Sold, Disposed or Written off, and the gain or loss is shown on the asset and in the Disposals tab. Reverse disposal puts the asset back in use and reverses the entry.",
+      "tips": ["If depreciation has been posted for months after the disposal date, reverse those runs first."]
+    },
+    {
+      "title": "Read the asset register and depreciation reports",
+      "who": "Anyone with accounting.view",
+      "where": "Accounting > Fixed Assets",
+      "route": "/accounting/assets",
+      "steps": [
+        "Register tab: filter by status chip (All, In use, Sold, Disposed, Written off), Search, Category and As on date, then Show. Click Export CSV to download.",
+        "By financial year tab: depreciation per year and per asset, with Export CSV.",
+        "Disposals tab: choose From and To, click Show, and Export CSV if needed.",
+        "Open any asset and use the Depreciation schedule tab (month by month, with Posted, Due and Upcoming) and Export CSV."
+      ],
+      "result": "The top tiles show assets in use, cost, depreciation so far and book value. A notice appears if the register and ledger accounts disagree or if assets are not in the books yet.",
+      "tips": []
+    },
+    {
+      "title": "Create and activate a budget",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Budgets > New budget",
+      "route": "/accounting/budgets/new",
+      "steps": [
+        "Open Accounting > Budgets and click New budget.",
+        "Enter Budget name (for example Operating budget 2026-27), choose the Financial year and add Notes if needed.",
+        "For each line choose the Account (expense or income), the Cost centre (project) or whole company, and Phasing: Even over 12 months with a Yearly amount (for example 3,00,000), or Month by month with twelve amounts.",
+        "Use Add line for more lines and Spread evenly to split a month-by-month total.",
+        "Click Create budget.",
+        "Open the budget and click Make active."
+      ],
+      "result": "The budget is saved as Draft, version 1. Once active, any expense that takes an account past its budget line shows a warning on the expense form.",
+      "tips": [
+        "Only one budget can be active per financial year; close the other one first.",
+        "A budget needs at least one line before it can be made active, and an account can have only one line per cost centre."
+      ]
+    },
+    {
+      "title": "Revise, close, reopen or delete a budget",
+      "who": "Finance manager or partner",
+      "where": "Accounting > Budgets > (budget)",
+      "route": "/accounting/budgets",
+      "steps": [
+        "Open the budget from the list (filter with All, Draft, Active, Closed).",
+        "On an active budget, change the lines, fill Reason for the revision and click Save budget (you are asked to confirm the reason).",
+        "Click Close budget at year end; Reopen makes a closed budget active again.",
+        "Click Delete to remove a draft budget.",
+        "Under Revision history click View lines to see an earlier version."
+      ],
+      "result": "Changed lines on an active budget are saved as a new version with the reason, date and who made it. A closed budget cannot be changed until reopened. Only drafts can be deleted.",
+      "tips": []
+    },
+    {
+      "title": "Compare budget with actual",
+      "who": "Anyone with accounting.view",
+      "where": "Accounting > Budgets > Budget vs actual",
+      "route": "/accounting/budgets/report",
+      "steps": [
+        "Open Accounting > Budgets and click Budget vs actual (or vs actual on a budget row).",
+        "Choose the Budget, Up to month and Cost centre.",
+        "Switch between the Spending and Income tabs.",
+        "Click Export CSV or Print."
+      ],
+      "result": "Tiles show budget to date, actual from the books, variance and what is left of the year's budget. Tables show the figures by account, by cost centre (project) and month by month, marked Over budget, Below target or On track. A Not budgeted table lists accounts with actuals but no budget line.",
+      "tips": ["A positive variance is good: spending under budget or income above target."]
+    },
+    {
+      "title": "Read the trial balance, P&L, balance sheet and cash flow",
+      "who": "Anyone with accounting.view",
+      "where": "Accounting > Financial Reports",
+      "route": "/accounting/reports",
+      "steps": [
+        "Open Accounting > Financial Reports and click a tile: Profit and loss, Balance sheet, Cash flow statement or Trial balance.",
+        "For Profit and loss and Cash flow, set From and To and click Show; for Balance sheet and Trial balance choose the As of date and click Show.",
+        "Click an account name to open its ledger.",
+        "Click Export CSV to download or Print for paper or PDF."
+      ],
+      "result": "Profit and loss shows income, direct costs, gross profit, operating expenses, operating profit, other income and expenses and net profit. Balance sheet shows assets, liabilities and equity with a badge saying whether it balances. Cash flow (indirect method) shows operating, investing and financing activities and closing cash. Trial balance lists every account's debit or credit balance.",
+      "tips": ["The General ledger tile on the same page takes you to the Chart of Accounts, where any account opens its ledger."]
+    }
+  ],
+  "statuses": [
+    {"name": "Draft (expense)", "meaning": "Saved but not recorded: no number, nothing in the books. Can be edited, recorded or deleted."},
+    {"name": "Pending approval (expense)", "meaning": "Above an approval limit; waiting for approvers. Not numbered or posted yet. Take back returns it to Draft."},
+    {"name": "Recorded", "meaning": "Numbered and posted to the books. Can only be voided."},
+    {"name": "Void", "meaning": "Cancelled with a reason; its journal entry was reversed. The record is kept."},
+    {"name": "Posted (journal)", "meaning": "The entry is in the books."},
+    {"name": "Reversed (journal)", "meaning": "A mirror entry cancelled it; both stay in the books."},
+    {"name": "Reversal (journal)", "meaning": "The mirror entry that cancels an earlier one."},
+    {"name": "Reconciled", "meaning": "A bank or cash line matched to a bank statement."},
+    {"name": "In use / Sold / Disposed / Written off (asset)", "meaning": "Asset status. Only In use assets are depreciated."},
+    {"name": "Not in the books / Posted / Already in books (asset)", "meaning": "Whether the asset's purchase has reached the ledger. Depreciation is charged only when it has."},
+    {"name": "Posted / Due / Upcoming (depreciation month)", "meaning": "On the asset schedule: already charged, ready to charge, or in the future."},
+    {"name": "Draft / Active / Closed (budget)", "meaning": "Draft can be edited or deleted; Active drives expense warnings (one per financial year); Closed is frozen until reopened."}
+  ],
+  "routines": {
+    "daily": [
+      "Record cash and bank expenses and other income the same day, with the bill or receipt number.",
+      "Check Pending approval expenses and chase approvers if needed."
+    ],
+    "weekly": [
+      "Look at the Accounting Dashboard: cash and bank, receivable, payable and recent entries.",
+      "Finish or delete old draft expenses."
+    ],
+    "monthly": [
+      "Reconcile every bank account against the month-end statement.",
+      "Run depreciation for the month on Fixed Assets > Depreciation run.",
+      "Review Budget vs actual and the Profit and loss for the month.",
+      "Post any provisions or adjustments as manual journal entries."
+    ],
+    "yearly": [
+      "Create and activate next year's budget before 1 April; close the old budget.",
+      "Check the trial balance, balance sheet and asset register at 31 March and export them for the auditor.",
+      "Ask the partner to lock the finished financial year in Company > Financial Year Settings."
+    ]
+  },
+  "common_problems": [
+    {"problem": "I cannot see Record expense or New journal entry.", "fix": "You only hold accounting.view. Ask an admin to grant accounting.manage in Administration > Users and Access."},
+    {"problem": "Saving says the financial year is locked.", "fix": "The date falls in a locked financial year. Use a date in an open year or ask a partner to unlock the year."},
+    {"problem": "The GST fields are missing on the expense form.", "fix": "GST is not switched on for the company. A partner can switch it on in Company > Tax Configuration."},
+    {"problem": "An expense was saved but has no number.", "fix": "It is a draft or is waiting for approval. Record the draft, or wait for the approval; it is numbered when posted."},
+    {"problem": "I need to change a recorded expense.", "fix": "Recorded entries cannot be edited. Void it with a reason and record it again."},
+    {"problem": "There is no Reverse button on a journal entry.", "fix": "It was posted automatically by an invoice, expense, payroll or similar. Void or cancel that source document instead."},
+    {"problem": "The Reconcile button stays grey.", "fix": "Enter the statement closing balance, tick at least one line and keep ticking until Difference to statement is zero."},
+    {"problem": "No depreciation is charged for an asset.", "fix": "Its purchase is not in the books. Open the asset and click Record purchase (or mark it as already in the books)."},
+    {"problem": "I cannot change an asset's cost or dates.", "fix": "Depreciation has been posted. Reverse the depreciation runs from the latest back, then edit."},
+    {"problem": "Make active fails on a budget.", "fix": "Another budget is already active for that year (close it first), or the budget has no lines."}
+  ],
+  "connected": [
+    "Sales: issued invoices, credit and debit notes and payments received post here automatically.",
+    "Purchases: vendor bills and vendor payments post here automatically; a fixed asset can link to a vendor and bill.",
+    "People (HR): posted payroll runs create Payroll journal entries.",
+    "Partners: capital, loans, withdrawals and profit sharing post as Partner entries.",
+    "Projects: expenses, income and asset depreciation tagged to a project feed its profit and loss; budget lines can use a project as cost centre.",
+    "Approvals: expenses above an approval rule wait for a decision in the Approvals module.",
+    "GST & Tax: GST input and output from expenses, income and documents feed the GST summary and registers.",
+    "Company: financial years, document numbering, tax configuration and bank accounts are set there."
+  ]
+}

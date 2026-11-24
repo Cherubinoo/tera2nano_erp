@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "guide:docs": "node scripts/build-guide-docs.mjs",
     "guide:roles": "node scripts/build-roles-data.mjs",
-    "guide:check": "node scripts/check-guide-links.mjs"
+    "guide:check": "node scripts/check-guide-links.mjs",
+    "guide:operate": "node scripts/build-operate-docs.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

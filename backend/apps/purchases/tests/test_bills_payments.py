@@ -176,7 +176,7 @@ class BillPostingTests(PurchasesBase):
 
     def test_scanned_bill_attachments_follow_the_permissions(self):
         b = self.bill(self.local)
-        partner = client_for(make_user("pat", Role.PARTNER))
+        partner = client_for(make_user("pat", Role.PROJECT_MANAGER))  # can view purchases, cannot manage them (a Partner now can)
         hr = client_for(make_user("harry", Role.HR_MANAGER))
         up = lambda client: client.post("/api/v1/attachments/", {"entity_type": "vendor_bill", "entity_id": b["id"], "title": "Scan",
                                                                   "file": SimpleUploadedFile("scan.pdf", pdf_stub(), content_type="application/pdf")},

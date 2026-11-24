@@ -100,3 +100,67 @@ class LoginEvent(models.Model):
 
     def __str__(self):
         return f"{self.outcome} {self.username or '(unknown user)'} at {self.occurred_at:%Y-%m-%d %H:%M}"
+
+
+class Invitation(models.Model):
+    """A one-time link that lets one person create their own account (see `invitations.py`).
+
+    Only the SHA-256 hash of the link's token is stored, so the link cannot be recovered from the database; it is shown once, when
+    it is created. The access role is chosen by the person who invites, never by the invitee.
+    """
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        USED = "used", "Used"
+        EXPIRED = "expired", "Expired"
+        REVOKED = "revoked", "Revoked"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    token_hash = models.CharField(max_length=64, unique=True, editable=False)
+    role = models.CharField(max_length=20, choices=Role.CHOICES)
+    name_hint = models.CharField(max_length=150, blank=True)
+    email_hint = models.EmailField(blank=True)
+    note = models.CharField(max_length=500, blank=True)
+    created_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name="invitations_created")
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    used_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="invitations_used")
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    revoked_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="invitations_revoked")
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def status_at(self, when):
+        if self.revoked_at:
+            return self.Status.REVOKED
+        if self.used_at:
+            return self.Status.USED
+        if self.expires_at <= when:
+            return self.Status.EXPIRED
+        return self.Status.PENDING
+
+    def __str__(self):
+        return f"Invitation for {self.role} ({self.id})"
+
+
+class MemberProfile(models.Model):
+    """What a member entered when joining through an invitation. Which fields are asked lives in `invitations.INVITE_FIELDS`."""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="member_profile")
+    designation = models.CharField(max_length=150, blank=True)  # their role in the company, as they describe it (a job title)
+    phone = models.CharField(max_length=30, blank=True)
+    personal_email = models.EmailField(blank=True)
+    department = models.CharField(max_length=120, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    address = models.TextField(blank=True)
+    emergency_name = models.CharField(max_length=120, blank=True)
+    emergency_phone = models.CharField(max_length=30, blank=True)
+    extra = models.JSONField(default=dict, blank=True)  # answers to any field in INVITE_FIELDS without its own column
+    invited_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="members_invited")
+    invitation = models.ForeignKey(Invitation, null=True, blank=True, on_delete=models.SET_NULL, related_name="profiles")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Profile of {self.user_id}"

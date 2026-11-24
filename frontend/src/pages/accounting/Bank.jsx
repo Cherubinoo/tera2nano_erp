@@ -47,6 +47,7 @@ export function BankPage() {
         actions={manage && rows.length > 1 && <button type="button" className="btn btn-primary" onClick={() => setTransfer(true)}>Transfer</button>} />
       {loading && <Loading />}
       <ErrorBox error={error} onRetry={reload} />
+      <Notice>Have the bank's statement as a file? <Link to="/accounting/bank-reconciliation">Bank reconciliation</Link> imports it and matches each line to the books. Reconcile below is for ticking lines off by hand (for example a cash account).</Notice>
       <div className="tiles">
         {rows.map((a) => (
           <section className="tile" key={a.id} aria-label={a.name}>
@@ -56,6 +57,7 @@ export function BankPage() {
             <div className="hint">{a.unreconciled} line{a.unreconciled === 1 ? '' : 's'} to check{a.last_reconciled ? ` · last reconciled ${fmtDate(a.last_reconciled)}` : ' · never reconciled'}</div>
             <div className="row-actions" style={{ justifyContent: 'flex-start', marginTop: '.5rem' }}>
               <Link className="btn btn-small" to={`/accounting/accounts/${a.id}`}>Ledger</Link>
+              {a.subtype === 'bank' && <Link className="btn btn-small" to={`/accounting/bank/${a.id}/match`}>Statement lines</Link>}
               {manage && <Link className="btn btn-small btn-primary" to={`/accounting/bank/${a.id}/reconcile`}>Reconcile</Link>}
             </div>
           </section>

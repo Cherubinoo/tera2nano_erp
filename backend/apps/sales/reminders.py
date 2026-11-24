@@ -8,12 +8,16 @@ An invoice is reminded at most once per rule: sending or skipping records a `Pay
 row per (invoice, rule offset). When several rules have come due for the same invoice (for example it was never chased and
 is now 40 days late) only the latest one is offered, so a customer is not sent five reminders at once.
 
-There is no email server. "Send" prepares the text, records it against the invoice and leaves the actual sending to the
-person (copy the text or open it in their own mail program).
+"Send" records the reminder against the invoice and, when email is set up on the server (see apps.emails), emails the text
+to the customer. The record is kept whatever happens to the email: a failed email is logged as failed (with the reason) in
+the Sent emails log, where it can be sent again. Without an email server the person copies the text or opens it in their
+own mail program, as before. With "Email payment reminders automatically" switched on, a daily job sends the reminders that
+are due to customers who have an email address (apps.emails.jobs).
 """
 import datetime
 import re
 
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
@@ -216,7 +220,7 @@ def render(doc, rule, today=None):
 
 # --------------------------------------------------------------------------- send and skip
 
-def _record(company, actor, document_id, days_offset, status, note, today):
+def _record(company, actor, document_id, days_offset, status, note, today, *, subject=None, body=None, to_email=None):
     try:
         doc = _open_invoices(company).select_for_update(of=("self",)).filter(pk=document_id).first()
     except (ValueError, ValidationError):
@@ -229,12 +233,17 @@ def _record(company, actor, document_id, days_offset, status, note, today):
         raise ValidationError("This reminder is no longer due. Refresh the list.")
     if PaymentReminder.objects.filter(document=doc, days_offset=days_offset).exists():
         raise ValidationError("This reminder has already been sent or skipped.")
-    subject, body = render(doc, rule, today) if status == PaymentReminder.Status.SENT else ("", "")
+    if status == PaymentReminder.Status.SENT:
+        rendered = render(doc, rule, today)
+        subject = subject if subject is not None else rendered[0]
+        body = body if body is not None else rendered[1]
+    else:
+        subject, body = "", ""
     try:
         with transaction.atomic():
             row = PaymentReminder.objects.create(
                 company=company, document=doc, rule=rule, days_offset=rule.days_offset, status=status, subject=subject,
-                body=body, to_email=doc.customer.email if status == PaymentReminder.Status.SENT else "",
+                body=body, to_email=(doc.customer.email if to_email is None else to_email)[:254] if status == PaymentReminder.Status.SENT else "",
                 amount_due=max(services.balance_of(doc), services.ZERO), due_date=doc.due_date,
                 days_overdue=max((today - doc.due_date).days, 0), note=(note or "").strip()[:300], created_by=actor)
     except IntegrityError:
@@ -246,9 +255,67 @@ def _record(company, actor, document_id, days_offset, status, note, today):
     return row
 
 
-@transaction.atomic
-def send(company, actor, document_id, days_offset, today=None):
-    return _record(company, actor, document_id, days_offset, PaymentReminder.Status.SENT, "", today or datetime.date.today())
+def _mail():
+    """The email module when it is installed and a mail server is set up; otherwise None (reminders are recorded only)."""
+    if not django_apps.is_installed("apps.emails"):
+        return None
+    from apps.emails import services as mail
+
+    return mail if mail.is_configured() else None
+
+
+def _edited_text(subject, body):
+    if subject is not None:
+        if not isinstance(subject, str) or not subject.strip():
+            raise ValidationError({"subject": "Write the subject."})
+        subject = " ".join(subject.split())
+        if len(subject) > 200:
+            raise ValidationError({"subject": "Use at most 200 characters."})
+    if body is not None:
+        if not isinstance(body, str) or not body.strip():
+            raise ValidationError({"body": "Write the message."})
+        body = body.replace("\r\n", "\n").strip()
+        if len(body) > 4000:
+            raise ValidationError({"body": "Use at most 4000 characters."})
+    return subject, body
+
+
+def send(company, actor, document_id, days_offset, today=None, *, to=None, cc=None, subject=None, body=None, automatic=False):
+    """Record the reminder as sent and, when email is set up, email it. `to`, `cc`, `subject` and `body` are what the person
+    checked in the send dialog (by default: the customer's address and the rule's text). The returned row carries `email`:
+    the log entry of the email (None when nothing was emailed). A failed email never undoes the record."""
+    mail = _mail()
+    subject, body = _edited_text(subject, body)
+    recipients = cc_list = None
+    if mail is not None:
+        recipients = mail.clean_addresses(to, "to") if to is not None else None
+        cc_list = mail.clean_addresses(cc, "cc")
+    with transaction.atomic():
+        row = _record(company, actor, document_id, days_offset, PaymentReminder.Status.SENT, "", today or datetime.date.today(),
+                      subject=subject, body=body, to_email=", ".join(recipients) if recipients is not None else None)
+    row.email = None
+    if mail is not None:
+        recipients = recipients if recipients is not None else ([row.to_email] if row.to_email else [])
+        if recipients:
+            signature = mail.settings_for(company).signature.strip()
+            doc = row.document
+            row.email = mail.send(company, actor, kind="payment_reminder", to=recipients, cc=cc_list or [], subject=row.subject,
+                                  body=f"{row.body}\n\n{signature}" if signature else row.body, object_id=row.pk,
+                                  object_label=f"{offset_label(row.days_offset)} · {doc.number} · {doc.customer.display_name}",
+                                  url=f"/sales/documents/{doc.pk}", automatic=automatic)
+    return row
+
+
+def email_outcomes(reminder_ids):
+    """{reminder id: {status, status_label, error}} for reminders that were emailed (the latest attempt wins)."""
+    if not django_apps.is_installed("apps.emails") or not reminder_ids:
+        return {}
+    from apps.emails.models import EmailMessage
+
+    out = {}
+    for m in EmailMessage.objects.filter(kind="payment_reminder", object_id__in=[str(i) for i in reminder_ids]).order_by("created_at"):
+        out[m.object_id] = {"status": m.status, "status_label": m.get_status_display(), "error": m.error, "id": str(m.pk)}
+    return out
 
 
 @transaction.atomic

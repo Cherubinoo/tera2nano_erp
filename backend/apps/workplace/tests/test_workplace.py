@@ -542,8 +542,11 @@ class CircularTests(Base):
         c = self.issue(self.circular(audience="roles", roles=["employee", "finance_manager"]))
         self.assertEqual(c["recipients"], 3)  # staff, emp2, finance
         self.assertEqual(self.api_staff.get(f"{W}/circulars/{c['id']}/").status_code, 200)
-        self.assertEqual(self.api_partner.get(f"{W}/circulars/{c['id']}/").status_code, 404)
-        self.assertEqual(self.api_partner.post(f"{W}/circulars/{c['id']}/acknowledge/").status_code, 404)
+        # someone outside the audience who is not a manager cannot open or acknowledge it
+        only_finance = self.issue(self.circular(audience="roles", roles=["finance_manager"]))
+        self.assertEqual(self.api_staff.get(f"{W}/circulars/{only_finance['id']}/").status_code, 404)
+        self.assertEqual(self.api_staff.post(f"{W}/circulars/{only_finance['id']}/acknowledge/").status_code, 404)
+        self.assertEqual(self.api_partner.get(f"{W}/circulars/{c['id']}/").status_code, 200)  # managers (both partner roles) see every circular
         report = self.mgr.get(f"{W}/circulars/{c['id']}/acknowledgements/").json()
         self.assertEqual(sorted(r["name"] for r in report["rows"]), ["emp2", "finance", "staff"])
         self.assertEqual(self.mgr.post(f"{W}/circulars/{c['id']}/acknowledge/").status_code, 400)  # a manager outside the audience
@@ -610,7 +613,7 @@ class AssetTests(Base):
         self.assertEqual([self.audit("asset", x).count() for x in ("created", "updated", "deleted")], [1, 1, 1])
 
     def test_only_managers_use_the_register(self):
-        for client in (self.api_staff, self.api_finance, self.api_partner):
+        for client in (self.api_staff, self.api_finance):  # a partner holds workplace.manage, so it is not here
             self.assertEqual(client.get(f"{W}/assets/").status_code, 403)
             self.assertEqual(client.post(f"{W}/assets/", {"name": "x"}, format="json").status_code, 403)
 
@@ -652,7 +655,7 @@ class VisitorTests(Base):
 
 class PermissionMatrixTests(Base):
     def test_who_can_schedule_meetings_and_tasks_for_others(self):
-        expected = {"admin": 201, "mp": 201, "hr": 201, "pm": 201, "partner": 403, "finance": 403, "staff": 403}
+        expected = {"admin": 201, "mp": 201, "hr": 201, "pm": 201, "partner": 201, "finance": 403, "staff": 403}
         clients = {"admin": self.api, "mp": self.api_mp, "hr": self.api_hr, "pm": self.api_pm, "partner": self.api_partner,
                    "finance": self.api_finance, "staff": self.api_staff}
         for name, code in expected.items():

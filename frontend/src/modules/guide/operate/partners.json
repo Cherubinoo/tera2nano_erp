@@ -1,0 +1,293 @@
+{
+  "key": "partners",
+  "title": "Partners",
+  "purpose": "The Partners module keeps each partner's money position in the LLP: the capital account, the current account (drawings, remuneration, interest and profit share) and any loan the partner has given to the LLP. Every transaction you record here is posted to the books automatically, and large withdrawals wait for approval before they are posted. At year end you share the profit by the ratio in the LLP agreement and print each partner's capital account statement. The partners themselves (names, DPIN, designation) are added under Company > Partners and Signatories, not here.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Hold every permission: record transactions, approve or reject withdrawals (never their own), set the profit-sharing ratio, allocate and reverse profit, attach partner documents."},
+    {"role": "Finance Manager", "does": "Can view everything in the module (balances, transactions, loans, statements) but cannot record or change anything."},
+    {"role": "HR Manager, Project Manager, Employee", "does": "No access to this module by default."}
+  ],
+  "before_you_start": [
+    "Add every partner under Company > Partners and Signatories. A partner who is not there does not appear in this module.",
+    "Make sure the main bank account (and a cash account, if you pay in cash) exists in Accounting, because money transactions post to it by default.",
+    "Know the profit-sharing ratio and any interest-on-capital rate from the LLP agreement.",
+    "Withdrawals (Drawing or Capital withdrawn) above the approval limit wait for approval. The limit is ₹1,00,000 unless your administrator has changed it; setting it to zero switches approval off.",
+    "Partner withdrawals are approved through the Approvals module. The example rule 'Partner withdrawals' asks every other partner to agree."
+  ],
+  "tasks": [
+    {
+      "title": "Link a partner to their sign-in user and record the agreed capital",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Partners > click the partner's name > Overview tab",
+      "route": "/partners/accounts",
+      "steps": [
+        "Open the Partners module from the launcher and click Partners in the left menu.",
+        "Use Search (name or designation) and the Show box (Current partners, Former partners, All) to find the partner, then click the name.",
+        "On the Overview tab, find the Account settings card.",
+        "In Agreed capital contribution, type what the LLP agreement says, for example 5,00,000.",
+        "In Sign-in user, choose the partner's user name so the system knows this account belongs to them.",
+        "Add a short note if needed and click Save."
+      ],
+      "result": "The Capital account tile shows the agreed amount under it. Once linked, the partner sees 'this is you' on their own page, and the system stops them from approving withdrawals from their own account.",
+      "tips": ["Agreed capital cannot be negative.", "Linking the sign-in user matters for approvals: a partner can never approve a withdrawal from their own account or one they requested."]
+    },
+    {
+      "title": "Record capital introduced by a partner",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Record transaction",
+      "route": "/partners/transactions",
+      "steps": [
+        "Click Transactions in the left menu, then Record transaction (or use '+ New' > Partner transaction in the top bar).",
+        "Choose the Partner.",
+        "In Type, choose Capital introduced.",
+        "Enter the Date and the Amount, for example 2,00,000.",
+        "In Paid by, choose Bank transfer, Cheque, UPI, Cash or Other.",
+        "In Received in, leave Default (main bank account, or cash when paid by cash) or pick a specific bank or cash account.",
+        "Type the UTR or cheque number in Reference (cheque no., UTR ...) and a Narration if useful.",
+        "Click Record transaction."
+      ],
+      "result": "The transaction gets an automatic number and status Posted. The books are updated at once: bank or cash is debited and partners' capital is credited. The partner's Capital account balance goes up.",
+      "tips": ["The hint under Type explains the accounting for each type.", "To correct a mistake, void the transaction and record it again; posted amounts cannot be edited."]
+    },
+    {
+      "title": "Record a drawing or a capital withdrawal (with approval for large amounts)",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Record transaction",
+      "route": "/partners/transactions",
+      "steps": [
+        "Click Record transaction.",
+        "Choose the Partner and, in Type, choose Drawing (money for personal use) or Capital withdrawn (capital taken back).",
+        "Enter the Date and Amount, for example 1,50,000.",
+        "Choose Paid by and, in Paid from, the bank or cash account (or leave Default).",
+        "Add the Reference and Narration.",
+        "If the amount is above the approval limit, a yellow note says it will wait for approval. Click Record transaction."
+      ],
+      "result": "Up to the limit: status Posted straight away; a drawing debits the partner's current account and credits bank or cash. Above the limit: status Waiting for approval, nothing is posted yet, and an approval request (type Partner withdrawal) is sent to the approvers in the Approvals module. When it is approved the transaction is posted automatically; when rejected it becomes Rejected and nothing is posted.",
+      "tips": ["Capital withdrawn cannot be more than the partner's capital on that date.", "The person who records a withdrawal cannot approve it, and nor can the partner whose account it is (only an administrator is exempt)."]
+    },
+    {
+      "title": "Approve or reject a withdrawal that is waiting",
+      "who": "Another partner, Managing Partner or Admin (not the requester, not the partner whose account it is)",
+      "where": "Partners > Transactions > Waiting for approval chip (or Approvals > Pending My Approval)",
+      "route": "/partners/transactions?status=pending_approval",
+      "steps": [
+        "On the Partner Dashboard, a yellow note shows how many withdrawals are waiting; click Review. Or open Transactions and click the Waiting for approval chip.",
+        "Check the row: partner, type, amount and reference. Click the number to see the full details.",
+        "Click Approve to release it, or Reject to refuse it.",
+        "For Reject, type the reason in the box that opens and confirm."
+      ],
+      "result": "Approve: the transaction is posted to the books (status Posted) and any open approval request for it is closed. Reject: status Rejected, nothing is posted, the reason is saved. The decision and the person who made it are shown in the transaction details.",
+      "tips": ["You can also decide from Approvals > Pending My Approval; both routes do the same thing.", "If balances changed in the meantime (for example capital is now lower), the approval is refused with a message."]
+    },
+    {
+      "title": "Record partner remuneration",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Record transaction",
+      "route": "/partners/transactions",
+      "steps": [
+        "Click Record transaction.",
+        "Choose the Partner and, in Type, choose Remuneration.",
+        "Enter the Date (for example the last day of the month) and Amount, for example 75,000.",
+        "Add a Narration such as 'Remuneration for November 2026'.",
+        "Click Record transaction."
+      ],
+      "result": "Posted at once: remuneration expense is debited and the partner's current account is credited. No bank account is involved; pay it out later as a Drawing.",
+      "tips": ["Remuneration and interest already booked are part of the profit and loss, so they are already taken off the profit you share at year end."]
+    },
+    {
+      "title": "Record interest on capital",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Record transaction",
+      "route": "/partners/transactions",
+      "steps": [
+        "Click Record transaction, choose the Partner and, in Type, choose Interest on capital.",
+        "Enter Rate (% a year), for example 12.",
+        "Enter Interest period from and Interest period to, for example 01-04-2026 to 31-03-2027.",
+        "Click Work out interest on opening capital. The line below shows the capital, rate, days and interest, and the Amount is filled in for you.",
+        "Check or adjust the Amount, set the Date and click Record transaction."
+      ],
+      "result": "Posted at once: interest expense is debited and the partner's current account is credited.",
+      "tips": ["The calculation is simple interest on the capital at the start of the period.", "The rate must be between 0 and 100."]
+    },
+    {
+      "title": "Record a loan from a partner and its repayment",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Loans > Record loan / Record repayment",
+      "route": "/partners/loans",
+      "steps": [
+        "Click Loans in the left menu.",
+        "Click Record loan. Choose the Partner, enter Date and Amount (for example 3,00,000), Paid by and Received in.",
+        "Optionally enter Rate (% a year), for example 9. It is used only for the interest estimate.",
+        "Click Record transaction.",
+        "When the LLP pays the loan back, click Record repayment, choose the Partner, Amount and Paid from, and click Record transaction."
+      ],
+      "result": "The loan and repayment are posted to the books. The Loans page shows Lent, Repaid, Outstanding and Interest accrued (estimate) for each partner, plus an Open loans table. Repayments reduce the oldest loan first.",
+      "tips": ["A repayment cannot be more than the loan outstanding on that date.", "The interest estimate is not posted to the books; record interest yourself when it is due.", "Use the As of date and Show to see balances on an earlier date. Export CSV downloads the table."]
+    },
+    {
+      "title": "Move part of the current account into capital",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Record transaction",
+      "route": "/partners/transactions",
+      "steps": [
+        "Click Record transaction and choose the Partner.",
+        "In Type, choose Profit share transferred to capital.",
+        "Enter the Date and Amount, for example 1,00,000.",
+        "Click Record transaction."
+      ],
+      "result": "Posted at once: the current account goes down and the capital account goes up by the same amount.",
+      "tips": ["The amount cannot be more than the partner's current account balance on that date."]
+    },
+    {
+      "title": "Void a transaction",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Transactions > Void",
+      "route": "/partners/transactions",
+      "steps": [
+        "Find the transaction (Search, Partner, Type, From and To, then Search).",
+        "Click Void on its row. Only Posted or Waiting for approval transactions can be voided.",
+        "Type the reason and click Void transaction."
+      ],
+      "result": "Status becomes Void and the record is kept. If it was Posted, the journal entry is reversed. If it was waiting, its approval request is closed.",
+      "tips": ["Voiding capital introduced or a loan is refused if it would leave the partner's capital or loan negative; void the later withdrawals or repayments first."]
+    },
+    {
+      "title": "Search, view and export partner transactions",
+      "who": "Anyone with access to the module",
+      "where": "Partners > Transactions",
+      "route": "/partners/transactions",
+      "steps": [
+        "Type a number, partner, reference or narration in Search, or choose Partner, Type, From and To, and click Search.",
+        "Click a status chip: All, Posted, Waiting for approval, Rejected or Void.",
+        "Click a transaction number to see the details: partner, type, status, who requested and decided it, and the journal lines under 'Posted to the books'.",
+        "Click Export CSV at the bottom to download the list."
+      ],
+      "result": "The footer shows the count and the Posted total. Up to 500 rows are shown; narrow the search if you see '(first 500 shown; narrow the search)'.",
+      "tips": []
+    },
+    {
+      "title": "Set the profit-sharing ratio",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Profit Sharing > Ratio tab > New ratio",
+      "route": "/partners/profit-sharing",
+      "steps": [
+        "Click Profit Sharing in the left menu and open the Ratio tab.",
+        "Click New ratio.",
+        "In Effective from, enter the date the ratio starts (for example the date of the LLP agreement).",
+        "Enter each active partner's share, for example 50, 30 and 20. The total line must read 100.00% (adds up).",
+        "Add a Note such as 'amended LLP agreement' and click Save ratio."
+      ],
+      "result": "The ratio applies from its date until a later ratio replaces it. It appears under History with the 'In force' badge when it is the current one, and on the Partner Dashboard donut.",
+      "tips": ["Only one ratio can start on a given date.", "A ratio that a profit allocation has used cannot be removed; add a newer ratio instead. Unused ratios have a Remove button."]
+    },
+    {
+      "title": "Allocate the year's profit to the partners",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Profit Sharing > Allocations tab > Allocate profit",
+      "route": "/partners/profit-sharing",
+      "steps": [
+        "Finish the year's bookkeeping first so the profit and loss is final.",
+        "Open Profit Sharing; the Allocations tab opens first. Click Allocate profit.",
+        "Check Period from and Period to (they default to the current financial year up to today), for example 01-04-2026 to 31-03-2027.",
+        "If something must be set aside before sharing, enter Other deductions (for example 50,000 for a reserve) and a Note on deductions.",
+        "Click Preview. Read any warnings, check Net profit from the books, Profit to share and each partner's amount.",
+        "Click Save as draft.",
+        "Click the period in the list to open the draft. If the books changed, click Refresh figures.",
+        "Optionally enter a Post on date (it defaults to the end of the period) and click Post to the books."
+      ],
+      "result": "Posting gives the allocation a number and status Posted. Each partner's current account is credited with their share (debited if it is a loss) against retained earnings. Amounts are rounded to the paisa; any odd paisa goes to the partner with the largest share.",
+      "tips": ["The ratio in force at the end of the period is used for the whole period; a warning tells you if the ratio changed inside it.", "You cannot post a period that overlaps an allocation already posted; reverse that one first.", "Nothing can be posted when there is no profit or loss to share."]
+    },
+    {
+      "title": "Reverse a posted allocation or delete a draft",
+      "who": "Admin, Managing Partner or Partner",
+      "where": "Partners > Profit Sharing > Allocations tab > click the period",
+      "route": "/partners/profit-sharing",
+      "steps": [
+        "Click the period of the allocation in the list.",
+        "For a Draft: click Delete draft and confirm. Nothing had been posted.",
+        "For a Posted allocation: click Reverse, type the reason and click Reverse allocation."
+      ],
+      "result": "Reversing takes the credits back out of the partners' current accounts; the allocation stays in the list as Reversed with the reason shown. You can then allocate the period again.",
+      "tips": []
+    },
+    {
+      "title": "Print or download a partner's capital account statement",
+      "who": "Anyone with access to the module",
+      "where": "Partners > Statements (or the partner's Statement tab)",
+      "route": "/partners/statements",
+      "steps": [
+        "Click Statements in the left menu and choose a partner.",
+        "Enter From and To and click Show, or click This financial year.",
+        "Read the summary (Opening balance, each movement, Closing balance, split into Capital account and Current account) and the list of transactions with a running total.",
+        "Click Print to print it, or Export CSV to download it.",
+        "If the Download PDF button is shown, click it to issue a numbered PDF statement."
+      ],
+      "result": "Print and CSV are available always. Download PDF appears only once the partner statement document type is switched on; it then issues a numbered statement and downloads the PDF.",
+      "tips": ["Negative amounts are highlighted."]
+    },
+    {
+      "title": "Attach partner documents (KYC, DPIN, consent letters)",
+      "who": "Admin, Managing Partner or Partner (others can download)",
+      "where": "Partners > Partners > click the partner > Documents tab",
+      "route": "/partners/accounts",
+      "steps": [
+        "Open the partner and click the Documents tab.",
+        "In File (PDF, PNG or JPEG), choose the file.",
+        "Type a Name, for example 'PAN card', or leave it empty to use the file name.",
+        "If the document expires (for example a KYC), enter the Expires date.",
+        "Click Attach file."
+      ],
+      "result": "The file is listed with the date added, who added it, the expiry date (with an Expired badge after that date) and its size. Use Download to open it and Remove to delete it.",
+      "tips": ["The LLP agreement tab only lists agreement versions; they are uploaded in Company Documents (link on that tab)."]
+    },
+    {
+      "title": "Read the Partner Dashboard",
+      "who": "Anyone with access to the module",
+      "where": "Partners > Partner Dashboard",
+      "route": "/partners",
+      "steps": [
+        "Open the module; the dashboard opens first.",
+        "Look for the yellow note about withdrawals waiting for approval and click Review if it appears.",
+        "Read the tiles: Total capital, Partners, Loans from partners, Drawings this year, Profit share allocated. Click a tile to open the matching page.",
+        "Check the charts: Profit-sharing ratio, Capital by partner, Drawings this year, Capital over time, Contribution against profit share.",
+        "If a red note says the partner records and the ledger do not agree, ask Accounts to look for manual journal entries to the partner accounts."
+      ],
+      "result": "You see the financial year's position at a glance; nothing is changed.",
+      "tips": []
+    }
+  ],
+  "statuses": [
+    {"name": "Posted", "meaning": "The transaction is recorded and posted to the books."},
+    {"name": "Waiting for approval", "meaning": "A drawing or capital withdrawal above the approval limit; nothing is posted until it is approved."},
+    {"name": "Rejected", "meaning": "The withdrawal was refused with a reason; nothing was posted."},
+    {"name": "Void", "meaning": "Cancelled with a reason; if it had been posted, the journal entry was reversed. The record is kept."},
+    {"name": "Draft (allocation)", "meaning": "A profit allocation that is saved but not posted; it can be refreshed or deleted."},
+    {"name": "Posted (allocation)", "meaning": "The shares are credited to the partners' current accounts and the allocation has a number."},
+    {"name": "Reversed (allocation)", "meaning": "A posted allocation that was taken back out of the current accounts, with a reason."},
+    {"name": "In force (ratio)", "meaning": "The profit-sharing ratio that applies today."}
+  ],
+  "routines": {
+    "daily": ["Record capital, drawings and loan movements on the day the money moves, with the UTR or cheque number."],
+    "weekly": ["Check the Partner Dashboard for withdrawals waiting for approval and remind approvers."],
+    "monthly": ["Record each partner's remuneration.", "Compare partner balances with the bank statement and the Accounting reports; act on any 'records and ledger do not agree' note."],
+    "yearly": ["Record interest on capital for the year using Work out interest on opening capital.", "After the books are closed, allocate the year's profit and post it.", "Print or export each partner's capital account statement for the financial year.", "Add a new profit-sharing ratio if the LLP agreement changed, and attach updated partner documents."]
+  },
+  "common_problems": [
+    {"problem": "Message: capital on that date is lower, more than that cannot be withdrawn.", "fix": "Capital withdrawn cannot exceed the partner's capital on the transaction date. Check the date and amount, or record a Drawing from the current account instead."},
+    {"problem": "Message: You cannot approve a withdrawal from your own account or one you requested.", "fix": "Ask another partner, the Managing Partner or an administrator to approve it."},
+    {"problem": "Message: Set the profit-sharing ratio (effective on or before the end of the period) first.", "fix": "Go to Profit Sharing > Ratio > New ratio and add a ratio dated on or before the end of the period."},
+    {"problem": "Message: A profit allocation covering part of this period is already posted. Reverse it first.", "fix": "Open the posted allocation, click Reverse, then post the new one."},
+    {"problem": "A ratio has no Remove button.", "fix": "It has been used by a profit allocation. Add a newer ratio with a later Effective from date instead."},
+    {"problem": "Voiding is refused because the capital or loan would go negative.", "fix": "Void the later withdrawals or repayments first, then void the original transaction."},
+    {"problem": "There is no Download PDF button on the statement.", "fix": "The PDF statement is not switched on for this installation. Use Print or Export CSV."},
+    {"problem": "A withdrawal above the limit was posted immediately without anyone approving it.", "fix": "This happens when no approval rule matches and the person recording it holds the partners permission. Ask an administrator to keep the 'Partner withdrawals' rule switched on in Approvals > Approval Rules."}
+  ],
+  "connected": [
+    "Company module: the partners themselves (Partners and Signatories) and the LLP agreement versions (Company Documents).",
+    "Accounting: every posted transaction and profit allocation creates a journal entry against bank or cash, partners' capital, partners' current account, remuneration or interest expense, and retained earnings.",
+    "Reports: net profit for the allocation comes from the profit and loss statement.",
+    "Approvals: large withdrawals create a 'Partner withdrawal' request; approving it posts the transaction, rejecting it marks it Rejected.",
+    "Compliance: partner changes recorded as legal events can add the LLP Form 4 filing to the compliance calendar."
+  ]
+}

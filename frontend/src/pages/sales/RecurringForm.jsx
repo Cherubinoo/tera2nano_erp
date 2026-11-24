@@ -247,7 +247,8 @@ export default function RecurringForm() {
           <legend>Items on every invoice</legend>
           {errors.items && <p className="error-text" role="alert">{errors.items}</p>}
           {items.map((item, n) => (
-            <ItemEditor key={n} item={item} n={n} many={items.length > 1} options={o} errors={itemErrors[n]} set={setItem(n)} remove={() => setItems((rows) => rows.filter((_, i) => i !== n))} />
+            <ItemEditor key={n} item={item} n={n} many={items.length > 1} options={o} errors={itemErrors[n]} set={setItem(n)} remove={() => setItems((rows) => rows.filter((_, i) => i !== n))}
+              replace={(next) => setItems((rows) => rows.map((r, i) => (i === n ? next : r)))} />
           ))}
           <button type="button" className="btn btn-small" onClick={() => setItems((rows) => [...rows, blankItem()])}>Add item</button>
           <Totals working={working} error={workingError} pending={pending} />

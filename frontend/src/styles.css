@@ -190,6 +190,18 @@ caption { text-align: left; font-weight: 600; padding: .5rem 0; }
 /* login & wizard */
 .login { min-height: 100vh; display: grid; place-items: center; padding: 1rem; }
 .login-card { width: min(400px, 100%); display: flex; flex-direction: column; gap: .75rem; }
+.login-card h1 { margin-bottom: .1rem; }
+.join { align-items: start; padding-top: clamp(1rem, 6vh, 4rem); padding-bottom: 3rem; }
+.join-card { width: min(640px, 100%); gap: .5rem; }
+.join-brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .02em; padding-bottom: .75rem; margin-bottom: .5rem; border-bottom: 1px solid var(--border); }
+.join-mark { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--graphite); color: var(--gold); font-weight: 800; flex: none; }
+.join-role { margin: .1rem 0 .25rem; padding: .45rem .7rem; background: var(--info-bg); color: var(--info); border-radius: var(--radius); }
+.join-grid { margin: 1rem 0; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.join-submit { width: 100%; padding: .65rem 1rem; }
+.pw-row { display: flex; gap: .4rem; align-items: stretch; }
+.pw-row .btn { flex: none; min-width: 4.2rem; }
+.matrix th.col-locked { background: var(--info-bg); }
+.matrix th.col-locked .hint { font-weight: 400; margin: 0; white-space: normal; font-size: .75rem; }
 .wizard { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
 .wizard-steps { background: var(--surface); border-right: 1px solid var(--border); padding: 1.25rem 1rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .wizard-steps ol { list-style: none; padding: 0; margin: 1rem 0; }
@@ -548,3 +560,55 @@ td.empty, th.empty { border: 0; background: none; }
 .nav-guide { display: flex; align-items: center; gap: .55rem; margin: 1rem .8rem .8rem; padding: .5rem .7rem; border: 1px dashed var(--nav-line); border-radius: 8px; color: var(--nav-text); text-decoration: none; font-size: .86rem; }
 .nav-guide:hover { color: var(--nav-strong); border-color: var(--nav-active); background: var(--nav-hover); }
 .nav-guide .icon { color: var(--nav-active); flex: none; }
+
+/* sending email: the attached file, earlier sends, a failed send's reason, automatic reminders */
+.email-attach { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: .25rem 0 .5rem; }
+.email-file { display: inline-block; padding: .15rem .6rem; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; background: var(--head-bg); font-size: .85rem; overflow-wrap: anywhere; }
+.email-history { margin: .5rem 0; font-size: .9rem; }
+.email-history summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.email-history ul { margin: .4rem 0 0; padding-left: 1.1rem; }
+.email-history li { margin: .2rem 0; overflow-wrap: anywhere; }
+.email-error { color: var(--bad); max-width: 32ch; overflow-wrap: anywhere; }
+.auto-reminders { margin: .25rem 0 1rem; padding: .7rem .9rem; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: var(--radius); background: var(--head-bg); }
+.auto-reminders .checkbox-inline { margin: 0 0 .2rem; font-weight: 600; }
+.auto-reminders .hint { margin: 0; }
+
+/* ---- bank statement import, matching and reconciliation ---- */
+.good-text { color: var(--good); }
+.steps-inline { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; list-style: none; padding: 0; margin: 0 0 1rem; color: var(--muted); font-size: .9rem; }
+.facts-tight { grid-template-columns: 1fr; gap: .35rem; margin-top: .6rem; }
+.facts-tight div { display: flex; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.problem-list { margin: .4rem 0; padding-left: 1.2rem; }
+.problem-list li { margin: .15rem 0; }
+.sample-table td, .sample-table th { white-space: nowrap; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; }
+.stmt-lines { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+.stmt-line { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: .65rem .8rem; box-shadow: var(--shadow); min-width: 0; }
+.stmt-line.stmt-matched { border-left-color: var(--good); }
+.stmt-line.stmt-ignored { border-left-color: var(--border); opacity: .85; }
+.stmt-main { display: flex; gap: .7rem; align-items: flex-start; }
+.stmt-main input[type="checkbox"] { margin-top: .25rem; flex: none; }
+.stmt-text { flex: 1; min-width: 0; }
+.stmt-date { font-size: .8rem; color: var(--muted); }
+.stmt-desc { font-weight: 600; overflow-wrap: anywhere; }
+.stmt-amount { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.suggestions { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .35rem; }
+.suggestions li { display: flex; gap: .6rem; align-items: center; justify-content: space-between; background: var(--bg); border-radius: var(--radius); padding: .4rem .6rem; }
+.suggestion-text { min-width: 0; overflow-wrap: anywhere; }
+.suggestion-entry { display: inline; margin-right: .5rem; }
+.stmt-actions { justify-content: flex-start; flex-wrap: wrap; margin-top: .5rem; }
+.stmt-matched { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin-top: .4rem; overflow-wrap: anywhere; }
+.pick-list { list-style: none; margin: .4rem 0; padding: 0; max-height: 18rem; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.pick-list li { padding: .4rem .6rem; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.pick-list li:last-child { border-bottom: 0; }
+.pick-list .check { display: flex; gap: .5rem; align-items: flex-start; }
+.report-table .group-row th { background: var(--bg); text-align: left; font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.report-table .indent { padding-left: 1.5rem; }
+.report-table .total-row th, .report-table .total-row td { border-top: 2px solid var(--text); }
+.report-table th[scope="row"] { text-align: left; }
+@media (max-width: 900px) {
+  .suggestions li { flex-direction: column; align-items: stretch; }
+  .report-table .indent { padding-left: .4rem; }
+}
+@media print {
+  .recon-report { box-shadow: none; break-inside: auto; }
+}

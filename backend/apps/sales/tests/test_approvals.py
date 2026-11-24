@@ -269,7 +269,7 @@ class StandaloneAndPermissionTests(QuoteApprovalBase):
 
     def test_every_role_against_the_quotation_actions(self):
         d = self.held()                                                # prepared by staff
-        decide = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}      # sales.manage
+        decide = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}      # sales.manage
         for role in ALL_ROLES:
             c = client_for(make_user(f"u_{role}", role))
             self.assertEqual(c.get(f"{S}/quotes/{d['id']}/").status_code, 200, role)    # documents.issue: every role
@@ -514,7 +514,7 @@ class PaymentStandaloneAndPermissionTests(PaymentVoidApprovalBase):
     def test_every_role_against_the_void_actions(self):
         p = self.paid_60k()
         self.void(p)
-        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
         for role in ALL_ROLES:
             c = client_for(make_user(f"u_{role}", role))
             for verb in ("void", "approve", "reject", "withdraw"):

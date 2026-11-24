@@ -1,8 +1,26 @@
 from django.urls import path
 
-from . import views, views_assets as fa, views_budgets as bd
+from . import views, views_assets as fa, views_bank as bk, views_budgets as bd
 
 urlpatterns = [
+    # bank statement import, matching and reconciliation
+    path("bank-rec/", bk.BankRecOverviewView.as_view(), name="acc-bankrec"),
+    path("bank/<uuid:pk>/statements/", bk.StatementCollectionView.as_view(), name="acc-bank-statements"),
+    path("bank/<uuid:pk>/lines/", bk.StatementLinesView.as_view(), name="acc-bank-lines"),
+    path("bank/<uuid:pk>/book-entries/", bk.BookEntriesView.as_view(), name="acc-bank-book-entries"),
+    path("bank/<uuid:pk>/matches/", bk.MatchCollectionView.as_view(), name="acc-bank-matches"),
+    path("bank/<uuid:pk>/matches/auto/", bk.AutoMatchView.as_view(), name="acc-bank-auto-match"),
+    path("bank/<uuid:pk>/cleared/", bk.ClearedView.as_view(), name="acc-bank-cleared"),
+    path("bank/<uuid:pk>/reconciliation/", bk.ReconciliationView.as_view(), name="acc-bank-reconciliation"),
+    path("bank/<uuid:pk>/reconciliation/close/", bk.ReconciliationCloseView.as_view(), name="acc-bank-reconciliation-close"),
+    path("statements/<uuid:pk>/", bk.StatementDetailView.as_view(), name="acc-statement"),
+    path("statements/<uuid:pk>/import/", bk.StatementImportView.as_view(), name="acc-statement-import"),
+    path("statements/<uuid:pk>/file/", bk.StatementFileView.as_view(), name="acc-statement-file"),
+    path("statement-lines/<uuid:pk>/ignore/", bk.LineIgnoreView.as_view(), name="acc-line-ignore"),
+    path("statement-lines/<uuid:pk>/unignore/", bk.LineIgnoreView.as_view(undo=True), name="acc-line-unignore"),
+    path("statement-lines/<uuid:pk>/create/", bk.LineCreateView.as_view(), name="acc-line-create"),
+    path("statement-lines/<uuid:pk>/create-options/", bk.LineCreateOptionsView.as_view(), name="acc-line-create-options"),
+    path("bank-matches/<uuid:pk>/undo/", bk.MatchUndoView.as_view(), name="acc-match-undo"),
     path("dashboard/", views.DashboardView.as_view(), name="acc-dashboard"),
     path("accounts/", views.AccountCollectionView.as_view(), name="acc-accounts"),
     path("accounts/setup/", views.AccountSetupView.as_view(), name="acc-setup"),

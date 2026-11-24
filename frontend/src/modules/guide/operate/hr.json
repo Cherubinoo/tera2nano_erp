@@ -1,0 +1,404 @@
+{
+  "key": "hr",
+  "title": "People (HR)",
+  "purpose": "People keeps the employee directory and everything about each person's work: department and designation, attendance, holidays, leave, salary, monthly payroll, performance reviews and project assignments. HR marks attendance and approves leave, payroll staff run the monthly payroll from attendance and leave and post it to the books, and every member uses the My pages to check in, apply for leave and download payslips. New staff who join through an invitation link get a People record linked to their sign-in automatically.",
+  "who": [
+    {"role": "Admin, Managing partner, Partner", "does": "Hold every permission: manage employees, attendance, leave, salaries and payroll, and invite members."},
+    {"role": "HR manager", "does": "Runs the module by default (hr.view, hr.manage, hr.payroll): adds employees, marks attendance, manages leave types and balances, decides leave, sets salaries, runs payroll, launches review cycles. Can invite new members as Employee or Project manager."},
+    {"role": "Finance manager", "does": "Can view the directory (hr.view) and see salaries and run payroll (hr.payroll), for example to post payroll and mark salaries paid."},
+    {"role": "Project manager", "does": "Can view the directory and departments (hr.view) and see Project Assignments."},
+    {"role": "Employee", "does": "Uses the self-service pages only: My Profile, My Attendance, My Leave, My Payslips, plus Performance (own reviews and goals) and Holidays. A reporting manager also sees Team approvals in My Leave."}
+  ],
+  "before_you_start": [
+    "Open the People tile from the module launcher. The left menu shows only the pages your role may use: HR Dashboard, Employees, Departments, Attendance, Leave, Payroll, Performance, Project Assignments, Holidays, My Profile, My Attendance, My Leave, My Payslips.",
+    "Set up departments and designations first (People > Departments), then leave types (People > Leave > Leave types) and the holiday calendar (People > Holidays).",
+    "Before the first payroll, check People > Payroll > Settings (PF, ESI, professional tax slabs, loss of pay basis, leave year) and give every employee a salary structure.",
+    "For the My pages to work, each person's employee record must be linked to their sign-in (the Sign-in user field). Members who join through an invitation link are linked automatically.",
+    "Employee and leave request numbers come from Company > Document Numbering."
+  ],
+  "tasks": [
+    {
+      "title": "Invite a new member (gets a linked People record)",
+      "who": "Admin, Managing partner, Partner, HR manager (users.invite)",
+      "where": "Administration > Invite members > Create invite link",
+      "route": "/company/invite",
+      "steps": [
+        "Open the Administration tile and click Invite members.",
+        "Click Create invite link.",
+        "Choose the Access role (HR managers can choose only Employee or Project manager) and Link valid for (days), 1 to 30 (7 by default).",
+        "Optionally enter the Name of the person, Email of the person and a Note, then click Create link.",
+        "Click Email this link, check the message and click Send email, or click Copy link and send it yourself. Nothing is sent until you do.",
+        "The person opens the link, fills in Full name, Username, Password, Mobile number, Personal email, Your role in the company and the optional details, and joins."
+      ],
+      "result": "The link works once. For the roles Employee, Project manager, HR manager and Finance manager, joining also creates an employee record in People, linked to the new sign-in, with today as date of joining, Full-time, the designation they typed (created if new) and the department if it matches an existing one. Partners and administrators get the account only. The invitation list shows who joined and when.",
+      "tips": [
+        "Revoke withdraws an unused link; New link replaces it with a fresh one.",
+        "After someone joins, open their employee record and complete the job details, reporting manager and salary."
+      ]
+    },
+    {
+      "title": "Add an employee by hand",
+      "who": "HR manager or partner (hr.manage)",
+      "where": "People > Employees > New employee",
+      "route": "/hr/employees?new=1",
+      "steps": [
+        "Open People > Employees and click New employee (or Add employee on the HR Dashboard, or + New > Employee).",
+        "Enter the name, Date of birth, Gender, Work email, Personal email, Phone, Address and emergency contact.",
+        "Enter Date of joining, Employment type (Full-time, Contract, Intern, Consultant), Department, Designation, Reporting manager and Work location.",
+        "Choose the Sign-in user if the person already has a login, so they can use the My pages.",
+        "Enter PAN, Aadhaar number, UAN (provident fund), ESI number and the salary bank account (Salary account holder, Bank, IFSC, Salary account number).",
+        "Click Save."
+      ],
+      "result": "The employee is created with an automatic employee code (shown in the message) and status Active.",
+      "tips": ["PAN looks like ABCDE1234F and IFSC like HDFC0001234; the form checks the format."]
+    },
+    {
+      "title": "Find, edit or exit an employee",
+      "who": "HR manager or partner; anyone with hr.view can search",
+      "where": "People > Employees > (employee)",
+      "route": "/hr/employees",
+      "steps": [
+        "Open People > Employees. Use the status chips, Search (name, code, email or phone), Department and Type, then Search.",
+        "Click the employee to open their page with tabs Profile, Job & Salary, Documents, Leave, Attendance, Performance, Payslips and Projects.",
+        "Click Edit to change details. To record a resignation set Status to On notice; when they leave set Status to Exited and fill Last working day and Reason for leaving.",
+        "Use Show full numbers to see full PAN, Aadhaar and account numbers (they are masked otherwise).",
+        "Use the Documents tab to upload the offer letter, contract, ID proofs and certificates, with an expiry date if needed."
+      ],
+      "result": "Changes are saved and recorded. Exited employees are no longer included as current staff.",
+      "tips": ["Delete is only for records made by mistake; someone with history should be marked Exited instead."]
+    },
+    {
+      "title": "Manage departments and designations",
+      "who": "HR manager or partner",
+      "where": "People > Departments",
+      "route": "/hr/departments",
+      "steps": [
+        "Open People > Departments.",
+        "On the Departments tab click New department, enter the name, Description and Head of department, and save.",
+        "On the Designations tab click New designation and enter the name.",
+        "Use Edit to rename or untick Active to switch one off; Delete removes one with nobody in it.",
+        "Open the Organisation chart tab to see who reports to whom."
+      ],
+      "result": "Departments and designations appear in the employee form, with headcount shown in each list.",
+      "tips": ["A department or designation with people in it cannot be deleted; switch it off instead."]
+    },
+    {
+      "title": "Set up the holiday calendar",
+      "who": "HR manager or partner",
+      "where": "People > Holidays > New holiday",
+      "route": "/hr/holidays",
+      "steps": [
+        "Open People > Holidays and move to the year with the arrows.",
+        "Click New holiday, enter the Date and Holiday name (for example 15-08-2026, Independence Day).",
+        "Tick Optional if people may choose to take it, then save."
+      ],
+      "result": "Company holidays do not use up leave and are not counted as absences. Everyone can see the calendar.",
+      "tips": []
+    },
+    {
+      "title": "Mark daily attendance",
+      "who": "HR manager or partner",
+      "where": "People > Attendance > Daily sheet",
+      "route": "/hr/attendance",
+      "steps": [
+        "Open People > Attendance (or Mark attendance on the HR Dashboard) and stay on Daily sheet.",
+        "Choose the Date.",
+        "Click Mark everyone not yet marked as present, or tick people, choose a status in Mark ... as and click Apply to selected.",
+        "For one person use the Present or Absent button on their row.",
+        "Use the Monthly grid tab and click a day to set Present, Absent, Half day, Work from home and so on, with In and Out times and a Note."
+      ],
+      "result": "Attendance is saved and feeds loss of pay in payroll. People on approved leave are shown On leave and cannot be changed on the sheet.",
+      "tips": ["Attendance cannot be marked for a future date."]
+    },
+    {
+      "title": "Check in and out (self-service)",
+      "who": "Every member with a linked employee record",
+      "where": "People > My Attendance",
+      "route": "/hr/my-attendance",
+      "steps": [
+        "Open People > My Attendance.",
+        "Under Today choose Working from: Office or Home, and click Check in.",
+        "At the end of the day click Check out."
+      ],
+      "result": "Your attendance for today is recorded as Present or Work from home with the times. The page shows your month and totals.",
+      "tips": ["If the page says your sign-in is not linked, ask HR to link your login to your employee profile."]
+    },
+    {
+      "title": "Create leave types and adjust balances",
+      "who": "HR manager or partner",
+      "where": "People > Leave > Leave types / Balances",
+      "route": "/hr/leave",
+      "steps": [
+        "Open People > Leave and click the Leave types tab.",
+        "Click New leave type: enter Name (for example Casual leave), Code (CL), Days a year (12), tick Paid leave, and Unused days carry forward with Most days that carry forward if allowed. Save.",
+        "To set an opening balance, click the Balances tab, choose the Employee and click Adjust a balance.",
+        "Choose the Leave type, enter Days to add (use a minus sign to deduct) and a Reason such as Opening balance, then Save adjustment."
+      ],
+      "result": "Leave types appear in leave requests; unpaid leave reduces the month's pay. Balances show each type's entitlement, used and available days, with every adjustment listed.",
+      "tips": ["Leave 0 days a year for unpaid leave, which has no limit. A leave type that has been used cannot be deleted; switch it off."]
+    },
+    {
+      "title": "Apply for leave (self-service)",
+      "who": "Every member with a linked employee record",
+      "where": "People > My Leave > Apply for leave",
+      "route": "/hr/my-leave",
+      "steps": [
+        "Open People > My Leave (or + New > Leave request) and click Apply for leave.",
+        "Choose the Leave type, First day and Last day (or tick Half day for a single date) and write the Reason.",
+        "Tick Send for approval now, or leave it unticked to save a draft.",
+        "Click Apply. A draft can later be sent with Submit, changed with Edit or removed with Delete."
+      ],
+      "result": "When sent, the request gets a leave number and status Pending approval, and goes to your reporting manager and HR. Your balances are shown on the same page.",
+      "tips": [
+        "Weekly offs and holidays inside the dates are not counted. A request cannot overlap another, cross into the next leave year or exceed your balance.",
+        "Cancel withdraws a pending request; approved leave that has already started can only be cancelled by HR."
+      ]
+    },
+    {
+      "title": "Approve or reject leave",
+      "who": "The employee's reporting manager, or HR (hr.manage)",
+      "where": "People > My Leave > Team approvals, or People > Leave > Requests",
+      "route": "/hr/leave",
+      "steps": [
+        "Managers: open People > My Leave and click Team approvals. HR: open People > Leave, Requests tab, and click the Pending chip.",
+        "Check the dates, days and reason.",
+        "Click Approve, or Reject and type the reason."
+      ],
+      "result": "Approved leave is deducted from the balance and marked On leave in attendance. Rejected requests show the reason. Cancelling approved leave gives the days back and removes the attendance entries.",
+      "tips": [
+        "Nobody can decide their own request.",
+        "HR can raise a request for someone with New request for someone, and see who is away on the Team calendar tab."
+      ]
+    },
+    {
+      "title": "Set or revise an employee's salary",
+      "who": "HR manager, Finance manager or partner (hr.payroll)",
+      "where": "People > Employees > (employee) > Job & Salary > New structure",
+      "route": "/hr/employees",
+      "steps": [
+        "Open the employee and click the Job & Salary tab.",
+        "Click New structure.",
+        "Enter Effective from, Basic (monthly) (for example 30,000), House rent allowance (15,000), Special allowance and Other allowances.",
+        "Enter any Fixed monthly deduction and Income tax (TDS) per month (from the employee's tax declaration).",
+        "Tick Provident fund applies, ESI applies when the gross is within the ceiling and Professional tax applies as relevant.",
+        "Add Notes (for example Annual revision) and click Save structure."
+      ],
+      "result": "The structure in force is marked In force and used by payroll from its effective date. If it is a raise above an approval limit, it is held as a salary revision with status Pending approval and payroll keeps the current salary until it is approved in the Approvals module.",
+      "tips": [
+        "Only one revision per employee can wait for approval; use Withdraw to cancel it.",
+        "A structure cannot start before the date of joining, and only one can start on a given date. Payslips already made keep their own figures if a structure is removed."
+      ]
+    },
+    {
+      "title": "Record a salary advance",
+      "who": "HR manager, Finance manager or partner",
+      "where": "People > Employees > (employee) > Job & Salary > Record an advance",
+      "route": "/hr/employees",
+      "steps": [
+        "Open the employee's Job & Salary tab and click Record an advance.",
+        "Enter Date given, Amount (for example 20,000) and Recovered each month (for example 5,000).",
+        "Click Save advance."
+      ],
+      "result": "The advance is recovered from each payslip as Advance recovery until it is repaid. An advance with nothing recovered yet can be deleted.",
+      "tips": []
+    },
+    {
+      "title": "Prepare a payroll run",
+      "who": "HR manager, Finance manager or partner (hr.payroll)",
+      "where": "People > Payroll > Runs > New payroll run",
+      "route": "/hr/payroll",
+      "steps": [
+        "Open People > Payroll and click New payroll run.",
+        "Choose the Month and add Notes if needed, then click Generate payslips.",
+        "Read the warnings: people with no salary structure for the month are left out.",
+        "Click Open and adjust on a payslip to change Loss of pay days, Bonus, Income tax (TDS), Advance recovery, Other deductions or Remarks, then click Recalculate and save.",
+        "If attendance or salaries changed, click Regenerate to work out all payslips again."
+      ],
+      "result": "A draft run is created with a run number and one payslip per employee, worked out from salary, attendance and leave (loss of pay). Tiles show gross pay, deductions, net pay and cost to company.",
+      "tips": [
+        "Only one live run per month is allowed; void the old one to start again. A month that has not started cannot be run.",
+        "Regenerate discards changes made to individual payslips."
+      ]
+    },
+    {
+      "title": "Lock, approve and post payroll to the books",
+      "who": "HR manager, Finance manager or partner; approvers in Approvals",
+      "where": "People > Payroll > (run)",
+      "route": "/hr/payroll",
+      "steps": [
+        "When the payslips are right, click Lock run.",
+        "Click Send for approval. Approvers decide in the Approvals module (or with Approve / Send back on the run when the Approvals module does not manage it).",
+        "When the run is Approved, click Post to books and confirm Post."
+      ],
+      "result": "Locking stops payslip edits (Reopen as draft unlocks it). Posting writes one Payroll journal entry: Dr salaries and wages, employer PF and employer ESI; Cr salaries payable (net pay), PF payable, ESI payable, professional tax payable, TDS payable, employee advances and other deductions. Payslips then appear in each employee's My Payslips.",
+      "tips": ["A run cannot be locked while anyone's deductions are more than their pay."]
+    },
+    {
+      "title": "Pay salaries: bank file and mark paid",
+      "who": "Finance manager, HR manager or partner",
+      "where": "People > Payroll > (run) > Bank transfer file / Mark salaries paid",
+      "route": "/hr/payroll",
+      "steps": [
+        "Open the posted run and click Bank transfer file to download the salary transfer CSV for your bank.",
+        "Upload it to your bank and make the transfers.",
+        "Click Mark salaries paid, enter the Payment date, choose Paid from (or leave Default bank account) and the Reference (UTR or batch number), then click Record payment.",
+        "Click PDF on any payslip to download it."
+      ],
+      "result": "A second journal entry clears salaries payable against the bank, and the run shows Salaries paid. Each bank file download is recorded in the change history.",
+      "tips": ["People without complete bank details are listed in a warning and left out of the bank file."]
+    },
+    {
+      "title": "Email payslips to employees",
+      "who": "Anyone with hr.payroll (HR manager, Finance manager, partners)",
+      "where": "People > Payroll > (run) > Payslips > Email",
+      "route": "/hr/payroll",
+      "steps": [
+        "Open an approved, posted or paid run. Email appears next to PDF on each payslip.",
+        "Click Email on the payslip. The window opens with To (the employee's work email, or personal email if there is no work email), the Subject \"Your payslip for August 2026\" and a short message; the payslip PDF is shown under Attached.",
+        "Check the address, change the message if needed and click Send email. Read the result and click Done.",
+        "Repeat for each employee."
+      ],
+      "result": "The employee receives their payslip PDF. Each message is listed under Administration > Sent emails.",
+      "tips": [
+        "Payslips carry pay details: check the address before sending. Employees can always download their own payslips from My Payslips.",
+        "Email is not offered while the run is still a draft or locked."
+      ]
+    },
+    {
+      "title": "Void a payroll run or delete a draft",
+      "who": "HR manager, Finance manager or partner",
+      "where": "People > Payroll > (run) > Void / Delete",
+      "route": "/hr/payroll",
+      "steps": [
+        "Open the run.",
+        "For a draft, click Delete and confirm to remove it and its payslips.",
+        "For any other run, click Void, type the reason and confirm."
+      ],
+      "result": "Voiding reverses any journal entries made for the run (posting and payment), and the month can be run again.",
+      "tips": []
+    },
+    {
+      "title": "Read payroll reports and maintain settings",
+      "who": "HR manager, Finance manager or partner",
+      "where": "People > Payroll > Reports / Settings",
+      "route": "/hr/payroll",
+      "steps": [
+        "Click the Reports tab and choose Statutory (PF, ESI, PT, TDS), Cost by department, Year to date by employee or Salary register.",
+        "Choose the Month or From and To, and click Download CSV.",
+        "Click the Settings tab to change Provident fund rate (%), PF wage ceiling, ESI gross ceiling, ESI employee and employer rates, Loss of pay is worked out on, Leave year starts in, and the professional tax State and slabs (Add a slab). Click Save settings."
+      ],
+      "result": "Reports give the figures for PF, ESI, professional tax and TDS payments and returns. Settings apply to payslips generated afterwards.",
+      "tips": []
+    },
+    {
+      "title": "Download my payslips (self-service)",
+      "who": "Every member with a linked employee record",
+      "where": "People > My Payslips",
+      "route": "/hr/my-payslips",
+      "steps": [
+        "Open People > My Payslips.",
+        "Click View to see a payslip, or Download PDF."
+      ],
+      "result": "You see each month's gross, deductions and net pay, once that month's payroll has been posted.",
+      "tips": []
+    },
+    {
+      "title": "Update my contact details (self-service)",
+      "who": "Every member with a linked employee record",
+      "where": "People > My Profile > Edit my contact details",
+      "route": "/hr/my-profile",
+      "steps": [
+        "Open People > My Profile.",
+        "Click Edit my contact details.",
+        "Change Phone, Address, Emergency contact name, Relationship or Emergency contact phone and save."
+      ],
+      "result": "Your details are saved. For anything else (name, bank, PAN, job) contact HR. The page also shows your leave balances.",
+      "tips": []
+    },
+    {
+      "title": "Run a performance review cycle",
+      "who": "HR (cycles); employees and managers (reviews and goals)",
+      "where": "People > Performance",
+      "route": "/hr/performance",
+      "steps": [
+        "HR: on Cycles and summary click New cycle, enter a Name (for example FY 2026-27 first half), Period starts and Period ends, and save.",
+        "Click Launch and confirm: a review is created for every current employee with their manager as reviewer.",
+        "Add goals on the Goals tab with New goal (Employee, Review cycle, Goal, What success looks like, Weight (%)); people click Update to record progress and status.",
+        "Employees: on the Reviews tab click Write self review, choose a rating and comments, and click Submit review.",
+        "Managers: click Rate, choose the Rating and Feedback, and click Save rating.",
+        "HR: when done, click Close on the cycle."
+      ],
+      "result": "Reviews move from Waiting for self review to Waiting for manager to Completed. The Appraisal summary shows reviews completed, average ratings (out of 5) and goal progress. A closed cycle accepts no more ratings or goal changes.",
+      "tips": ["Only a draft cycle can be deleted."]
+    },
+    {
+      "title": "Assign people to projects",
+      "who": "HR manager or partner",
+      "where": "People > Project Assignments > New assignment",
+      "route": "/hr/assignments",
+      "steps": [
+        "Open People > Project Assignments and click New assignment (or Assign to a project on an employee's Projects tab).",
+        "Choose the Employee and Project, enter Role on the project and Allocation (%), for example 50.",
+        "Enter From and To (leave To empty if ongoing) and Notes, then click Save.",
+        "Use Edit or Remove on a row to change it."
+      ],
+      "result": "The assignment shows in the list and on the employee. Tiles show average utilisation today, people without a project and over-allocated people.",
+      "tips": ["A person's total allocation across projects can be at most 100% on any day."]
+    }
+  ],
+  "statuses": [
+    {"name": "Active / On notice / Exited (employee)", "meaning": "Employment status. Exited needs a last working day."},
+    {"name": "Present / Absent / Half day / On leave / Holiday / Work from home", "meaning": "Attendance for a day; absences, half days and unpaid leave can reduce pay."},
+    {"name": "Draft / Pending approval / Approved / Rejected / Cancelled (leave)", "meaning": "Leave request stages. A number is given when it is sent for approval."},
+    {"name": "In force (salary structure)", "meaning": "The structure payroll uses now."},
+    {"name": "Pending approval / Approved / Rejected / Withdrawn (salary revision)", "meaning": "A raise held by an approval rule until decided."},
+    {"name": "Draft", "meaning": "Payroll run being prepared; payslips can be adjusted or regenerated."},
+    {"name": "Locked", "meaning": "Payslips frozen, ready to send for approval."},
+    {"name": "Pending approval / Approved", "meaning": "Payroll run waiting for, or given, approval."},
+    {"name": "Posted to books", "meaning": "Salary cost and liabilities are in the accounts; payslips visible to employees."},
+    {"name": "Salaries paid", "meaning": "Payment recorded against the bank."},
+    {"name": "Void", "meaning": "Run cancelled with a reason; its journal entries reversed."},
+    {"name": "Draft / Open / Closed (review cycle)", "meaning": "Cycle being set up, running, or finished."},
+    {"name": "Waiting for self review / Waiting for manager / Completed", "meaning": "Stages of one person's review."},
+    {"name": "Not started / In progress / Achieved / Missed (goal)", "meaning": "Goal status."}
+  ],
+  "routines": {
+    "daily": [
+      "Mark attendance on the Daily sheet (or check that everyone has checked in).",
+      "Approve or reject pending leave requests."
+    ],
+    "weekly": [
+      "Check the HR Dashboard: on leave today, leave to approve, joiners and leavers.",
+      "Check Project Assignments for people without a project or over-allocated."
+    ],
+    "monthly": [
+      "After month end: finish attendance, then create the payroll run, adjust payslips, lock, send for approval and post to books.",
+      "Download the bank transfer file, pay salaries and mark them paid.",
+      "Download the Statutory report for PF, ESI, professional tax and TDS payments.",
+      "Record new joiners (or send invitation links) and mark leavers as Exited."
+    ],
+    "yearly": [
+      "Add next year's holidays to the calendar.",
+      "Review leave types and adjust balances for carry forward.",
+      "Enter salary revisions with their effective date.",
+      "Run the review cycles and close them when complete."
+    ]
+  },
+  "common_problems": [
+    {"problem": "My Profile, My Leave or My Payslips says my sign-in is not linked.", "fix": "HR opens your employee record, clicks Edit and chooses your login in Sign-in user."},
+    {"problem": "Someone who joined through an invitation is not in Employees.", "fix": "Only staff roles (Employee, Project manager, HR manager, Finance manager) get a People record. Partners and admins do not; add one by hand if needed."},
+    {"problem": "An employee is missing from the payroll run.", "fix": "They have no salary structure effective for that month. Add one on Job & Salary, then Regenerate the draft run."},
+    {"problem": "The new salary is not used in payroll.", "fix": "The raise is waiting for approval. Check Salary revisions on the employee or the Approvals module."},
+    {"problem": "Lock run is refused.", "fix": "Someone's deductions are more than their pay. Open the payslip and reduce the advance recovery or other deductions."},
+    {"problem": "I cannot create a payroll run for the month.", "fix": "A live run already exists for that month, or the month has not started. Void the old run to start again."},
+    {"problem": "A leave request is refused for not enough balance.", "fix": "Check Balances; HR can add days with Adjust a balance, or choose an unpaid leave type."},
+    {"problem": "Someone is missing from the bank file.", "fix": "Their bank details are incomplete. Fill Salary account holder, Bank, IFSC and Salary account number on the employee."}
+  ],
+  "connected": [
+    "Accounting: posting a payroll run creates a Payroll journal entry; marking salaries paid creates a payment entry against the bank.",
+    "GST & Tax: TDS on salary (section 192) from payroll shows in the TDS payable ledger and the 24Q return.",
+    "Projects: employees are picked as project managers, team members, assignees and on timesheets; assignments link people to projects.",
+    "Approvals: leave requests, salary revisions and payroll runs go through approval rules there.",
+    "Administration: invitation links create the sign-in and, for staff roles, a linked employee record."
+  ]
+}

@@ -137,7 +137,7 @@ class AssignmentTests(HRBase):
         self.assertEqual(len(self.api_pm.get(f"{H}/assignments/").json()), 2)
         self.assertEqual(self.api_pm.get(f"{H}/assignments/", {"project": "not-a-uuid"}).json(), [])
         self.assertEqual(self.api_staff.get(f"{H}/assignments/").status_code, 403)
-        for client in (self.api_pm, self.api_partner, self.fin, self.api_staff):
+        for client in (self.api_pm, self.fin, self.api_staff):  # none of them manage HR
             self.assertEqual(client.post(f"{H}/assignments/", {}).status_code, 403)
 
     def test_edit_delete_and_utilisation(self):

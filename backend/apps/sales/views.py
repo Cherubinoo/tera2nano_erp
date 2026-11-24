@@ -213,6 +213,8 @@ def document_dict(d, *, detail=False, today=None, projects=None):
     }
     if detail:
         profile = RecurringInvoice.objects.filter(pk=d.recurring_id).first() if d.recurring_id else None
+        sent_reminders = list(d.reminders.select_related("created_by").order_by("-created_at")) if d.is_receivable else []
+        emails = reminders.email_outcomes([r.pk for r in sent_reminders])
         out.update({
             "recurring": ({"id": str(profile.pk), "name": profile.name, "reference_code": profile.reference_code,
                            "run_date": d.recurring_run_date} if profile else None),
@@ -220,8 +222,8 @@ def document_dict(d, *, detail=False, today=None, projects=None):
                 "id": str(r.id), "status": r.status, "status_label": r.get_status_display(), "days_offset": r.days_offset,
                 "label": reminders.offset_label(r.days_offset), "subject": r.subject, "body": r.body, "to_email": r.to_email,
                 "amount_due": str(r.amount_due), "note": r.note, "created_at": r.created_at,
-                "by": r.created_by.get_username() if r.created_by_id else "",
-            } for r in d.reminders.select_related("created_by").order_by("-created_at")] if d.is_receivable else [],
+                "by": r.created_by.get_username() if r.created_by_id else "", "email": emails.get(str(r.pk)),
+            } for r in sent_reminders],
         })
         out.update({
             "form": d.form, "record": d.record, "void_reason": d.void_reason, "voided_at": d.voided_at,

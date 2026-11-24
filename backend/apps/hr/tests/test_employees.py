@@ -147,11 +147,11 @@ class MaskingAndPrivacy(HRBase):
         r = self.api_hr.get(f"{H}/employees/{self.e['id']}/", {"reveal": "true"}).json()
         self.assertEqual((r["pan"], r["aadhaar"], r["bank_account_number"]), (PAN, "234567890123", ACCOUNT))
         self.assertEqual(CompanyProfileAuditEvent.objects.filter(entity_type="employee", action=Action.REVEALED).count(), 1)
-        for client in (self.fin, self.api_pm, self.api_partner, self.api_staff):  # none of them manage HR
+        for client in (self.fin, self.api_pm, self.api_staff):  # none of them manage HR (a partner holds every permission, so it is not here)
             self.assertEqual(client.get(f"{H}/employees/{self.e['id']}/", {"reveal": "true"}).status_code, 403)
 
     def test_directory_viewers_do_not_see_personal_or_pay_data(self):
-        for client in (self.api_pm, self.api_partner):
+        for client in (self.api_pm,):
             r = client.get(f"{H}/employees/{self.e['id']}/").json()
             for key in ("pan_masked", "aadhaar_masked", "bank_account_masked", "date_of_birth", "personal_email", "address", "current_salary"):
                 self.assertNotIn(key, r, key)
@@ -189,17 +189,17 @@ class PermissionMatrix(HRBase):
             ("get", f"{H}/employees/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
             ("get", f"{H}/dashboard/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
             ("get", f"{H}/departments/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
-            ("post", f"{H}/departments/", {"name": "X{n}"}, {"admin", "managing_partner", "hr"}),
-            ("get", f"{H}/employees/{e['id']}/salary/", None, {"admin", "managing_partner", "finance", "hr"}),
-            ("get", f"{H}/payroll/runs/", None, {"admin", "managing_partner", "finance", "hr"}),
-            ("get", f"{H}/payroll/reports/register/", None, {"admin", "managing_partner", "finance", "hr"}),
-            ("post", f"{H}/holidays/", {"date": "2026-10-{n}", "name": "H"}, {"admin", "managing_partner", "hr"}),
+            ("post", f"{H}/departments/", {"name": "X{n}"}, {"admin", "managing_partner", "partner", "hr"}),
+            ("get", f"{H}/employees/{e['id']}/salary/", None, {"admin", "managing_partner", "partner", "finance", "hr"}),
+            ("get", f"{H}/payroll/runs/", None, {"admin", "managing_partner", "partner", "finance", "hr"}),
+            ("get", f"{H}/payroll/reports/register/", None, {"admin", "managing_partner", "partner", "finance", "hr"}),
+            ("post", f"{H}/holidays/", {"date": "2026-10-{n}", "name": "H"}, {"admin", "managing_partner", "partner", "hr"}),
             ("get", f"{H}/holidays/", None, set(clients)),
             ("get", f"{H}/leave/types/", None, set(clients)),
             ("get", f"{H}/assignments/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
             ("get", f"{H}/employees/org-chart/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
             ("get", f"{H}/payroll/settings/", None, {"admin", "managing_partner", "partner", "finance", "hr", "pm"}),
-            ("patch", f"{H}/payroll/settings/", {"pt_state": "Tamil Nadu"}, {"admin", "managing_partner", "finance", "hr"}),
+            ("patch", f"{H}/payroll/settings/", {"pt_state": "Tamil Nadu"}, {"admin", "managing_partner", "partner", "finance", "hr"}),
         ]
         for method, url, payload, allowed in expect:
             for n, (role, client) in enumerate(clients.items(), 10):
@@ -210,7 +210,7 @@ class PermissionMatrix(HRBase):
 
     def test_only_hr_manage_changes_people(self):
         e = self.emp("Asha")
-        for client in (self.fin, self.api_pm, self.api_partner, self.api_staff):
+        for client in (self.fin, self.api_pm, self.api_staff):
             self.assertEqual(client.post(f"{H}/employees/", {"first_name": "X", "date_of_joining": "2025-04-01"}).status_code, 403)
             self.assertEqual(client.patch(f"{H}/employees/{e['id']}/", {"phone": "9999999999"}).status_code, 403)
             self.assertEqual(client.delete(f"{H}/employees/{e['id']}/").status_code, 403)

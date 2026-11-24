@@ -45,7 +45,8 @@ class VendorTests(PurchasesBase):
         self.assertNotIn("123456789012", str(self.fin.get(f"{P}/vendors/").json()))
         manager = self.fin.get(f"{P}/vendors/{v['id']}/").json()
         self.assertEqual((manager["pan"], manager["bank_account_number"], manager["bank_ifsc"]), ("FFFPF1234F", "123456789012", "HDFC0001234"))
-        partner = client_for(make_user("pat", Role.PARTNER)).get(f"{P}/vendors/{v['id']}/").json()
+        partner = client_for(make_user("pat", Role.PROJECT_MANAGER)).get(  # can view, cannot manage; a Partner now holds every permission
+            f"{P}/vendors/{v['id']}/").json()
         self.assertEqual((partner["pan"], partner["bank_account_number"]), ("XXXXXX234F", "XXXXXX9012"))
         self.assertNotIn("123456789012", str(partner))
         # a masked value sent back unchanged does not overwrite the stored number

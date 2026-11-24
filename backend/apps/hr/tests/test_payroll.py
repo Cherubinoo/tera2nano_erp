@@ -358,7 +358,7 @@ class Documents(PayrollBase):
         ev = CompanyProfileAuditEvent.objects.get(entity_type="payroll_run", action=Action.DOWNLOADED)
         self.assertEqual((ev.new_values["rows"], ev.new_values["total"]), (2, "54812.50"))
         self.assertNotIn(ACCOUNT, str(ev.new_values))
-        for client in (self.api_staff, self.api_pm, self.api_partner):
+        for client in (self.api_staff, self.api_pm):
             self.assertEqual(client.get(f"{H}/payroll/runs/{run['id']}/bank-file/").status_code, 403)
 
     def test_salary_register_csv_and_reports_count_only_finalised_runs(self):
@@ -389,7 +389,7 @@ class Documents(PayrollBase):
         self.assertEqual(self.fin.get(f"{H}/payroll/reports/ytd/", {"year": "abc"}).status_code, 400)
         self.assertEqual(self.fin.get(f"{H}/payroll/reports/monthly-cost/", {"from": "2026-09", "to": "2026-08"}).status_code, 400)
         self.assertEqual(CompanyProfileAuditEvent.objects.filter(action=Action.DOWNLOADED).count(), 1)  # the register CSV
-        for client in (self.api_staff, self.api_pm, self.api_partner):
+        for client in (self.api_staff, self.api_pm):
             for path in ("monthly-cost", "department-cost", "statutory", "register", "ytd"):
                 self.assertEqual(client.get(f"{H}/payroll/reports/{path}/").status_code, 403, path)
 
@@ -446,7 +446,7 @@ class SelfServiceIsolation(PayrollBase):
         run = self.posted()
         theirs = self.slip(run, self.other)
         self.assertEqual(self.api_pm.get(f"{H}/payroll/payslips/{theirs['id']}/").status_code, 403)
-        self.assertEqual(self.api_partner.get(f"{H}/employees/{self.other['id']}/salary/").status_code, 403)
+        self.assertEqual(self.api_partner.get(f"{H}/employees/{self.other['id']}/salary/").status_code, 200)  # a partner holds hr.payroll
         self.assertNotIn("current_salary", self.api_pm.get(f"{H}/employees/{self.other['id']}/").json())
 
     def test_my_profile_is_limited_and_a_user_without_a_record_is_told_so(self):
@@ -492,7 +492,7 @@ class PayrollPermissionMatrix(PayrollBase):
     def test_run_endpoints_by_role(self):
         clients = {"admin": self.api, "managing_partner": self.api_mp, "partner": self.api_partner, "finance": self.fin, "hr": self.api_hr,
                    "pm": self.api_pm, "employee": self.api_staff}
-        allowed = {"admin", "managing_partner", "finance", "hr"}
+        allowed = {"admin", "managing_partner", "partner", "finance", "hr"}
         run = self.run_payroll()
         for role, client in clients.items():
             for method, url, body in (("get", f"{H}/payroll/runs/", None), ("get", f"{H}/payroll/runs/{run['id']}/", None),
@@ -503,7 +503,7 @@ class PayrollPermissionMatrix(PayrollBase):
                     self.assertNotEqual(r.status_code, 403, f"{role} {method} {url}")
                 else:
                     self.assertEqual(r.status_code, 403, f"{role} {method} {url}")
-        self.assertEqual(self.api_partner.post(f"{H}/payroll/runs/", {"month": "2026-09"}).status_code, 403)
+        self.assertEqual(self.api_pm.post(f"{H}/payroll/runs/", {"month": "2026-09"}).status_code, 403)
         self.assertEqual(self.anon.get(f"{H}/payroll/runs/").status_code, 401)
         ghost = uuid.uuid4()
         for action in ("lock", "post", "pay", "void", "approve"):

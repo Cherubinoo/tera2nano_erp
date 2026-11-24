@@ -9,6 +9,7 @@ import { BankAccounts } from './Bank';
 import { BrandingDesigner } from './Branding';
 import ChangeHistory from './History';
 import { AccessManager } from './Access';
+import { InviteManager } from './Invite';
 import Home from './Home';
 import { DocumentsManager } from './Documents';
 import { LettersManager } from './Letters';
@@ -124,6 +125,15 @@ export function LettersPage() {
 
 export function HomePage() {
   return <Home />;
+}
+
+export function InvitePage() {
+  return (
+    <>
+      <PageHeader title="Invite members" description="Send a one-time link so a new member can create their own account with the access role you choose." />
+      <InviteManager />
+    </>
+  );
 }
 
 export function AccessPage() {

@@ -1,0 +1,337 @@
+{
+  "key": "gst-tax",
+  "title": "GST & Tax",
+  "purpose": "GST & Tax shows the company's GST, TDS and income tax position straight from the books, and keeps a record of every return filed and every challan paid. Use it to see what GST is payable each month, check the sales and purchase registers before filing, prepare return figures, post the input credit set-off, record tax payments, track TDS your customers deducted, and plan advance tax. The actual filing and payment happen on the government portals (GST portal, income-tax portal, TRACES); here you record what was filed and paid, with the acknowledgement.",
+  "who": [
+    {"role": "Admin, Managing partner, Partner", "does": "Hold every permission: view everything, record returns, payments, TDS credits and the income-tax worksheet."},
+    {"role": "Finance manager", "does": "Runs the module by default (tax.view and tax.manage): prepares and records returns, records challans, posts the GST set-off, maintains the TDS receivable tracker and advance-tax estimate."},
+    {"role": "HR manager, Project manager, Employee", "does": "No access by default. An admin can grant tax.view (read only) or tax.manage in Administration > Users and Access."}
+  ],
+  "before_you_start": [
+    "Open the GST & Tax tile from the module launcher. The left menu shows: Tax Dashboard, GST Summary, Sales Register, Purchase Register, Returns, GST Payments, TDS, Advance Tax & Income Tax, Tax Calendar.",
+    "Only people with tax.manage see the buttons that create or change records (Record payment, New return record, Add TDS credit and so on).",
+    "The figures come from the books, so issue invoices, record vendor bills and expenses, and post payroll before you prepare a return.",
+    "GST returns appear only if the company is registered for GST (Company > Tax Configuration).",
+    "Tax payments are posted from a bank account. If you leave Paid from empty, the default bank account is used, so set up Company > Bank Accounts first."
+  ],
+  "tasks": [
+    {
+      "title": "Check the tax position on the dashboard",
+      "who": "Anyone with tax.view",
+      "where": "GST & Tax > Tax Dashboard",
+      "route": "/tax",
+      "steps": [
+        "Open GST & Tax > Tax Dashboard.",
+        "Read the tiles: GST payable (all periods), Input credit available, TDS payable, Tax paid this year, Returns filed and Next advance tax. Click a tile to open its page.",
+        "Look at Coming up for the next due dates; click Open the calendar for more."
+      ],
+      "result": "You see what is owed, what credit is available and what is due next, for the current financial year.",
+      "tips": ["Record tax payment and New return record buttons at the top are shortcuts for people with tax.manage."]
+    },
+    {
+      "title": "Read the GST summary and liability ledger",
+      "who": "Anyone with tax.view",
+      "where": "GST & Tax > GST Summary",
+      "route": "/tax/gst",
+      "steps": [
+        "Open GST & Tax > GST Summary.",
+        "On the Summary tab, read this month's liability, input credit available and the Month by month table (taxable value, CGST, SGST, IGST, output tax, input credit, net payable and the GSTR-1 and GSTR-3B status for each month).",
+        "Click the Liability ledger tab to see, per head, opening, liability, ITC utilised, cash paid and closing, plus the input credit ledger.",
+        "Click the Books vs filed tab, choose From and To (or This month, Last month, Year to date) and click Show."
+      ],
+      "result": "Books vs filed compares the books, the register and the figures you recorded on filed GSTR-1 and GSTR-3B. Each line shows Matches or Difference.",
+      "tips": ["A Difference usually means an invoice or bill was changed after the return was filed. Check the document and, if needed, reopen the return record and correct its figures."]
+    },
+    {
+      "title": "Review the sales register (GSTR-1 view)",
+      "who": "Anyone with tax.view",
+      "where": "GST & Tax > Sales Register",
+      "route": "/tax/sales-register",
+      "steps": [
+        "Open GST & Tax > Sales Register.",
+        "Choose From and To, or click Last month, then click Show.",
+        "Use the tabs B2B, B2C large, B2C small, Credit and debit notes, Exports, HSN summary and By month.",
+        "Click an invoice number to open the document in Sales.",
+        "Click Export (tab name) CSV to download that section; on Credit and debit notes you can also Export unregistered notes CSV."
+      ],
+      "result": "You get the outward supplies arranged like GSTR-1, with tiles for taxable value, IGST, CGST plus SGST and total tax (credit notes deducted). Use the CSV files when filling GSTR-1 on the GST portal.",
+      "tips": ["An inter-state invoice to an unregistered buyer above 2,50,000 appears under B2C large."]
+    },
+    {
+      "title": "Review the purchase register and input credit eligibility",
+      "who": "Anyone with tax.view; Review needs tax.manage",
+      "where": "GST & Tax > Purchase Register",
+      "route": "/tax/purchase-register",
+      "steps": [
+        "Open GST & Tax > Purchase Register and choose the period, then click Show.",
+        "Filter with the chips: All, Eligible, No GSTIN, Ineligible.",
+        "To decide on a line, click Review. Choose Mark eligible, or type a Reason (for example blocked under section 17(5)) and click Mark ineligible. Remove decision clears an ineligible mark.",
+        "Click Export CSV to download the register."
+      ],
+      "result": "Input GST on vendor bills and expenses is listed with supplier, GSTIN, bill number and credit. The tiles show Input credit, Eligible (supplier GSTIN known), No GSTIN (not yet verified) and Ineligible.",
+      "tips": ["A reason is required when you mark a line ineligible."]
+    },
+    {
+      "title": "Create the year's return records",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > Create the year's returns",
+      "route": "/tax/returns",
+      "steps": [
+        "Open GST & Tax > Returns.",
+        "Click Create the year's returns.",
+        "Choose the Financial year (for example 2026-27).",
+        "Click Create records."
+      ],
+      "result": "Every return the year needs is created with its statutory due date: GSTR-1 (11th of next month) and GSTR-3B (20th of next month) for each month and GSTR-9 when GST-registered, TDS 24Q and 26Q for each quarter, ITR-5 and the tax audit report. Records that already exist are left alone.",
+      "tips": ["If the company is not registered for GST, the GST returns are left out."]
+    },
+    {
+      "title": "Add a single return record",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > New return record",
+      "route": "/tax/returns?new=1",
+      "steps": [
+        "Open GST & Tax > Returns and click New return record (also in the top bar + New menu as Tax return record).",
+        "Choose the Return (for example GSTR-3B (summary return and tax payment)) and the Financial year.",
+        "Choose the Month for monthly returns or the Quarter for TDS returns.",
+        "Leave Due date empty to use the statutory date, or enter an extended date. Add Notes if needed.",
+        "Click Create record."
+      ],
+      "result": "The record is created with status Pending and a reference. Only one record per return and period is allowed.",
+      "tips": []
+    },
+    {
+      "title": "Prepare a return from the books",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > (return) > Prepare from the books",
+      "route": "/tax/returns",
+      "steps": [
+        "Open GST & Tax > Returns. Filter with the status chips (All, Pending, Prepared, Filed, Late), Kind and Financial year.",
+        "Click the return to open it.",
+        "Click Prepare from the books. If figures already exist, confirm Prepare (it replaces any you edited).",
+        "Check the Figures section. Correct any figure if needed and click Save figures."
+      ],
+      "result": "The figures are worked out from the books and saved on the record; the status becomes Prepared. Use these figures when you file on the government portal.",
+      "tips": ["The tiles show the status, due date, period and whether figures have been prepared."]
+    },
+    {
+      "title": "Post the GST input credit set-off (GSTR-3B)",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > (GSTR-3B) > Set-off and payment",
+      "route": "/tax/returns",
+      "steps": [
+        "Open the month's GSTR-3B record.",
+        "In Set-off and payment, read the table per head: Tax owed, Input credit, Set off and Cash payable.",
+        "Click Post input credit set-off and confirm Post set-off.",
+        "If cash is still payable, click Record GST payment to record the challan."
+      ],
+      "result": "A journal entry is posted that debits the GST payable accounts and credits the input credit accounts in the order GST law requires. What is left is paid in cash. Undo set-off (with a reason) reverses it.",
+      "tips": [
+        "The set-off can be posted once per return; undo it first to redo it.",
+        "A return with a set-off still in the books cannot be deleted."
+      ]
+    },
+    {
+      "title": "Mark a return as filed",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > (return) > Mark as filed",
+      "route": "/tax/returns",
+      "steps": [
+        "File the return on the government portal first.",
+        "Open the return record and click Mark as filed.",
+        "Enter Filed on (the filing date), the Acknowledgement / ARN number, and any Late fee paid and Interest paid.",
+        "Click Mark as filed.",
+        "Under Acknowledgement and working papers, attach the acknowledgement PDF or return summary."
+      ],
+      "result": "The status becomes Filed (with Filed late noted if after the due date) and the record is locked. The Returns list shows the acknowledgement and filing date.",
+      "tips": [
+        "The filing date cannot be in the future or before the period starts.",
+        "To correct a filed return, click Reopen and give a reason; then change the figures and mark it filed again."
+      ]
+    },
+    {
+      "title": "Edit filing details or delete a return record",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Returns > (return) > Filing details",
+      "route": "/tax/returns",
+      "steps": [
+        "Open the return.",
+        "In Filing details change the Acknowledgement / ARN number, Due date (when the government extends it), Late fee, Interest or Notes and click Save details.",
+        "To remove a record that is not filed and has no set-off, click Delete and confirm."
+      ],
+      "result": "Details are saved. Delete removes the record only; journal entries are not affected.",
+      "tips": ["The due date of a filed return can only be changed after Reopen."]
+    },
+    {
+      "title": "Record a GST payment (challan)",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > GST Payments > Record payment",
+      "route": "/tax/payments?new=gst",
+      "steps": [
+        "Pay the challan on the GST portal first.",
+        "Open GST & Tax > GST Payments and click Record payment.",
+        "Choose Tax: GST, enter the Payment date and the Return month it settles.",
+        "Under Amounts paid by head, enter each amount, for example CGST 9,000 and SGST 9,000, plus any Interest or Penalty / late fee.",
+        "Enter the CIN / challan reference, choose Paid from (bank account) and type the Bank name on the challan.",
+        "Click Record payment."
+      ],
+      "result": "The payment gets a reference and posts to the books: Dr GST payable heads (interest and penalty to a tax expense account), Cr bank. It shows status Recorded.",
+      "tips": ["Click the payment reference to open it and attach the paid challan under Challan receipt."]
+    },
+    {
+      "title": "Find, filter or void a tax payment",
+      "who": "Anyone with tax.view; Void needs tax.manage",
+      "where": "GST & Tax > GST Payments",
+      "route": "/tax/payments",
+      "steps": [
+        "Open GST & Tax > GST Payments.",
+        "Use the tabs All, GST, TDS, Advance tax, Income tax, the Financial year and Search (reference, challan number or period).",
+        "To cancel a wrong entry, click Void on its row, type the reason and confirm Void payment."
+      ],
+      "result": "Void reverses the books: the tax payable is restored and the bank is credited back. The payment stays listed as Void with the reason.",
+      "tips": ["A payment cannot be dated in the future."]
+    },
+    {
+      "title": "Watch TDS payable and record a TDS challan",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > TDS > Payable ledger / Challans",
+      "route": "/tax/tds",
+      "steps": [
+        "Open GST & Tax > TDS. The Payable ledger tab shows opening balance, TDS deducted, paid to the government and TDS payable, by section and posting.",
+        "After paying challan 281 on the income-tax portal, click the Challans tab and then Record challan.",
+        "Enter the Payment date, Section (for example 194J; 192 for salary), Quarter, the TDS (challan 281) amount and any Interest or Late filing fee.",
+        "Enter the CIN / challan reference, Paid from and bank name, then click Record payment."
+      ],
+      "result": "The challan posts Dr TDS payable, Cr bank, and the payable ledger reduces for that section. Void challan reverses it.",
+      "tips": ["TDS deducted on vendor bills and payroll reaches the payable ledger automatically from the books."]
+    },
+    {
+      "title": "Keep quarterly TDS returns (24Q and 26Q)",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > TDS > Quarterly returns",
+      "route": "/tax/tds?tab=returns",
+      "steps": [
+        "Open GST & Tax > TDS and click the Quarterly returns tab.",
+        "Click New TDS return if the quarter is not listed (choose TDS 24Q for salary or TDS 26Q for other payments, the year and quarter).",
+        "Open the return, click Prepare from the books, file on the portal, then Mark as filed with the acknowledgement."
+      ],
+      "result": "24Q takes section 192 (salary) and 26Q every other section, with TDS deducted and paid in the quarter. Due dates: 31 July, 31 October, 31 January and 31 May.",
+      "tips": []
+    },
+    {
+      "title": "Track TDS deducted by customers (receivable)",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > TDS > Receivable tracker > Add TDS credit",
+      "route": "/tax/tds?tab=receivable",
+      "steps": [
+        "Open GST & Tax > TDS and click the Receivable tracker tab.",
+        "Click Add TDS credit.",
+        "Enter Deductor (customer), Deductor's TAN, Section (for example 194J), Date of deduction, Amount paid or credited (for example 1,00,000) and TDS amount (for example 10,000).",
+        "Set Status: Certificate awaited, Certificate received or Matched in 26AS. Enter the Certificate number (Form 16A) and Certificate date once received.",
+        "Click Save. Use Edit to update the status later, or Delete to remove an entry."
+      ],
+      "result": "The tracker totals what you can claim and shows how much is awaiting a certificate, received or matched in Form 26AS, against the TDS receivable balance in the books. These credits feed the TDS credit on the income-tax page.",
+      "tips": ["The certificate number is required once the status is no longer Certificate awaited."]
+    },
+    {
+      "title": "Estimate income tax and plan advance tax",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Advance Tax & Income Tax",
+      "route": "/tax/income-tax",
+      "steps": [
+        "Open GST & Tax > Advance Tax & Income Tax and choose the financial year.",
+        "Read the Tax computation (built from the books' profit).",
+        "In Worksheet inputs, optionally enter Profit to use instead of the books, the Tax rate % (30 by default for an LLP), Surcharge % and Cess % (4 by default).",
+        "Add Add-backs (expenses not allowed) and Deductions with Add a line, then click Save worksheet.",
+        "In Advance tax schedule, enter Estimated tax for the year or click Use the computed figure, then Save estimate."
+      ],
+      "result": "Tiles show estimated income tax, advance tax paid, TDS credit and balance payable. The schedule shows the four instalments (15 June 15%, 15 September 45%, 15 December 75%, 15 March 100%) with required, paid, shortfall and status.",
+      "tips": ["Income and tax are rounded to the nearest ten rupees."]
+    },
+    {
+      "title": "Record an advance tax or self-assessment tax payment",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Advance Tax & Income Tax > Record payment",
+      "route": "/tax/income-tax",
+      "steps": [
+        "Pay the challan on the income-tax portal.",
+        "On the Advance tax schedule, click Record payment on the instalment with a shortfall (the amount is filled in), or use GST Payments > Record payment and choose Advance tax or Income tax (self-assessment).",
+        "For advance tax choose the Instalment or leave From the date.",
+        "Enter the amounts by head, the CIN / challan reference and Paid from, then click Record payment."
+      ],
+      "result": "The payment posts to the books (advance tax to an advance tax asset account; interest and penalty to a tax expense account) and the instalment's paid figure updates.",
+      "tips": []
+    },
+    {
+      "title": "Track ITR-5 and the tax audit report",
+      "who": "Finance manager or partner",
+      "where": "GST & Tax > Advance Tax & Income Tax > ITR and tax audit",
+      "route": "/tax/income-tax",
+      "steps": [
+        "In ITR and tax audit, click New record if ITR-5 or the tax audit is not listed.",
+        "Open the record, Prepare from the books, file on the portal, then Mark as filed with the acknowledgement.",
+        "Attach the acknowledgement under Acknowledgement and working papers."
+      ],
+      "result": "ITR-5 is due 31 July (31 October when a tax audit applies) and the tax audit report 30 September after the year ends.",
+      "tips": []
+    },
+    {
+      "title": "Use the tax calendar",
+      "who": "Anyone with tax.view",
+      "where": "GST & Tax > Tax Calendar",
+      "route": "/tax/calendar",
+      "steps": [
+        "Open GST & Tax > Tax Calendar.",
+        "Choose Look ahead (30 days to 1 year).",
+        "Filter by kind: All, GST, TDS, Advance tax, Income tax."
+      ],
+      "result": "Tiles show what is Overdue, due in 7 days and due in 30 days. Items are grouped by month, including missed ones from the last 30 days.",
+      "tips": []
+    }
+  ],
+  "statuses": [
+    {"name": "Pending", "meaning": "Return record created; figures not prepared and not filed."},
+    {"name": "Prepared", "meaning": "Figures worked out from the books; not yet filed."},
+    {"name": "Filed", "meaning": "Marked as filed with the date (and acknowledgement). Locked until reopened."},
+    {"name": "Late", "meaning": "Past the due date and not filed. A filed return filed after the due date shows Filed late."},
+    {"name": "Recorded / Void (payment)", "meaning": "A tax payment posted to the books, or cancelled with its entry reversed."},
+    {"name": "Certificate awaited / Certificate received / Matched in 26AS", "meaning": "Stages of a TDS credit in the receivable tracker."},
+    {"name": "Eligible / No GSTIN / Ineligible", "meaning": "Input credit status of a purchase line."},
+    {"name": "Matches / Difference", "meaning": "Books vs filed comparison result."},
+    {"name": "Paid / Overdue / Due soon / Upcoming", "meaning": "Status of an advance tax instalment or calendar item."}
+  ],
+  "routines": {
+    "daily": [],
+    "weekly": [
+      "Look at the Tax Dashboard and Tax Calendar for anything due in the next 7 days."
+    ],
+    "monthly": [
+      "By the 11th: review the Sales Register for last month, export the CSVs, file GSTR-1 on the portal and mark it filed.",
+      "Review the Purchase Register and mark ineligible credit with a reason.",
+      "By the 20th: prepare GSTR-3B, post the input credit set-off, pay the cash balance on the portal, record the GST payment and mark GSTR-3B filed.",
+      "Pay last month's TDS (challan 281) on the income-tax portal and record the challan.",
+      "Check Books vs filed for differences."
+    ],
+    "yearly": [
+      "At the start of the year: Returns > Create the year's returns.",
+      "Quarterly: file TDS 24Q and 26Q (31 July, 31 October, 31 January, 31 May) and update the receivable tracker from Form 26AS.",
+      "Before 15 June, 15 September, 15 December and 15 March: update the income-tax worksheet and pay advance tax.",
+      "After the year: tax audit (30 September), ITR-5 (31 July, or 31 October with audit) and GSTR-9 (31 December)."
+    ]
+  },
+  "common_problems": [
+    {"problem": "No GST returns were created for the year.", "fix": "The company is not marked as GST-registered. A partner can update Company > Tax Configuration, then run Create the year's returns again."},
+    {"problem": "I cannot change the figures of a return.", "fix": "It is filed and locked. Click Reopen, give the reason, correct the figures and mark it filed again."},
+    {"problem": "Delete is missing on a return.", "fix": "Filed returns, and returns with an input credit set-off still posted, cannot be deleted. Reopen it or undo the set-off first."},
+    {"problem": "Post input credit set-off is greyed out or refused.", "fix": "There is no input credit for that month, or the set-off is already posted. Undo it to redo it."},
+    {"problem": "The register figures do not match what I expected.", "fix": "The registers read the books. Check that all invoices are issued and all bills and expenses recorded for the period, then refresh."},
+    {"problem": "A payment was recorded with the wrong amount.", "fix": "Void it with a reason (this reverses the books) and record it again."}
+  ],
+  "connected": [
+    "Sales: issued invoices and credit and debit notes feed the Sales Register and GST output tax.",
+    "Purchases: vendor bills feed the Purchase Register, input credit and TDS payable.",
+    "Accounting: expenses and income with GST feed the registers; set-offs and tax payments post journal entries; the profit used for income tax comes from the books.",
+    "People (HR): TDS on salary from payroll (section 192) appears in the payable ledger and 24Q.",
+    "Company: GST registration, tax configuration and bank accounts are set there."
+  ]
+}

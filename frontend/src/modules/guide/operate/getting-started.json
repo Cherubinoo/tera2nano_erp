@@ -1,0 +1,431 @@
+{
+  "key": "getting-started",
+  "title": "Getting started",
+  "purpose": "This chapter takes you from your first sign-in to a fully set-up company, then shows how to find your way around and which routines keep the books, taxes and filings up to date. Follow the first-week setup in the order given: later steps (invoices, bills, payroll, returns) read the details you enter in the earlier ones. The daily, weekly, month-end and year-end checklists at the end are the rhythm of a well-run office.",
+  "who": [
+    {"role": "Admin", "does": "Holds every permission and cannot be locked out. Runs the setup wizard, changes company details, sets approval rules and role permissions, and can invite people with any role, including Admin."},
+    {"role": "Managing Partner", "does": "Holds every permission, like Admin. Can invite people with any role except Admin."},
+    {"role": "Partner", "does": "Holds every permission, like Admin. Can invite people with any role except Admin."},
+    {"role": "Finance Manager", "does": "By default: sales (including issuing invoices), accounting, purchases, GST and TDS, payroll figures, compliance filings, bank accounts and issuing documents; views partners, projects, approvals, reports and the employee directory. Cannot change company details or invite people."},
+    {"role": "HR Manager", "does": "By default: employee records, attendance, leave and payroll, Workplace (meetings, tasks, announcements), issuing documents and viewing reports and approvals. Can invite people as Employee or Project Manager only."},
+    {"role": "Project Manager", "does": "By default: creates and changes projects, budgets and milestones, manages Workplace items, issues documents, and views sales, purchases, CRM, the employee directory, approvals and reports."},
+    {"role": "Employee", "does": "By default: views company details and Workplace, issues documents (letters, quotations, minutes) and uses the self-service pages such as My Profile, My Leave and My Payslips."}
+  ],
+  "before_you_start": [
+    "You need a username and password. The first administrator gets them from whoever installed the system; everyone else joins through an invite link (see the task Join with an invite link).",
+    "Keep the LLP's papers to hand for setup: incorporation certificate (LLPIN), PAN, TAN, GST registration certificate, registered office address, bank account details and the company logo as a PNG or JPEG file.",
+    "Decide the date you start keeping books in this system (for example 1 April 2026) and get the closing balances from your previous books as at the day before (31 March 2026).",
+    "Defaults for the four non-partner roles can be changed by an Admin under Administration > Users and Access > Role permissions. This chapter describes the defaults."
+  ],
+  "tasks": [
+    {
+      "title": "Sign in",
+      "who": "Everyone",
+      "where": "Sign in page",
+      "route": "/login",
+      "steps": [
+        "Open the system address in your browser. If you are not signed in you see the Sign in page with the name Tera2Nano ERP.",
+        "Type your Username and Password.",
+        "Click Sign in.",
+        "If you see \"Enter your username and password.\", one of the boxes was empty. If you see \"Too many attempts. Wait a minute and try again.\", wait one minute before trying again."
+      ],
+      "result": "You land on the module launcher (Choose a module), or on the page you were trying to open before signing in. If the company has not been set up yet, an administrator is taken straight to the setup wizard; anyone else sees \"The company has not been set up yet. Ask a company administrator to complete the setup.\"",
+      "tips": [
+        "To sign out, click your name at the top right and choose Sign out, or use Sign out on the launcher. The next person to sign in then starts at the launcher.",
+        "Every sign-in, failed attempt and sign-out is recorded in Administration > Users and Access > Login history."
+      ]
+    },
+    {
+      "title": "Join with an invite link",
+      "who": "New members",
+      "where": "Invite link received from the company",
+      "route": "/join/<token>",
+      "steps": [
+        "Open the link you were given. The page checks the link (Checking your link…).",
+        "When you see Join followed by the company name, fill in the questions shown, including your full name, a username (no spaces) and your password typed twice.",
+        "Click Create my account.",
+        "When you see You are all set, click Go to sign in and sign in with your new username and password."
+      ],
+      "result": "Your account is created with the access role the person who invited you chose. The link works once only; afterwards it shows This link cannot be used.",
+      "tips": [
+        "If the link has expired or was revoked, ask for a new one. You never choose your own role."
+      ]
+    },
+    {
+      "title": "Run the first-time company setup wizard",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company setup wizard (opens automatically; later from your name menu > Resume company setup)",
+      "route": "/setup",
+      "steps": [
+        "Step 1 Company name: enter the legal name (for example Tera2Nano Technologies LLP) and the display name (for example Tera2Nano). Click Create company and continue.",
+        "Step 2 Incorporation and registration: fill in what you have (PAN, LLPIN, date of incorporation and so on). Leave anything you do not have blank.",
+        "Step 3 Registered office address: add the registered office.",
+        "Step 4 Company contacts: add the general, sales, finance or HR contacts that print on documents.",
+        "Step 5 Tax registrations: record only registrations that really apply. Do not enter a GSTIN unless the company is registered.",
+        "Step 6 Bank details: add the bank account, or skip if it is not opened yet.",
+        "Step 7 Company logo: upload a PNG or JPEG.",
+        "Step 8 Letterhead and footer: design the letterhead used on every PDF.",
+        "Step 9 Numbering sequences: check the prefixes used for document numbers.",
+        "Step 10 Financial year: add the current year, normally 1 April to 31 March.",
+        "Step 11 Default payment terms: create a draft of your payment terms and activate it when ready.",
+        "Move between steps with Back and Continue. On optional steps you can click Skip for now. Click any step in the left list to jump to it.",
+        "Step 12 Review and save: check the summary and click Save company profile, then Go to Company Overview."
+      ],
+      "result": "The company is created at step 1. Progress is saved as you go, so you can click Exit and finish later and come back through your name menu > Resume company setup. Skipped steps show Skipped – add later and do not block setup. After saving, a list Still to do (not blocking) shows anything left.",
+      "tips": [
+        "Only a company administrator (someone who may change company details) can run the wizard; others see \"Only a company administrator can run company setup.\"",
+        "Everything entered in the wizard can be changed later in the Company module."
+      ]
+    },
+    {
+      "title": "Week 1, step 1: complete the company profile",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Basic Information, then Company > Legal and Registration",
+      "route": "/company/basic",
+      "steps": [
+        "From the launcher open the Company tile.",
+        "Click Basic Information and check the legal name, display name and other identity details. Save.",
+        "Click Legal and Registration and fill in LLPIN, PAN, TAN and the incorporation details from your certificates. Save.",
+        "If the system asks for a reason, type a short one (for example Added TAN from certificate) and click Save change.",
+        "Open Company Overview to check the key facts and the Setup checklist."
+      ],
+      "result": "The details print on invoices, quotations, letters and statements. Each change is versioned and shown in Administration > Change History.",
+      "tips": ["Upload the scanned certificates under Documents > Company Documents so they can be attached as evidence."]
+    },
+    {
+      "title": "Week 1, step 2: record tax registrations",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Tax Configuration > Registrations tab",
+      "route": "/company/tax",
+      "steps": [
+        "Open Company > Tax Configuration.",
+        "Open the Registrations tab and add each registration that applies (for example the GSTIN 29ABCDE1234F1Z5 for Karnataka).",
+        "Save each one."
+      ],
+      "result": "Registrations are stored with the company and used by GST & Tax and on printed documents.",
+      "tips": ["Never enter a GSTIN if the company is not registered for GST."]
+    },
+    {
+      "title": "Week 1, step 3: add addresses",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Addresses",
+      "route": "/company/addresses",
+      "steps": [
+        "Open Company > Addresses.",
+        "Check the registered office added in the wizard.",
+        "Add any other address you use: corporate office, branch office, correspondence or billing address.",
+        "Save each address."
+      ],
+      "result": "The registered office prints on documents and is used for the company's state (place of supply decisions for GST).",
+      "tips": []
+    },
+    {
+      "title": "Week 1, step 4: add bank accounts",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Company > Bank Accounts",
+      "route": "/company/bank",
+      "steps": [
+        "Open Company > Bank Accounts.",
+        "Add each current account the company uses: bank name, account number, IFSC and so on.",
+        "Save."
+      ],
+      "result": "Bank accounts can be printed on invoices and quotations for payment, are offered as Deposited to on customer payments and Paid from on vendor payments, and appear in Accounting > Bank and Cash for reconciliation.",
+      "tips": ["Changing bank accounts needs the finance permission (finance.manage)."]
+    },
+    {
+      "title": "Week 1, step 5: set up branding and the letterhead",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Branding and Letterhead",
+      "route": "/company/branding",
+      "steps": [
+        "Open Company > Branding and Letterhead.",
+        "Upload or check the logo and adjust the letterhead header and footer.",
+        "Save, then issue a test letter or quotation and download its Letterhead PDF to check the look."
+      ],
+      "result": "Every issued document is printed with this letterhead (Letterhead PDF) and, where available, as a Print PDF without the artwork for pre-printed paper.",
+      "tips": []
+    },
+    {
+      "title": "Week 1, step 6: check document numbering",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Document Numbering",
+      "route": "/company/numbering",
+      "steps": [
+        "Open Company > Document Numbering.",
+        "Check the prefixes. Numbers carry your short company code, the document code, the two-digit year and the day and month, for example T2N/INV/26/2411/00001 for an invoice or T2N-LD-26-2411-0001 for a CRM lead.",
+        "Change a prefix only before you issue the first document of that type."
+      ],
+      "result": "Numbers are allocated automatically when a document is issued; you never type them. A number is never reused, even when a document is voided.",
+      "tips": ["Invoices, quotations, bills and similar documents restart their counter every financial year."]
+    },
+    {
+      "title": "Week 1, step 7: set the financial year",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Financial Year Settings",
+      "route": "/company/financial-years",
+      "steps": [
+        "Open Company > Financial Year Settings.",
+        "Check that the current year exists, for example 1 April 2026 to 31 March 2027. Add it if it is missing.",
+        "Save."
+      ],
+      "result": "Numbering, reports, budgets and the compliance calendar use the financial year.",
+      "tips": ["Add next year's financial year before 1 April so numbering continues smoothly."]
+    },
+    {
+      "title": "Week 1, step 8: invite members and give them roles",
+      "who": "Admin, Managing Partner, Partner, HR Manager",
+      "where": "Administration > Invite members",
+      "route": "/company/invite",
+      "steps": [
+        "Open the Administration tile and click Invite members.",
+        "Click Create invite link.",
+        "Choose the Access role (for example Finance Manager).",
+        "Set Link valid for (days): 1 to 30 days, 7 by default.",
+        "Optionally fill in Name of the person, Email of the person and a Note, to recognise the link later.",
+        "Click Create link.",
+        "Click Email this link, check the message and click Send email (or click Copy link and send it yourself). Then click Done.",
+        "To stop a link, click Revoke; to replace a lost link, click New link."
+      ],
+      "result": "The full link is shown only once. The list shows each invitation's status (pending, used, expired, revoked), who invited, when it expires and who joined. Nothing is emailed until you click Email this link.",
+      "tips": [
+        "Admin may invite any role; Managing Partner and Partner any role except Admin; HR Manager only Employee or Project Manager.",
+        "To change someone's role later, an Admin opens Administration > Users and Access > Users, clicks Edit next to the person, changes Role and clicks Save. Switch off signs a user out at once; nobody can change their own role.",
+        "An Admin can also add a user directly with Add user (username, role, password of at least 10 characters)."
+      ]
+    },
+    {
+      "title": "Week 1, step 9: review the chart of accounts",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Accounting > Chart of Accounts",
+      "route": "/accounting/accounts",
+      "steps": [
+        "Open the Accounting tile and click Chart of Accounts.",
+        "Read through the accounts grouped by type.",
+        "To add one you need (for example a second bank or a specific expense head), click New account, fill in the details and click Save."
+      ],
+      "result": "Invoices, bills, payments and payroll post automatically to these accounts.",
+      "tips": ["Add accounts before entering opening balances so every balance has a home."]
+    },
+    {
+      "title": "Week 1, step 10: enter opening balances",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Accounting > Opening balances",
+      "route": "/accounting/opening-balances",
+      "steps": [
+        "Open Accounting > Opening balances.",
+        "Set Balances as at, usually the day before your first transaction (for example 31 March 2026).",
+        "Use Find an account to locate each account and type its Debit or Credit (for example Bank: Debit ₹4,50,000; Partners' capital: Credit ₹10,00,000).",
+        "Watch Total debit, Total credit and Difference at the bottom.",
+        "Click Post opening balances."
+      ],
+      "result": "The balances are posted to the books. If debits and credits do not match, the difference goes to Opening balance adjustments so the books still balance; check the figures first if you did not expect a difference.",
+      "tips": ["Vendor opening balances can also be entered on each vendor (Opening balance we owe)."]
+    },
+    {
+      "title": "Week 1, step 11: set approval rules",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Approvals > Approval Rules",
+      "route": "/approvals/rules",
+      "steps": [
+        "Open the Approvals tile and click Approval Rules.",
+        "Click New rule.",
+        "Enter a Rule name (for example Bills above ₹50,000) and choose Applies to: Purchase order, Vendor bill, Leave request, Expense, Payroll run, Project budget, Salary revision, Payment, Partner withdrawal or Quotation.",
+        "Set Amount from and Amount to (both included; leave empty for no limit).",
+        "Under Approval steps, in order, choose who approves: Anyone with a role or A specific user, and whether it Needs Any one of them or All of them. Optionally set Escalate after (days). Use Add step for a second approver.",
+        "Keep Rule is switched on ticked and click Add rule."
+      ],
+      "result": "From now on, a record of that kind within the amount range waits for approval before it is numbered or posted. Approvers see it under Approvals > Pending My Approval and in the approvals bell.",
+      "tips": ["Without any rule, nothing is held for approval."]
+    },
+    {
+      "title": "Week 1, step 12: generate the compliance calendar",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Compliance > Compliance Dashboard",
+      "route": "/compliance",
+      "steps": [
+        "Open the Compliance tile.",
+        "On the Compliance Dashboard click Generate calendar (or, on Compliance > Filings, Generate calendar for the year shown).",
+        "Open Compliance > Calendar to see the due dates."
+      ],
+      "result": "Due dates for the financial year are created from the obligations catalogue. Later, the same button reads Refresh calendar.",
+      "tips": []
+    },
+    {
+      "title": "Week 1, step 13: check the tax settings",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Tax Configuration > GST settings tab",
+      "route": "/company/tax",
+      "steps": [
+        "Open Company > Tax Configuration.",
+        "On the GST settings tab tick GST applies to this company only if the company is registered, then choose the GST treatment, Default tax code (for example 18%) and Default place of supply, and type the Invoice title (for example Tax Invoice).",
+        "Choose what prints: Show GSTIN on documents, Show HSN/SAC codes, Show place of supply, Show CGST/SGST/IGST breakup.",
+        "Save. Use the Calculator tab to check a sample: Taxable value (INR) ₹1,00,000 at GST rate (%) 18 within the same state gives CGST ₹9,000 and SGST ₹9,000."
+      ],
+      "result": "Quotations, invoices and bills work out GST from these settings. While GST is off, documents show \"GST is not switched on for the company (Tax Configuration)\" and print without tax.",
+      "tips": []
+    },
+    {
+      "title": "Week 1, step 14: set up email",
+      "who": "Admin, Managing Partner, Partner (with your IT person for the mail server)",
+      "where": "Administration > Email settings",
+      "route": "/company/email",
+      "steps": [
+        "Ask your IT person to enter the company mail server in the server settings (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL, see the README) and restart the app.",
+        "Open the Administration tile and click Email settings. The Mail server box should say \"Email is set up\".",
+        "Fill Sender name, Reply-to address and a Signature, and click Save settings.",
+        "Under Send a test email, click Send a test email and check that it arrives in your inbox.",
+        "Optionally tick \"Email payment reminders automatically\"."
+      ],
+      "result": "Invoices, credit notes, quotations, purchase orders, payslips, payment reminders and invitation links can now be emailed from their pages, with the PDF attached. Every message is listed under Administration > Sent emails.",
+      "tips": ["Until the mail server is set up, the app says \"Email is not set up on the server; messages are saved but not delivered\" and nothing reaches anyone."]
+    },
+    {
+      "title": "Find your way around",
+      "who": "Everyone",
+      "where": "Launcher and top bar",
+      "route": "/apps",
+      "steps": [
+        "Launcher: after sign-in you see Welcome back and Choose a module. Click a tile (CRM, Sales, Purchases, Accounting, GST & Tax, Projects, People (HR), Partners, Approvals, Compliance, Workplace, Reports, Documents, Company, Administration, Guide). Use Continue where you left off to return to your last page. Arrow keys move between tiles; Enter opens one.",
+        "Sidebar: inside a module the left sidebar shows only that module's menu. Click All modules to go back to the launcher. At the bottom, How this module works opens that module's guide.",
+        "Module switcher: the grid button at the top left (Switch module) lists every module you may open.",
+        "Search: click Search pages (or press Ctrl+K), type part of a page name, for example invoices, and press Enter.",
+        "+ New: the New button at the top right creates a record directly: Invoice, Customer, Payment received, Lead, Purchase order, Vendor bill, Expense and more (only the ones your role allows).",
+        "Approvals bell: shows how many approvals wait for you; click it to open Approvals > Pending My Approval.",
+        "Help: the ? icon opens the guide for the module you are in.",
+        "Dark mode: the screens follow your device's light or dark setting automatically; there is no separate switch.",
+        "Phone: on a narrow screen tap the menu button (three lines) at the top left to open the sidebar; tap outside it to close. On a computer the same button shrinks the sidebar to icons."
+      ],
+      "result": "Only the modules and menu items your role allows are shown. A tile can show a small count, such as approvals waiting for you or sales reminders due.",
+      "tips": ["Company home (link on the launcher) shows recent documents and the setup checklist."]
+    },
+    {
+      "title": "Daily routine",
+      "who": "Finance Manager, partners, anyone who handles money",
+      "where": "Approvals, Sales, Purchases, CRM",
+      "route": "/approvals",
+      "steps": [
+        "Open the approvals bell and decide everything waiting for you.",
+        "Sales > Payments Received: record every payment that reached the bank today and apply it to invoices.",
+        "Sales > Invoices and Notes: issue the drafts that are ready.",
+        "Purchases > Bills: enter vendor bills received today and attach the scanned bill.",
+        "CRM > Activities: work through Today and Overdue."
+      ],
+      "result": "Receivables, payables and the bank stay current, so dashboards and reminders are accurate.",
+      "tips": []
+    },
+    {
+      "title": "Weekly routine",
+      "who": "Finance Manager, partners",
+      "where": "Sales, Purchases, Compliance, CRM",
+      "route": "/sales/reminders",
+      "steps": [
+        "Sales > Reminders: work through Due now (Send or Skip each).",
+        "Sales > Receivables Ageing: follow up anything in the older columns.",
+        "Purchases > Payables Ageing: check Due in the next 30 days and plan vendor payments.",
+        "Compliance > Calendar: look at what falls due in the coming weeks.",
+        "CRM > Deals: review deals past their expected close date."
+      ],
+      "result": "Nothing important slips past its due date.",
+      "tips": []
+    },
+    {
+      "title": "Month-end close checklist",
+      "who": "Finance Manager, HR Manager (payroll), partners",
+      "where": "Several modules",
+      "route": "",
+      "steps": [
+        "Bank reconciliation: Accounting > Import statement for each bank account, then Bank reconciliation > Match lines (accept suggestions, create missing entries, ignore what should not be matched) and Reconciliation > Mark reconciled up to the statement date. Cash accounts are ticked by hand in Bank and Cash > Reconcile.",
+        "Recurring invoices: Sales > Recurring invoices. If Create N due now appears, click it and confirm Create now; issue any drafts it made.",
+        "Payment reminders: Sales > Reminders > Due now. Send or Skip each reminder; Send emails it to the customer when email is set up (or switch on \"Email payment reminders automatically\" under Rules and wording).",
+        "Vendor bills: Purchases > Bills. Record every bill for the month, check the Draft and Pending approval chips are cleared.",
+        "Payroll run and posting: People (HR) > Payroll > New payroll run. Check the payslips, then Lock run, Send for approval, Post to books and, once salaries are paid, Mark salaries paid.",
+        "Depreciation run: Accounting > Fixed Assets > Depreciation run tab. Check the preview and click Post depreciation.",
+        "GST returns: GST & Tax > Returns. Create the month's return record (New return record), prepare the figures and, after filing on the GST portal, click Mark as filed.",
+        "TDS: GST & Tax > TDS. Record challan for TDS deposited (Challan 281) and, in the quarter-end month, add the TDS return with New TDS return.",
+        "Compliance filings: Compliance > Filings. Open each task due this month and click Mark filed after filing.",
+        "Reports review: Accounting > Financial Reports (profit and loss, balance sheet, trial balance, cash flow) and Reports > Executive Dashboard."
+      ],
+      "result": "The month's books are complete and reconciled, tax liabilities are recorded and filings are marked, so the next month starts clean.",
+      "tips": [
+        "Do bank reconciliation first: it often reveals unrecorded receipts and payments.",
+        "Payroll posting records the salary cost and the amounts payable to employees, PF, ESI, professional tax and tax authorities."
+      ]
+    },
+    {
+      "title": "Year-end checklist",
+      "who": "Partners, Finance Manager",
+      "where": "Partners, Compliance, Accounting, Company",
+      "route": "",
+      "steps": [
+        "Finish the March month-end close checklist first.",
+        "Profit sharing: Partners > Profit Sharing > Allocate profit. Preview the year's profit, click Save as draft, check the shares and click Post to the books.",
+        "Partner statements: Partners > Statements. Choose each partner and period, click Show, then Download PDF or Export CSV.",
+        "Annual filings: Compliance > Filings. Check the annual LLP and income-tax filings on the calendar and click Mark filed as each is done.",
+        "Next year's budget: Accounting > Budgets > New budget, fill in the figures, click Create budget and then Make active.",
+        "Company > Financial Year Settings: make sure next year exists.",
+        "Compliance Dashboard: Generate calendar for the new financial year."
+      ],
+      "result": "Profit is allocated to partners' accounts in the books, statements are ready for the partners, annual filings are tracked and the new year is ready to use.",
+      "tips": ["A posted profit allocation can be undone only with Reverse, which keeps a record."]
+    }
+  ],
+  "statuses": [
+    {"name": "Setup: not started / in progress / completed", "meaning": "Where the company setup wizard stands. Until it is completed, administrators see Resume company setup in their name menu."},
+    {"name": "Step skipped", "meaning": "An optional wizard step you chose Skip for now on. Shown as Skipped – add later; it does not block setup."},
+    {"name": "Invitation: Pending", "meaning": "The link has been created and not used yet."},
+    {"name": "Invitation: Used", "meaning": "Someone created their account with the link."},
+    {"name": "Invitation: Expired", "meaning": "The link passed its validity days without being used."},
+    {"name": "Invitation: Revoked", "meaning": "Someone stopped the link before it was used."},
+    {"name": "User switched off", "meaning": "The person cannot sign in until an Admin switches them on again."}
+  ],
+  "routines": {
+    "daily": [
+      "Clear the approvals bell.",
+      "Record payments received and apply them to invoices.",
+      "Issue ready draft invoices.",
+      "Enter vendor bills received and attach the scans.",
+      "Work through CRM activities due today and overdue."
+    ],
+    "weekly": [
+      "Send or skip payment reminders (Sales > Reminders).",
+      "Review Receivables Ageing and Payables Ageing.",
+      "Check the Compliance calendar for the coming weeks.",
+      "Review overdue deals in CRM."
+    ],
+    "monthly": [
+      "Bank reconciliation for every account.",
+      "Create due recurring invoices and issue the drafts.",
+      "Send payment reminders.",
+      "Record all vendor bills for the month.",
+      "Payroll run, approval, posting and Mark salaries paid.",
+      "Post depreciation.",
+      "Prepare and mark GST returns as filed.",
+      "Record TDS challans (and the quarterly TDS return).",
+      "Mark compliance filings as filed.",
+      "Review the financial reports and executive dashboard."
+    ],
+    "yearly": [
+      "Allocate and post partners' profit share.",
+      "Download partner statements.",
+      "Track and mark annual filings.",
+      "Create and activate next year's budget.",
+      "Add next financial year and generate its compliance calendar."
+    ]
+  },
+  "common_problems": [
+    {"problem": "After signing in I see \"The company has not been set up yet\".", "fix": "Ask an Admin, Managing Partner or Partner to sign in; they are taken to the setup wizard automatically."},
+    {"problem": "Too many attempts. Wait a minute and try again.", "fix": "Several wrong passwords were tried. Wait one minute; if you have forgotten the password, an Admin can set a new one in Users and Access (Set password)."},
+    {"problem": "A module or menu item I need is missing.", "fix": "Your role does not include that permission. Ask an Admin to change your role or the role's permissions in Administration > Users and Access."},
+    {"problem": "The invite link says This link cannot be used.", "fix": "It was used, expired or revoked. Ask the person who invited you to click New link and send it again."},
+    {"problem": "I lost the invite link before sending it.", "fix": "The full link is shown only once. Click New link on that invitation in Administration > Invite members."},
+    {"problem": "Opening balances show a Difference.", "fix": "Check each figure against your previous books. If you post anyway, the difference goes to Opening balance adjustments."},
+    {"problem": "Documents print without GST.", "fix": "GST is switched off in Company > Tax Configuration > GST settings. Switch it on only if the company is registered."}
+  ],
+  "connected": [
+    "Company details, addresses, bank accounts, letterhead and numbering feed every printed document in Sales, Purchases, Documents and People (HR).",
+    "The financial year drives numbering, reports, budgets and the compliance calendar.",
+    "Roles and permissions decide which modules and buttons each person sees.",
+    "Approval rules hold quotations, purchase orders, vendor bills, payments, expenses, payroll runs, budgets, salary revisions, leave and partner withdrawals until approved.",
+    "The chart of accounts and opening balances are the starting point for every automatic posting from Sales, Purchases, People (HR), Fixed Assets and Partners."
+  ]
+}

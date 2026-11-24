@@ -119,8 +119,12 @@ ENTITIES = {
     "journal_entry": EntityAudit("Journal entry", "accounting", bump_version=False),
     "voucher": EntityAudit("Expense or income", "accounting", bump_version=False),
     "reconciliation": EntityAudit("Bank reconciliation", "accounting", bump_version=False),
+    "bank_statement": EntityAudit("Bank statement import", "accounting", bump_version=False),
+    "bank_match": EntityAudit("Bank statement match", "accounting", bump_version=False),
+    "statement_line": EntityAudit("Bank statement line", "accounting", bump_version=False),
     "user": EntityAudit("User", "access", redact=frozenset({"email", "password"})),
     "access_matrix": EntityAudit("Access permissions", "access"),
+    "invitation": EntityAudit("Invitation link", "access", redact=frozenset({"email_hint"}), bump_version=False),
 }
 
 

@@ -5,6 +5,7 @@ import { useAuth } from '../../context';
 import { money, num, plain } from '../../format';
 import { asList, useLoad } from '../../hooks';
 import { Badge, Dialog, ErrorBox, Field, FormErrors, Loading, Notice, fmtDate, fmtDateTime, useConfirm, useReasonDialog, useToast } from '../../ui';
+import { EmailButton, EmailStatusBadge } from '../../components/Email';
 import { Downloads } from '../Letters';
 import { StatusBadge, projectLabel } from './common';
 import { PaymentDialog } from './Payments';
@@ -111,6 +112,7 @@ export default function DocumentDetail() {
           {d.status === 'draft' && issue && <button type="button" className="btn btn-primary" onClick={doIssue}>Issue</button>}
           {d.status === 'draft' && manage && <button type="button" className="btn" onClick={doDelete}>Delete</button>}
           {d.issued && <Downloads doc={{ id: d.issued.id, reference_number: d.number, has_print_file: d.issued.has_print_file }} onError={(e) => notify(e.message, 'error')} />}
+          {issued && d.issued && <EmailButton kind="sales_document" id={d.id} perm="sales.manage" label="Email" title={`Email ${d.kind_label.toLowerCase()} ${d.number}`} />}
           {issued && receivable && manage && num(d.balance) > 0 && <button type="button" className="btn btn-primary" onClick={() => setPaying(true)}>Record payment</button>}
           {issued && d.kind === 'credit_note' && manage && num(d.credit_left) > 0 && <button type="button" className="btn btn-primary" onClick={() => setApplying(true)}>Apply to an invoice</button>}
           {issued && d.kind === 'invoice' && manage && <Link className="btn" to={`/sales/documents/new?kind=credit_note&against=${id}`}>Create credit note</Link>}
@@ -208,15 +210,16 @@ export default function DocumentDetail() {
       {receivable && issued && (
         <section className="card" aria-label="Payment reminders">
           <h2>Payment reminders</h2>
-          {d.reminders.length === 0 ? <p className="muted">No reminder has been recorded for this invoice. Reminders are recorded in the system only; no email is sent from here. <Link to="/sales/reminders">Payment reminders</Link></p> : (
+          {d.reminders.length === 0 ? <p className="muted">No reminder has been sent for this invoice yet. Reminders are sent from <Link to="/sales/reminders">Payment reminders</Link>; when email is set up they are emailed to the customer.</p> : (
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Recorded</th><th>Reminder</th><th>Result</th><th>By</th><th /></tr></thead>
+                <thead><tr><th>Recorded</th><th>Reminder</th><th>Result</th><th>Email</th><th>By</th><th /></tr></thead>
                 <tbody>
                   {d.reminders.map((r) => (
                     <tr key={r.id}>
                       <td data-label="Recorded">{fmtDateTime(r.created_at)}</td><td data-label="Reminder">{r.label}</td>
                       <td data-label="Result"><Badge tone={r.status === 'sent' ? 'good' : 'neutral'}>{r.status_label}</Badge></td>
+                      <td data-label="Email">{r.email ? <><EmailStatusBadge status={r.email.status} label={r.email.status_label} />{r.email.error && <div className="hint">{r.email.error}</div>}</> : <span className="hint">{r.status === 'sent' ? 'Not emailed' : '—'}</span>}</td>
                       <td data-label="By">{r.by || '—'}</td>
                       <td data-label="Text"><button type="button" className="btn btn-small" onClick={() => setViewReminder(r)}>{r.status === 'sent' ? 'View text' : 'View'}</button></td>
                     </tr>

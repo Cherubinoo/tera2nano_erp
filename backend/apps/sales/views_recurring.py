@@ -187,15 +187,20 @@ def mailto(email, subject, body):
     return f"mailto:{urllib.parse.quote(email or '', safe='@')}?{query}"
 
 
-def reminder_dict(r):
+def reminder_dict(r, emails=None):
+    """`emails`: {reminder id: email outcome} from reminders.email_outcomes (looked up for this row when not given)."""
+    if emails is None:
+        emails = reminders.email_outcomes([r.pk])
     return {
         "id": str(r.id), "document": {"id": str(r.document_id), "number": r.document.number},
         "customer": {"id": str(r.document.customer_id), "name": r.document.customer.display_name},
         "rule": {"id": str(r.rule_id) if r.rule_id else None, "days_offset": r.days_offset, "label": reminders.offset_label(r.days_offset)},
         "status": r.status, "status_label": r.get_status_display(), "subject": r.subject, "body": r.body, "to_email": r.to_email,
         "amount_due": str(r.amount_due), "due_date": r.due_date, "days_overdue": r.days_overdue, "note": r.note,
-        "by": r.created_by.get_username() if r.created_by_id else "", "created_at": r.created_at,
+        "by": r.created_by.get_username() if r.created_by_id else ("Automatic" if r.status == PaymentReminder.Status.SENT else ""),
+        "created_at": r.created_at,
         "mailto": mailto(r.to_email, r.subject, r.body) if r.status == PaymentReminder.Status.SENT else "",
+        "email": emails.get(str(r.pk)),
     }
 
 
@@ -232,7 +237,10 @@ class ReminderActionView(APIView):
         except (TypeError, ValueError):
             raise ValidationError({"days_offset": "Send the rule's days offset."})
         if self.action == "send":
-            row = reminders.send(company, request.user, doc_id, offset)
+            # to, cc, subject and body are optional: what the person checked in the send dialog
+            d = request.data
+            row = reminders.send(company, request.user, doc_id, offset, to=d.get("to"), cc=d.get("cc"), subject=d.get("subject"),
+                                 body=d.get("body"))
         else:
             row = reminders.skip(company, request.user, doc_id, offset, request.data.get("note", ""))
         row = PaymentReminder.objects.select_related("document__customer", "created_by").get(pk=row.pk)
@@ -251,7 +259,9 @@ class ReminderHistoryView(APIView):
                 raise ValidationError({"document": "Not a valid id."})
         if p.get("status") in PaymentReminder.Status.values:
             qs = qs.filter(status=p["status"])
-        return Response({"results": [reminder_dict(r) for r in qs[:200]]})
+        rows = list(qs[:200])
+        emails = reminders.email_outcomes([r.pk for r in rows])
+        return Response({"results": [reminder_dict(r, emails) for r in rows]})
 
 
 class ReminderRuleCollectionView(APIView):

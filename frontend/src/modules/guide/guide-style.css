@@ -197,3 +197,27 @@ span.guide-chip { cursor: default; }
 .guide-status-group .guide-table { table-layout: fixed; }
 .guide-status-group .guide-table th:first-child { width: 14rem; }
 @media (max-width: 900px) { .guide-status-group .guide-table th:first-child { width: auto; } }
+
+/* ---- How to operate (operating manual) ---- */
+.op-section-title { margin: 1.5rem 0 .75rem; font-size: 1.15rem; }
+.op-task { margin-bottom: 1rem; border-left: 3px solid var(--gold); }
+.op-task h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
+.op-who, .op-where, .op-result { margin: .35rem 0; }
+.op-steps { margin: .6rem 0; padding-left: 1.4rem; line-height: 1.6; }
+.op-steps li { margin: .2rem 0; }
+.op-result { background: var(--info-bg); border-radius: var(--radius); padding: .5rem .75rem; }
+.op-tips { margin-top: .6rem; color: var(--muted); }
+.op-tips ul { margin: .25rem 0 0; padding-left: 1.2rem; }
+.op-routines { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.op-routines h3 { margin: 0 0 .35rem; font-size: .95rem; color: var(--accent); }
+.op-routines ul { margin: 0; padding-left: 1.2rem; }
+.op-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.op-card { display: block; color: var(--text); text-decoration: none; border-top: 3px solid var(--gold); transition: box-shadow .15s, transform .15s; }
+.op-card:hover, .op-card:focus-visible { box-shadow: var(--shadow); transform: translateY(-2px); }
+.op-card h2 { margin: 0 0 .4rem; font-size: 1.05rem; }
+.op-card p { margin: 0 0 .5rem; color: var(--muted); font-size: .92rem; }
+.op-search { display: flex; flex-direction: column; gap: .3rem; margin-top: 1rem; max-width: 420px; }
+.op-search input { padding: .55rem .7rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); }
+.op-hits { margin: .75rem 0 0; padding-left: 1.2rem; }
+.op-hits li { margin: .25rem 0; }
+@media (max-width: 600px) { .op-steps { padding-left: 1.1rem; } .op-grid { grid-template-columns: 1fr; } }

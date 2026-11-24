@@ -1,15 +1,18 @@
 import './guide-style.css';
 import Integration from './Integration';
 import ModuleGuide from './ModuleGuide';
+import Operate from './Operate';
 import Overview from './Overview';
 import { Glossary, Roles } from './Reference';
 import { MODULE_GUIDES } from './guideData';
+import { chapterFor } from './operateData';
 
 // The Guide: the process from end to end, how modules connect, one page per module, roles and a glossary.
 // All the text lives in guideData.js (and guideModulesA/B.js); docs/MODULE_GUIDE.md is generated from the same data.
 // The launcher tile, icon and purpose come from src/moduleMeta.js ('guide').
 const general = [
   { to: '/guide', label: 'Overview', end: true },
+  { to: '/guide/operate', label: 'How to operate' },
   { to: '/guide/integration', label: 'How modules connect' },
   { to: '/guide/roles', label: 'Roles and access' },
   { to: '/guide/glossary', label: 'Glossary' },
@@ -23,13 +26,16 @@ export default {
   perm: null,
   order: 1000,
   nav: [...general, ...modules],
+  crumbLabel: (segment) => chapterFor(segment)?.title || null,
   groups: [
-    { key: 'guide-start', label: 'Start here', items: general.slice(0, 1) },
-    { key: 'guide-ref', label: 'Reference', items: general.slice(1) },
+    { key: 'guide-start', label: 'Start here', items: general.slice(0, 2) },
+    { key: 'guide-ref', label: 'Reference', items: general.slice(2) },
     { key: 'guide-modules', label: 'Module guides', items: modules },
   ],
   routes: [
     { index: true, element: <Overview /> },
+    { path: 'operate', element: <Operate /> },
+    { path: 'operate/:chapter', element: <Operate /> },
     { path: 'integration', element: <Integration /> },
     { path: 'roles', element: <Roles /> },
     { path: 'glossary', element: <Glossary /> },

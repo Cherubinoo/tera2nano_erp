@@ -8,10 +8,9 @@ from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase
 
 from apps.accounting.models import JournalEntry
-from apps.accounts import access
-from apps.accounts.models import Role, RolePermission
+from apps.accounts.models import Role
 from apps.company.models import CompanyProfile, CompanyProfileAuditEvent
-from apps.company.tests.base import client_for, make_user
+from apps.company.tests.base import client_for, make_user, viewer_client
 from apps.sales import recurring
 from apps.sales.models import RecurringInvoice, SalesDocument
 from apps.sales.tests.test_sales import ITEMS, S, SalesBase
@@ -475,10 +474,8 @@ class PermissionAndAuditTests(RecurringBase):
         self.assertEqual(RecurringInvoice.objects.count(), 1)
 
     def test_a_manager_who_cannot_issue_can_only_use_draft_mode(self):
-        user = make_user("mgr", Role.MANAGING_PARTNER)
-        RolePermission.objects.create(role=Role.MANAGING_PARTNER, code="sales.issue", granted=False)
-        access.matrix_changed()
-        mgr = client_for(user)
+        # the partner roles always hold sales.issue, so the manager here is a project manager given sales.manage only
+        mgr = viewer_client("mgr", "sales.manage")
         r = mgr.post(f"{S}/recurring-invoices/", self.payload(mode="issue"), format="json")
         self.assertEqual(r.status_code, 400)
         self.assertIn("mode", r.json())
@@ -583,3 +580,44 @@ class CommandTests(RecurringBase):
         from django.core.management.base import CommandError
         with self.assertRaises(CommandError):
             self.call("--date", "30-09-2026")
+
+
+class DailyJobTests(RecurringBase):
+    """Recurring invoices run on their own: from `run_daily_jobs` on a schedule, or on the first app load of the day."""
+
+    def test_run_daily_jobs_command_makes_due_invoices_once(self):
+        p = self.make(mode="issue")
+        out = StringIO()
+        call_command("run_daily_jobs", "--date", "2026-09-30", stdout=out, stderr=StringIO())
+        self.assertIn("Recurring invoices: 2 recurring invoice(s) created, 0 failure(s)", out.getvalue())
+        call_command("run_daily_jobs", "--date", "2026-09-30", stdout=StringIO(), stderr=StringIO())
+        self.assertEqual(self.children(p).count(), 2)
+
+    def test_first_app_load_of_the_day_runs_the_jobs_once(self):
+        from unittest import mock
+        from django.test import override_settings
+        from apps.company import daily
+        p = self.make(mode="issue", start_date=datetime.date.today().isoformat())
+        daily._state["date"] = None
+        with override_settings(DAILY_JOBS_ON_REQUEST=True), mock.patch.object(daily, "run_all", wraps=daily.run_all) as spy:
+            self.assertEqual(self.fin.get("/api/v1/auth/me/").status_code, 200)
+            self.assertEqual(self.fin.get("/api/v1/auth/me/").status_code, 200)
+            self.assertEqual(spy.call_count, 1)  # only the first request of the day
+        self.assertEqual(self.children(p).count(), 1)
+        daily._state["date"] = None
+        with override_settings(DAILY_JOBS_ON_REQUEST=False):  # switched off (and always off in tests)
+            self.fin.get("/api/v1/auth/me/")
+        self.assertIsNone(daily._state["date"])
+
+    def test_a_failing_job_does_not_stop_the_others(self):
+        from apps.company import daily
+        ran = []
+        daily.register("Boom", lambda company, today: 1 / 0)
+        daily.register("After", lambda company, today: ran.append(today) or "ok")
+        try:
+            result = daily.run_all(self.company, D(2026, 9, 30))
+        finally:
+            daily._JOBS[:] = [j for j in daily._JOBS if j[0] not in ("Boom", "After")]
+        self.assertIn(("Boom", False, "division by zero"), result)
+        self.assertIn(("After", True, "ok"), result)
+        self.assertEqual(ran, [D(2026, 9, 30)])

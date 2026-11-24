@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api, downloadFile } from '../api';
+import { EmailButton } from '../components/Email';
 import { useAuth, useLookups } from '../context';
 import { localToday } from '../forms';
 import { asList, useLoad } from '../hooks';
@@ -39,9 +40,17 @@ export function Downloads({ doc, onError }) {
           <button type="button" className="btn btn-small" onClick={() => open('?variant=print&inline=true')}>Open to print</button>
         </>
       )}
+      {EMAILABLE.includes(doc.document_type) && doc.status !== 'void' && (
+        <EmailButton kind="issued_document" id={doc.id} perm="documents.issue" small
+          title={`Email ${doc.document_type === 'quotation' ? 'quotation' : 'document'} ${doc.reference_number || ''}`.trim()} />
+      )}
     </>
   );
 }
+
+// Issued documents that can be emailed from their list (with the letterhead PDF attached). Invoices, purchase orders and
+// payslips are emailed from their own pages.
+const EMAILABLE = ['quotation', ...LETTER_TYPES, 'meeting_minutes', 'operation_document', 'circular'];
 
 export function IssuedList({
   refreshKey, onVoided, types = LETTER_TYPES, title = 'Issued letters', emptyText = 'No letters issued yet.', showMeeting = false,

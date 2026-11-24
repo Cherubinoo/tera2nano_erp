@@ -52,6 +52,7 @@ export function useReducedMotion() {
 
 export const GUIDE_PAGES = [
   { to: '/guide', label: 'Overview and process flow', end: true },
+  { to: '/guide/operate', label: 'How to operate' },
   { to: '/guide/integration', label: 'How modules connect' },
   { to: '/guide/roles', label: 'Roles and access' },
   { to: '/guide/glossary', label: 'Glossary' },

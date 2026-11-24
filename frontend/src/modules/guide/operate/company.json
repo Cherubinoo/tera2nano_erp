@@ -1,0 +1,337 @@
+{
+  "key": "company",
+  "title": "Company",
+  "purpose": "The Company module holds the company's identity: names, legal registrations (LLPIN, PAN, TAN, GSTIN), addresses, partners, signatories, contacts, tax settings, bank accounts, letterhead design, document numbering, financial years and default terms. Every printed document and many calculations read from here, so keep it accurate. Every change is versioned and recorded in the change history.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Change company details, addresses, partners, signatories, contacts, registrations, tax settings, branding, numbering, financial years and policies (permission company.manage)."},
+    {"role": "Finance Manager", "does": "Adds, edits, verifies and reveals bank accounts (finance.manage); views everything else."},
+    {"role": "All other roles", "does": "View company details (company.view). Bank numbers stay masked, and partners' personal details are hidden."}
+  ],
+  "before_you_start": [
+    "Have the LLP's certificates to hand: incorporation certificate, PAN, TAN and GST registration certificate.",
+    "Upload scanned certificates first under Documents > Company Documents; you then choose them as supporting documents here.",
+    "Never type a registration number you are unsure of. Fields are optional until a registration actually applies.",
+    "When you save a change you may be asked for a reason; it is stored in the change history."
+  ],
+  "tasks": [
+    {
+      "title": "Use the company home page",
+      "who": "Everyone",
+      "where": "Company home page",
+      "route": "/company/home",
+      "steps": [
+        "Open /company/home to see the greeting, today's date and the company name.",
+        "Use the buttons New quotation, New letter, New minutes or New operations document to start work, or All modules to return to the launcher.",
+        "Read the tiles: Documents issued this month (letters, minutes, operations), Quotations this month, Quotation value this month and Needs attention.",
+        "Check the \"Documents issued\" chart for the last six months and the \"Needs attention\" list.",
+        "Click \"Show company setup\" to see the setup checklist.",
+        "Use \"Recent documents\" to download the Letterhead PDF or Print PDF of anything just issued."
+      ],
+      "result": "If setup is not finished, administrators see \"Company setup is not finished. Resume setup\" with a link to the setup wizard.",
+      "tips": ["Void documents are not counted in the chart."]
+    },
+    {
+      "title": "Check the company overview",
+      "who": "Everyone",
+      "where": "Company > Company Overview",
+      "route": "/company/overview",
+      "steps": [
+        "Open the Company module and click Company Overview.",
+        "Read the key facts: PAN, LLPIN, GSTIN, Incorporated, Registered office, Current financial year, Active terms and Company record version.",
+        "Review the Setup checklist and Needs attention lists.",
+        "Under \"At a glance\" click the counts of Active addresses, Active partners, Active contacts or Documents to open those pages."
+      ],
+      "result": "Nothing is changed; this page only shows the current state.",
+      "tips": []
+    },
+    {
+      "title": "Edit basic company information",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Basic Information",
+      "route": "/company/basic",
+      "steps": [
+        "Click Basic Information.",
+        "Edit the fields you need: Legal company name, Display name, Trade name, Short company code (for example T2N), Company description, Industry, Business type, Date of incorporation, Website, Primary email, Primary telephone, Alternate telephone, Default currency (INR), Default time zone (Asia/Kolkata) and Company status.",
+        "Click Save, check the list of changed fields and click Save changes. Give a reason if asked.",
+        "Click Cancel to undo unsaved edits."
+      ],
+      "result": "The company record version goes up by one and the change is recorded. New documents use the new details; issued documents keep their original text.",
+      "tips": ["Display name is what appears on screens and letterheads."]
+    },
+    {
+      "title": "Upload the company logo",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Basic Information > Company logo (also Company > Branding and Letterhead > Logos)",
+      "route": "/company/basic",
+      "steps": [
+        "Scroll to Company logo on Basic Information.",
+        "Choose a PNG or JPEG file and upload it."
+      ],
+      "result": "The logo is used on letterheads unless a letterhead logo override is uploaded under Branding.",
+      "tips": []
+    },
+    {
+      "title": "Record legal registration details (LLPIN, PAN, TAN, GSTIN)",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Legal and Registration",
+      "route": "/company/legal",
+      "steps": [
+        "Click Legal and Registration.",
+        "Choose Legal entity type, for example Limited Liability Partnership.",
+        "Type the LLP Identification Number (LLPIN) in the form AAA-1234.",
+        "Type the PAN in the form ABCDE1234F and, if you have one, the TAN in the form ABCD12345E.",
+        "Choose GST registration status: Not declared, Not registered, Application in progress, Registered or Registration cancelled.",
+        "If Registered, type the 15-character Registered GSTIN.",
+        "Optionally fill Incorporation certificate reference and choose the Incorporation certificate document.",
+        "Click Save and confirm."
+      ],
+      "result": "The GSTIN is checked for its state code, check character and that it contains the company PAN before it is saved.",
+      "tips": ["Upload the incorporation certificate first under Company Documents (type: Incorporation certificate) so you can pick it here."]
+    },
+    {
+      "title": "Add and verify a registration",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Legal and Registration > Registrations (also Company > Tax Configuration > Registrations tab)",
+      "route": "/company/legal",
+      "steps": [
+        "In the Registrations section click Add registration.",
+        "Choose Registration type: GSTIN, PAN, TAN, LLPIN, MSME / Udyam, Import Export Code, Shops and Establishment, Professional tax or Other registration.",
+        "Type the Registration number, and optionally Jurisdiction, State, GST state code, Effective from and to, Supporting document and Notes.",
+        "Click Save.",
+        "To verify it, make sure a Supporting document is chosen (use Edit if not), click Verify, add an optional note and confirm. Use Reject if the details are wrong."
+      ],
+      "result": "The Verification column shows Verified or Rejected. A registration cannot be verified without a supporting document.",
+      "tips": ["Only record registrations that actually apply."]
+    },
+    {
+      "title": "Add or change an address",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Addresses",
+      "route": "/company/addresses",
+      "steps": [
+        "Click Addresses, then Add address (or Edit on a row).",
+        "Fill Address label (for example \"Chennai office\"), Address type (Registered office, Corporate office, Branch office, Correspondence address, Billing address or Other business address), Address line 1, City or town, State and a 6-digit PIN code. Optionally fill building, line 2, locality, district, GST state code, country and effective dates.",
+        "Tick Primary address if it is the main one, and keep Active ticked.",
+        "Under \"Print this address on\" tick the documents that should show this address.",
+        "Click Save.",
+        "To stop using an address, click Deactivate and give a reason."
+      ],
+      "result": "Making an address primary removes the primary flag from the previous one. Deactivating also removes its primary flag.",
+      "tips": []
+    },
+    {
+      "title": "Add partners and their signatures",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Partners and Signatories > Partners",
+      "route": "/company/partners",
+      "steps": [
+        "Click Partners and Signatories; stay on the Partners tab.",
+        "Click Add partner and fill Full name, Designation, Partner type (Designated partner, Partner, Nominee partner, Other), Designated partner tick box, DPIN (8 digits), Official email, Official contact number, Appointment date and Authorization scope.",
+        "Click Save.",
+        "To store a signature image, click Signature on the partner's row, then Upload signature and pick a PNG or JPEG under 10 MB."
+      ],
+      "result": "Viewing a stored signature is recorded in the change history.",
+      "tips": [
+        "A stored signature image is not proof of approval; approvals are recorded separately.",
+        "Partners' personal details (DPIN, email, telephone) are visible to administrators only."
+      ]
+    },
+    {
+      "title": "Authorise a signatory",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Partners and Signatories > Authorized signatories",
+      "route": "/company/partners",
+      "steps": [
+        "Click the Authorized signatories tab, then Add signatory.",
+        "Fill Signatory name, Designation and optionally Linked partner.",
+        "Choose Authorization type: All company documents, Specific document types, Banking and payments, Statutory filings, Contracts and agreements, or Other.",
+        "Fill Authorized from (needed when Active) and Authorized until.",
+        "Choose Status (Draft, Active, Suspended, Revoked), and optionally the authorization reference, Supporting document and Authorized document types.",
+        "Click Save. Use Deactivate to revoke an active signatory."
+      ],
+      "result": "Active signatories can be printed in the signature block of documents they are authorised for. Non-administrators only see active signatories.",
+      "tips": []
+    },
+    {
+      "title": "Maintain the contact directory",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Contact Directory",
+      "route": "/company/contacts",
+      "steps": [
+        "Click Contact Directory, then Add contact.",
+        "Choose Contact type, for example \"Finance and billing\", and fill Display name plus an Email address or Telephone (at least one).",
+        "Optionally fill Department, tick \"Primary contact for this type\", and choose the documents under \"Use on these documents\".",
+        "Click Save."
+      ],
+      "result": "The right contact is printed on each document automatically by type, unless you assign one explicitly.",
+      "tips": ["Deactivating a contact does not require a reason."]
+    },
+    {
+      "title": "Configure GST and tax codes",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Tax Configuration > GST settings",
+      "route": "/company/tax",
+      "steps": [
+        "Click Tax Configuration (GST settings tab).",
+        "Tick \"GST applies to this company\" only if the company is registered and GST applies.",
+        "Choose GST treatment: GST not applicable, Regular taxpayer, Composition scheme or Unregistered.",
+        "Set the Default tax code, Default place of supply and Invoice title (for example \"Tax Invoice\").",
+        "Choose the display options: Show GSTIN on documents, Show HSN/SAC codes, Show place of supply, Show CGST/SGST/IGST breakup.",
+        "Under Tax codes click Add tax code and fill Code, Description, Rate (%), HSN/SAC and effective dates.",
+        "Click Save tax configuration and confirm."
+      ],
+      "result": "New documents use the new GST treatment. Only current GST rates are accepted; historic rates need an Effective to date.",
+      "tips": ["Check rates against current GST notifications before saving."]
+    },
+    {
+      "title": "Try the GST calculator",
+      "who": "Everyone",
+      "where": "Company > Tax Configuration > Calculator",
+      "route": "/company/tax",
+      "steps": [
+        "Click the Calculator tab.",
+        "Type the Taxable value (INR), for example 10000, and the GST rate (%), for example 18.",
+        "Optionally choose Supplier state and Place of supply.",
+        "Click Calculate."
+      ],
+      "result": "Shows Taxable value, CGST, SGST, UTGST, IGST, Total tax and Grand total, and whether it is an intra-state or inter-state supply. Nothing is saved.",
+      "tips": []
+    },
+    {
+      "title": "Add a bank account",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Company > Bank Accounts",
+      "route": "/company/bank",
+      "steps": [
+        "Click Bank Accounts, then Add bank account.",
+        "Fill Account display name, Bank name, Branch, Account holder name, Account number, IFSC code (for example HDFC0001234), Account type (Current, Savings, Overdraft / cash credit, Other) and Currency (INR).",
+        "Optionally fill effective dates, choose the Bank verification document and tick Primary account.",
+        "Click Save."
+      ],
+      "result": "The account gets its own reference ID, for example T2N-BNK-26-2710-0001. The account number is shown masked everywhere.",
+      "tips": ["The \"Show verified bank details on invoices / quotations\" boxes can only be ticked after the account is verified."]
+    },
+    {
+      "title": "Verify bank details (second person)",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Company > Bank Accounts > Verify",
+      "route": "/company/bank",
+      "steps": [
+        "Make sure the Bank verification document is chosen (use Edit if not).",
+        "Click Verify on the account's row and read the warning.",
+        "Click Verify, add an optional note and click Record.",
+        "Then click Edit and tick \"Show verified bank details on invoices\" and/or \"on quotations\" if wanted. Use Reject if the details are wrong."
+      ],
+      "result": "The account shows Verified. Someone other than the person who last changed the details must verify, unless nobody else holds a finance or administrator role (then self-verification is allowed and noted).",
+      "tips": [
+        "Changing the account number, IFSC, holder or bank name of a verified account resets it to pending and removes it from documents until verified again.",
+        "Rejected details are removed from invoices and quotations."
+      ]
+    },
+    {
+      "title": "Reveal a full bank account number",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Company > Bank Accounts > Reveal number",
+      "route": "/company/bank",
+      "steps": [
+        "Click Reveal number on the account's row.",
+        "Optionally type why you need it and click Reveal.",
+        "Read the number in the yellow box; click Hide now when done."
+      ],
+      "result": "The number hides automatically after 30 seconds. Every reveal is recorded in the change history.",
+      "tips": []
+    },
+    {
+      "title": "Design the letterhead",
+      "who": "Admin, Managing Partner, Partner (others can view)",
+      "where": "Company > Branding and Letterhead",
+      "route": "/company/branding",
+      "steps": [
+        "Click Branding and Letterhead.",
+        "Under Logos upload the Company logo, an optional Letterhead logo override, a Watermark image and an Alternate / monochrome logo.",
+        "Adjust the groups: Template and page, Header and logo, Colours and fonts, Margins, Body spacing, Footer and page numbers, Watermark and Signature block.",
+        "Watch the Preview on the right. Choose a Sample document and Version (With letterhead, or Plain for pre-printed letterhead paper). Click Refresh preview if needed.",
+        "Click Save letterhead, check the changed items and confirm."
+      ],
+      "result": "New quotations, invoices and letters use the saved letterhead; documents already issued keep their original files. The letterhead version number goes up.",
+      "tips": ["Previews are marked PREVIEW, use no document number and are not stored."]
+    },
+    {
+      "title": "Set up document numbering",
+      "who": "Admin, Managing Partner, Partner (others can view)",
+      "where": "Company > Document Numbering",
+      "route": "/company/numbering",
+      "steps": [
+        "Click Document Numbering to see each document type's Next number, Prefix, FY segment, Reset and Status.",
+        "If some types are not configured, type the Short company code (for example T2N) and click Create missing sequences, then confirm.",
+        "To change a rule, click Edit: adjust Prefix, Separator, Include financial-year segment, Include two-digit year, Include issue date, Minimum sequence length, Reset frequency (Never, Every calendar year, Every financial year, Every month), Next sequence value and Active.",
+        "Click Save and then Save rule.",
+        "Click Recent numbers to see numbers issued from a sequence, including void ones with their reason."
+      ],
+      "result": "Changes affect only numbers issued from now on. Numbers already issued are never changed or reused.",
+      "tips": ["Next value cannot be set lower than the lowest value that would clash with an issued number."]
+    },
+    {
+      "title": "Manage financial years",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Company > Financial Year Settings",
+      "route": "/company/financial-years",
+      "steps": [
+        "Click Financial Year Settings, then Add financial year.",
+        "Fill Financial year label (2026-27), Start date (01-04-2026) and End date (31-03-2027). Tick Current financial year if it is the current one. Tick the irregular-period box only for a first year shorter or longer than 12 months.",
+        "Click Save.",
+        "Use Set current to make another open year current, Lock or Unlock to stop or allow new numbers in that year, and Close to close a year. Each needs a reason."
+      ],
+      "result": "Years cannot overlap. Locking a year stops new document numbers being issued in it. Closing a year also locks it and removes the current flag.",
+      "tips": ["Years cannot be deactivated; close or lock them instead."]
+    },
+    {
+      "title": "Set default terms and policies",
+      "who": "Admin, Managing Partner, Partner (others can view)",
+      "where": "Company > Policies and Default Terms",
+      "route": "/company/policies",
+      "steps": [
+        "Click Policies and Default Terms.",
+        "Click New version from active (copies the current terms) or New blank draft, add an optional summary and click Create draft.",
+        "In the draft fill Effective from, Standard payment terms, Payment term (days), Default quotation validity (days), Default invoice due period (days), quotation and invoice terms, project terms, confidentiality notice, footer text, refund terms, email signature and correspondence wording.",
+        "Optionally add Internal approval thresholds (Applies to, Amount above, Approver) and Document retention rules (Document type, Keep for years).",
+        "Click Save draft and confirm.",
+        "Click Activate on the draft, confirm and add an optional note. Use Delete to discard a draft."
+      ],
+      "result": "The new version becomes Active and the previous one is Superseded from the day before the new effective date. Documents already issued keep the terms they were issued with.",
+      "tips": ["Active and superseded versions cannot be edited; create a new version instead."]
+    }
+  ],
+  "statuses": [
+    {"name": "Draft (setup in progress) / Active / Inactive", "meaning": "Company status."},
+    {"name": "Unverified / Pending verification / Verified / Rejected", "meaning": "Check status of a registration or bank account."},
+    {"name": "Active / Inactive", "meaning": "Whether an address, partner, contact, registration or bank account is in use."},
+    {"name": "Primary", "meaning": "The main address, contact (per type) or bank account."},
+    {"name": "Draft / Active / Suspended / Revoked", "meaning": "Signatory status."},
+    {"name": "Open / Closed, Locked, Current", "meaning": "Financial year states."},
+    {"name": "Draft / Active / Superseded", "meaning": "Policy version status."},
+    {"name": "Active / Off", "meaning": "Whether a numbering sequence is in use."}
+  ],
+  "routines": {
+    "daily": [],
+    "weekly": ["Check Needs attention on the company home page."],
+    "monthly": ["Review registrations and documents for expiry; upload renewals."],
+    "yearly": ["Before 1 April, add the new financial year (for example 2027-28) and Set current on 1 April.", "After the books are final, Lock and then Close the old year.", "Review default terms and activate a new policy version if needed."]
+  },
+  "common_problems": [
+    {"problem": "\"You can view these details but only company administrators can change them.\"", "fix": "Your role lacks company.manage. Ask an administrator or partner to make the change."},
+    {"problem": "GSTIN refused.", "fix": "Check it has 15 characters, the right state code and contains the company PAN."},
+    {"problem": "\"Attach the supporting document before verifying.\"", "fix": "Upload the certificate under Documents > Company Documents, then Edit the registration or bank account and choose it."},
+    {"problem": "\"Payment details must be verified by someone other than the person who entered them.\"", "fix": "Ask another finance user or administrator to verify."},
+    {"problem": "Bank details disappeared from invoices.", "fix": "The account details were changed or rejected. Verify the account again and re-tick the show-on-documents boxes."},
+    {"problem": "Cannot issue numbers in a year.", "fix": "The financial year is locked or closed. An administrator can Unlock it with a reason."}
+  ],
+  "connected": [
+    "Every issued document (letters, minutes, quotations, invoices, payslips, purchase orders) takes its name, address, contact, GSTIN, bank details, signatory, terms and letterhead from here.",
+    "Document Numbering supplies the numbers for invoices, bills, vouchers, employees, projects and other records across all modules.",
+    "Tax Configuration decides how GST is calculated on Sales documents.",
+    "Policies set default payment terms, quotation validity and invoice due days used by Sales.",
+    "Supporting documents come from Documents > Company Documents.",
+    "Every change is written to Administration > Change History."
+  ]
+}

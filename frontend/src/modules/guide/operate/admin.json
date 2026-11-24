@@ -1,0 +1,306 @@
+{
+  "key": "admin",
+  "title": "Administration",
+  "purpose": "Administration is where you control who can sign in and what each person may do. You add and switch off users, set passwords, decide each role's permissions, and invite new members with a one-time link so they can create their own account. You also set up how the app's emails look (sender, reply-to, signature) and check every email it has sent. It also keeps the login history and a permanent record of every change made to users, permissions and company settings.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Hold every permission, always: manage users and the permission matrix, view login history and changes, view the change history, set up email and see every sent email (email.manage), and invite members with any access role (partners cannot give the Admin role)."},
+    {"role": "HR Manager", "does": "Can invite new members (users.invite by default), but may only give the access roles Project Manager or Employee."},
+    {"role": "Finance Manager, Project Manager, Employee", "does": "No administration access by default. An administrator can grant it in the permission matrix."}
+  ],
+  "before_you_start": [
+    "Agree which role each person should have. Roles: Admin, Managing Partner, Partner, Finance Manager, HR Manager, Project Manager, Employee.",
+    "The access role decides what a person can open. A job title (for example Site Engineer) is separate and grants nothing.",
+    "The app sends email (invitation links, invoices, quotations, purchase orders, payment reminders and payslips) once your IT person has set up the mail server. Until then each message is saved on the server but not delivered, and the app says so. See \"Set up email\" below.",
+    "Most changes ask for a reason; write something clear, because it is kept permanently."
+  ],
+  "tasks": [
+    {
+      "title": "Invite a new member: create the link",
+      "who": "Anyone with users.invite (Admin, Managing Partner, Partner, HR Manager by default)",
+      "where": "Administration > Invite members > Create invite link",
+      "route": "/company/invite",
+      "steps": [
+        "Open the Administration module and click Invite members.",
+        "Click Create invite link.",
+        "Choose the Access role. The list only shows roles you are allowed to give: an Admin can give any role; a Managing Partner or Partner any role except Admin; an HR Manager only Project Manager or Employee. Employee is pre-selected when allowed.",
+        "Set \"Link valid for (days)\": 1 to 30 days. The default is 7.",
+        "Optionally fill \"Name of the person\" (for example Priya Raman), \"Email of the person\" and a Note. The name and note help you recognise the link; the email address is where \"Email this link\" sends the invitation.",
+        "Click Create link."
+      ],
+      "result": "The \"Invitation link\" window opens with the full link, for example https://your-erp/join/... The link works once and expires after the days you chose. The creation is recorded in the user and permission changes.",
+      "tips": [
+        "The person joining cannot change the access role you chose.",
+        "Someone who holds users.invite through a custom grant (not one of the roles above) may invite Employees only."
+      ]
+    },
+    {
+      "title": "Invite a new member: copy or email the link",
+      "who": "The person who created the link",
+      "where": "Administration > Invite members > Invitation link window",
+      "route": "/company/invite",
+      "steps": [
+        "Read the yellow warning: this is the only time the full link is shown.",
+        "To email it from the app, click Email this link. A window opens with the message ready: To (the email you entered), Subject \"Your invitation to join ...\", and a message with the role, the expiry date, the link and your signature. Change anything you like and click Send email.",
+        "Read the result: \"Email sent\", \"Saved, not delivered\" (email is not set up on the server) or \"The email was not sent\" with the reason. Click Done.",
+        "Or click Copy link and paste it into a chat or message to the person. If copying fails, click in the link box, select it and press Ctrl+C. \"Open in my email program\" prepares the same message in your own mail program instead.",
+        "Click Done."
+      ],
+      "result": "The link appears in the list as Pending until it is used, expires or is revoked. An emailed invitation is listed under Administration > Sent emails, with the link itself hidden.",
+      "tips": [
+        "The full link cannot be shown again later, because only a scrambled copy is stored. If it is lost, use New link.",
+        "Because the link is not kept, a failed invitation email cannot be sent again from Sent emails. Use New link and email that.",
+        "Send the link only to the intended person; anyone holding it can use it once."
+      ]
+    },
+    {
+      "title": "Track, filter, revoke or replace invitation links",
+      "who": "Inviters (each sees links they created or links for roles they may give)",
+      "where": "Administration > Invite members",
+      "route": "/company/invite",
+      "steps": [
+        "Use Show to filter: All links, Pending, Used, Expired or Revoked.",
+        "Read each row: Status, Invitee, Access role, Invited by (with time), Expires and Joined (who joined and when, or who revoked it).",
+        "To stop a pending link, click Revoke, then Revoke link. It stops working at once.",
+        "To send a fresh link (lost, expired or revoked), click New link. The old link is withdrawn if still open, and a new one is made with the same role, name, email, note and validity length. Copy or email it from the window that opens."
+      ],
+      "result": "Revoking and replacing are recorded in the user and permission changes.",
+      "tips": ["New link is not offered for a link that has already been used."]
+    },
+    {
+      "title": "What the invited person does on the join page",
+      "who": "The new member (no sign-in needed)",
+      "where": "The link they received (/join/...)",
+      "route": "",
+      "steps": [
+        "Open the link. The page shows \"Join\" with the company name and \"You are joining as\" with the access role.",
+        "Fill the required fields: Full name, Username (letters, digits and . @ + - _ only, no spaces), Password (at least 10 characters, not common or purely numeric), Confirm password, Mobile number, Personal email, and \"Your role in the company\" (job title, for example Site Engineer).",
+        "Optionally fill Department, Date of birth, Address, Emergency contact name and Emergency contact phone.",
+        "Use Show / Hide to check the password.",
+        "Click Create my account.",
+        "On \"You are all set\", click Go to sign in and sign in with the new username and password."
+      ],
+      "result": "A user account is created with the access role chosen by the inviter, plus a member profile with the details entered. For Employee, Project Manager, HR Manager and Finance Manager roles an HR employee record is also created (joining date today, full time, with the job title and, if it matches an existing one, the department). Admin and partner roles get the account and profile only. The link is marked Used and cannot be used again.",
+      "tips": [
+        "Full name and Personal email are pre-filled if the inviter entered them.",
+        "If the page says \"This link cannot be used\", the link has expired, was already used or was withdrawn; ask for a new link.",
+        "If it says \"Please wait a moment\", too many attempts were made; wait a minute and open the link again.",
+        "\"This username is already taken. Choose another.\" means someone already uses that username."
+      ]
+    },
+    {
+      "title": "Add a user directly",
+      "who": "Admin, Managing Partner, Partner (users.manage)",
+      "where": "Administration > Users and Access > Users > Add user",
+      "route": "/company/access",
+      "steps": [
+        "Click Users and Access, stay on the Users tab and click Add user.",
+        "Fill Username (no spaces), Role, First name, Last name, Email and a Password of at least 10 characters.",
+        "Click Save.",
+        "Give the person their username and password yourself."
+      ],
+      "result": "The user can sign in at once with the role's permissions. The addition is recorded under Changes.",
+      "tips": ["Inviting is usually better: the person chooses their own password and fills in their own details."]
+    },
+    {
+      "title": "Edit a user or change their role",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Administration > Users and Access > Users > Edit",
+      "route": "/company/access",
+      "steps": [
+        "Find the user in the list (Name, Username, Role, Last sign-in, Status).",
+        "Click Edit.",
+        "Change First name, Last name, Email or Role. The username cannot be changed.",
+        "Click Save."
+      ],
+      "result": "A role change takes effect immediately. The change is recorded.",
+      "tips": [
+        "You cannot change your own role.",
+        "The only administrator cannot be given another role until someone else is made an administrator."
+      ]
+    },
+    {
+      "title": "Set a new password for a user",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Administration > Users and Access > Users > Set password",
+      "route": "/company/access",
+      "steps": [
+        "Click Set password on the user's row.",
+        "Type the New password (at least 10 characters, not easily guessed).",
+        "Click Set password.",
+        "Tell the user the new password in person or by phone."
+      ],
+      "result": "The user is signed out everywhere and must use the new password next time. The change is recorded (the password itself is never shown).",
+      "tips": []
+    },
+    {
+      "title": "Switch a user off (deactivate) or on",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Administration > Users and Access > Users > Switch off / Switch on",
+      "route": "/company/access",
+      "steps": [
+        "Click Switch off on the user's row (for example when someone leaves).",
+        "Optionally type a reason and click Switch off.",
+        "To restore access later, click Switch on."
+      ],
+      "result": "A switched-off user is signed out at once, cannot sign in and holds no permissions. Their status shows \"Switched off\" and their past records stay.",
+      "tips": [
+        "You cannot switch off your own account.",
+        "The only administrator cannot be switched off."
+      ]
+    },
+    {
+      "title": "Change what a role may do (permission matrix)",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Administration > Users and Access > Role permissions",
+      "route": "/company/access",
+      "steps": [
+        "Click the Role permissions tab. Permissions are grouped (Company, Finance, Documents, Sales, Accounting, Purchases, Tax, People, Projects, Approvals, Compliance, Partners, Workplace, CRM, Reports, Administration).",
+        "Tick or untick boxes in the Finance Manager, HR Manager, Project Manager and Employee columns. A dot (●) marks a setting that differs from the default.",
+        "Note that the Admin, Managing Partner and Partner columns are locked (\"Locked: full access\"): they always hold every permission and cannot be reduced.",
+        "Click Save changes, type a reason and click Save permissions."
+      ],
+      "result": "Changes apply at once to everyone with the changed roles and are recorded under Changes.",
+      "tips": ["Because the partner columns are locked, no partner can ever be locked out, and new permissions added later reach them automatically."]
+    },
+    {
+      "title": "Reset all permissions to the defaults",
+      "who": "Admin, Managing Partner, Partner",
+      "where": "Administration > Users and Access > Role permissions > Reset to defaults",
+      "route": "/company/access",
+      "steps": [
+        "Click Reset to defaults.",
+        "Confirm with Reset.",
+        "Type the reason and click Reset permissions."
+      ],
+      "result": "All saved permission changes are discarded and every role returns to its default set, at once. The reset is recorded.",
+      "tips": []
+    },
+    {
+      "title": "Check the login history",
+      "who": "Admin, Managing Partner, Partner (users.view_activity)",
+      "where": "Administration > Users and Access > Login history",
+      "route": "/company/access",
+      "steps": [
+        "Click the Login history tab.",
+        "Optionally type a Username and choose a Result: All, Signed in, Wrong username or password, Account switched off, Signed out.",
+        "Click Search.",
+        "Read When, User, Result, IP address and Browser, newest first."
+      ],
+      "result": "Shows up to 300 events. A typed name that is not a real user is never stored.",
+      "tips": ["Many \"Wrong username or password\" entries for one user may mean someone is guessing; set a new password for that user."]
+    },
+    {
+      "title": "Review user and permission changes",
+      "who": "Admin, Managing Partner, Partner (users.view_activity)",
+      "where": "Administration > Users and Access > Changes",
+      "route": "/company/access",
+      "steps": [
+        "Click the Changes tab.",
+        "Read When, By, What (User added / changed / switched on / switched off, Permissions, or Invitation link created / changed / withdrawn), Details and Reason."
+      ],
+      "result": "These entries also appear in the company change history.",
+      "tips": []
+    },
+    {
+      "title": "Search the company change history",
+      "who": "Admin, Managing Partner, Partner (audit.view)",
+      "where": "Administration > Change History",
+      "route": "/company/history",
+      "steps": [
+        "Click Change History.",
+        "Optionally fill Record type (for example bank_account, policy, issued_document), Category, Action (created, updated, deactivated, activated, deleted, verified, revealed, downloaded, issued), From date and To date.",
+        "Click Apply filters (or Clear to remove them).",
+        "Click Details on a row to see each changed field's Previous and New value, the Reason and IDs.",
+        "Use Previous and Next to page through, 25 events per page."
+      ],
+      "result": "The history is append-only: entries can never be edited or deleted. Revealed bank numbers show with a highlighted action.",
+      "tips": ["Sensitive values such as full account numbers, DPINs and personal contact details are never copied into the history."]
+    },
+    {
+      "title": "Set up email: sender name, reply-to address and signature",
+      "who": "Admin, Managing Partner, Partner (email.manage)",
+      "where": "Administration > Email settings",
+      "route": "/company/email",
+      "steps": [
+        "Click Email settings.",
+        "Look at the Mail server box. \"Email is set up\" shows the server, port and sending address. \"Email is not set up on the server; messages are saved but not delivered\" means your IT person still has to enter the mail server details in the server settings (EMAIL_HOST and the other EMAIL_ values described in the README).",
+        "Fill Sender name, for example Example Ventures Accounts. Leave it empty to use the company's display name.",
+        "Optionally fill Reply-to address, for example accounts@yourcompany.com, so replies reach the right inbox.",
+        "Optionally write a Signature, for example your name, team and phone number. It is added at the end of every prefilled message; without one, messages end with \"Regards\" and the sender name.",
+        "Tick \"Email payment reminders automatically\" if reminders should go out on their own every day (see the Sales chapter).",
+        "Click Save settings."
+      ],
+      "result": "Every email the app prepares from now on uses this sender name, reply-to address and signature. The change is recorded in the Change History.",
+      "tips": [
+        "The mail server password is kept in the server settings only. It is never stored in the app or shown on this page.",
+        "Holders of sales.manage (for example the Finance Manager) can switch automatic reminders on or off from Sales > Reminders > Rules and wording, but cannot change the sender or signature."
+      ]
+    },
+    {
+      "title": "Send a test email",
+      "who": "Admin, Managing Partner, Partner (email.manage)",
+      "where": "Administration > Email settings > Send a test email",
+      "route": "/company/email",
+      "steps": [
+        "Click Email settings and scroll to Send a test email.",
+        "Check the Send to address (your own address is filled in) and click Send a test email.",
+        "Read the result: \"Sent to ... Check the inbox (and the spam folder)\", \"Saved, not delivered\" (email is not set up) or \"Not sent\" with the reason.",
+        "Open your inbox and check that the message arrived with the right sender name."
+      ],
+      "result": "The test message is listed under Sent emails.",
+      "tips": ["If it fails with \"The mail server refused the sign-in\" or \"Could not connect to the mail server\", give that exact message to your IT person: the server settings need correcting."]
+    },
+    {
+      "title": "Check sent emails and send a failed one again",
+      "who": "Admin, Managing Partner, Partner (email.manage)",
+      "where": "Administration > Sent emails",
+      "route": "/company/sent-emails",
+      "steps": [
+        "Click Sent emails. Every message the app has sent or tried to send is listed, newest first: when, to whom, subject, what it was about, the result and who sent it.",
+        "Click Failed (or Sent, or \"Saved, not delivered\") above the list to see only those, or use Search (subject, address, record or error), About and Result, then click Search.",
+        "A failed message shows the reason in red under its result, for example \"The mail server refused these addresses\".",
+        "Click Open on a row to read the full message, the attachments and a link to the record it was about.",
+        "For a failed message, fix the cause (for example correct the customer's email address, or ask IT to fix the mail server), then click Open, then Send again."
+      ],
+      "result": "Send again sends the same message once more (the PDF is attached again from the record) and adds a new row with its own result; the old row is marked \"Sent again\".",
+      "tips": [
+        "A failed email never undoes the work itself: the invoice stays issued, the reminder stays recorded.",
+        "Invitation emails cannot be sent again from here because the one-time link is not kept; use New link on Invite members."
+      ]
+    }
+  ],
+  "statuses": [
+    {"name": "Pending", "meaning": "Invitation link not yet used, not expired and not revoked; it still works."},
+    {"name": "Used", "meaning": "Someone created their account with the link; it cannot be used again."},
+    {"name": "Expired", "meaning": "The validity days passed before it was used. Use New link."},
+    {"name": "Revoked", "meaning": "Withdrawn by an inviter (or replaced by a new link); it no longer works."},
+    {"name": "Active", "meaning": "The user can sign in."},
+    {"name": "Switched off", "meaning": "The user cannot sign in and holds no permissions."},
+    {"name": "Locked: full access", "meaning": "Admin, Managing Partner and Partner columns in the matrix; always every permission."},
+    {"name": "Signed in / Wrong username or password / Account switched off / Signed out", "meaning": "Login history results."}
+  ],
+  "routines": {
+    "daily": [],
+    "weekly": ["Check Invite members for Pending links that should be revoked and Expired links that need a New link.", "Glance at the Login history for repeated failed sign-ins.", "Open Sent emails, click Failed, and deal with any failed messages."],
+    "monthly": ["Review the Users list: switch off anyone who has left.", "Review the Changes tab and Change History for unexpected changes."],
+    "yearly": ["Review the permission matrix with the partners and reset or adjust roles as needed."]
+  },
+  "common_problems": [
+    {"problem": "The person never got the invitation email.", "fix": "Check Administration > Sent emails: a Failed row gives the reason, and \"Saved, not delivered\" means email is not set up on the server. Ask them to check their spam folder. Otherwise use New link and email or copy it again."},
+    {"problem": "Email settings says \"Email is not set up on the server\".", "fix": "Your IT person must enter the mail server details (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL) in the server settings and restart the app. Then send a test email."},
+    {"problem": "Emails fail with \"The mail server refused the sign-in\".", "fix": "The mail server user name or password in the server settings is wrong. Ask your IT person to correct it, then use Send again on the failed rows."},
+    {"problem": "I lost the invitation link.", "fix": "It cannot be shown again. Click New link on that row; the old link is withdrawn and a fresh one is shown."},
+    {"problem": "The role I want is not in the Access role list.", "fix": "You may only give certain roles (HR Manager: Project Manager or Employee; partners: anything except Admin). Ask an administrator or partner to create the link."},
+    {"problem": "\"This link cannot be used\" on the join page.", "fix": "The link expired, was used or was revoked. Ask the inviter for a new link."},
+    {"problem": "\"This is the only administrator...\"", "fix": "Make another user an Admin first, then change or switch off this one."},
+    {"problem": "Users and Access says \"Your role does not include user management or login history.\"", "fix": "Ask an administrator or partner for the users.manage or users.view_activity permission."},
+    {"problem": "A user forgot their password.", "fix": "Use Set password and tell them the new password in person."}
+  ],
+  "connected": [
+    "Every module checks the permissions set here before showing menus, pages and buttons.",
+    "Joining through an invitation creates an HR employee record for Employee, Project Manager, HR Manager and Finance Manager roles.",
+    "Roles holding a permission are used to find second approvers (for example for bank detail verification).",
+    "Change History collects changes from Company, Documents, Reports (salary exports), attachments, users and permissions.",
+    "Email settings (sender name, reply-to, signature) are used by every email the app sends: invoices and credit notes (Sales), quotations and letters (Documents), purchase orders (Purchases), payslips (People), payment reminders and invitation links. Sent emails lists them all."
+  ]
+}

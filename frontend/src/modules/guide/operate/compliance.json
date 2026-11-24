@@ -1,0 +1,329 @@
+{
+  "key": "compliance",
+  "title": "Compliance",
+  "purpose": "The Compliance module keeps the LLP on the right side of the law. It holds a ready-made catalogue of statutory obligations for an Indian LLP (MCA/ROC, income tax, GST, TDS, labour and local), turns it into a dated calendar for each financial year, and records each filing with its acknowledgement number, fee and any late fee. It also keeps the LLP's legal history, contracts and renewals, legal notices and court cases, company policies, and one Expiry Watch list of everything coming due.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Hold every permission: generate the calendar, mark filings, edit obligations, and manage legal events, contracts, cases and policies."},
+    {"role": "Finance Manager", "does": "Can view and manage compliance by default, the same as the partners."},
+    {"role": "HR Manager, Project Manager, Employee", "does": "No access to this module by default."}
+  ],
+  "before_you_start": [
+    "Fill in the company profile (LLPIN, PAN, TAN, GSTIN, registered office, date of incorporation) and the partners under Company. The module reads these and never copies them.",
+    "Open Obligations once and switch off anything that does not apply (for example GST if you are not registered), and switch on what does (for example the tax-audit version of ITR-5).",
+    "Make sure the people who file returns have user accounts, so filings can be assigned to them."
+  ],
+  "tasks": [
+    {
+      "title": "Review the obligations catalogue and switch items on or off",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Obligations",
+      "route": "/compliance/obligations",
+      "steps": [
+        "Click Obligations in the left menu. Obligations are grouped by category (MCA / ROC, Income tax, GST, TDS, Labour, Local, Other).",
+        "Use Category, Switched (On or Off) and Search (name, form, code or authority) to find items, then click Search.",
+        "Read each row: form, frequency, when it is due, owner role and penalty.",
+        "Untick the box in the On column to switch an obligation off, or tick it to switch it on."
+      ],
+      "result": "The message reminds you to regenerate the calendar. Switching off does not delete items already in a calendar; regenerating the calendar applies the change to open items.",
+      "tips": ["Obligations you added yourself show 'added by you'."]
+    },
+    {
+      "title": "Edit an obligation (due date rule, owner, reminders, late fee)",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Obligations > Edit",
+      "route": "/compliance/obligations",
+      "steps": [
+        "Click Edit on the obligation's row.",
+        "Under When it falls due, choose the Rule type: Every month (Day of the month, and Months after the period; 1 means next month), Fixed dates in the year (Month, Day, Covers previous or current financial year, Label), or Days after an event.",
+        "Update Due date in words, for example '20th of the following month'.",
+        "Choose the Late fee estimate rule (LLP Act additional fee per day, Income tax late fee section 234F, GST late fee per day, TDS return late fee section 234E, or No automatic estimate) and a Penalty note.",
+        "Choose the Default owner (role), Default priority and Reminders (days before), for example 15, 7, 1.",
+        "Click Save."
+      ],
+      "result": "The obligation is updated. Open items follow the new rule the next time you generate the calendar; filed items are never changed.",
+      "tips": ["New items go to the longest-serving active user with the default owner role."]
+    },
+    {
+      "title": "Add a new obligation, or delete one you added",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Obligations > New obligation",
+      "route": "/compliance/obligations",
+      "steps": [
+        "Click New obligation.",
+        "Enter the Name, a short unique Code (for example PT-MH-ANNUAL; it cannot be changed later), Form number, Category, Authority and Frequency.",
+        "Set the due date rule and the other fields as in the task above.",
+        "Click Save.",
+        "To delete an obligation you added, click Delete on its row and confirm. The button appears only for your own obligations that have no calendar items."
+      ],
+      "result": "The obligation joins the catalogue and is included the next time the calendar is generated.",
+      "tips": []
+    },
+    {
+      "title": "Generate the compliance calendar for a financial year",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > Generate calendar for (year), or Compliance Dashboard > Generate calendar",
+      "route": "/compliance/filings",
+      "steps": [
+        "Click Filings in the left menu.",
+        "Choose the Financial year, for example 2026-27.",
+        "Click Generate calendar for 2026-27."
+      ],
+      "result": "A dated item is created for every switched-on recurring obligation in that year, assigned to the default owner with the default priority and reminders. The message reports how many were added, moved, unchanged, and filed or closed items left alone. Due dates you moved by hand are kept.",
+      "tips": ["Run it again after changing obligations; it is safe to repeat.", "Event filings (Form 3, 4, 5, 15 and so on) are not generated; add them from a legal event or with New task."]
+    },
+    {
+      "title": "Find what is due (Filings list and Calendar)",
+      "who": "Anyone with access to the module",
+      "where": "Compliance > Filings, or Compliance > Calendar",
+      "route": "/compliance/filings",
+      "steps": [
+        "On Filings, choose the Financial year and click a chip: All, Open, Overdue, Due soon, Upcoming, Filed, Not applicable. Each chip shows its count.",
+        "Narrow with Category, Assigned to (Me, Unassigned or a person) and Search (filing, form, period or acknowledgement no.).",
+        "Or click Calendar: use Previous, Next, Today or Jump to month. Each day shows coloured pills; click a date to list what falls on it. Tick Only mine to see your items.",
+        "Switch the Calendar to the Agenda tab for a day-by-day list of the month.",
+        "Click any item to open it."
+      ],
+      "result": "Tax due dates from the Tax module also appear on the Calendar with a 'Tax' and 'Read only' badge; open them in the Tax module.",
+      "tips": ["Due soon means due within 15 days."]
+    },
+    {
+      "title": "Mark a filing as filed, with its acknowledgement",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > click the item > Mark filed",
+      "route": "/compliance/filings",
+      "steps": [
+        "File the return on the government portal first and note the SRN, ARN or acknowledgement number.",
+        "Open the item and click Mark filed.",
+        "Enter Filed on (it cannot be a future date).",
+        "Enter the SRN / ARN / acknowledgement no., the Filing fee paid (Rs), for example 200, and any Late fee / penalty paid (Rs).",
+        "If the date is after the due date, a yellow note shows the days late and the estimated late fee.",
+        "Add Remarks and click Mark as filed.",
+        "Back in the item, under Acknowledgement and documents, choose the acknowledgement PDF, enter a Name and click Attach file."
+      ],
+      "result": "Status becomes Filed with an On time or 'n days late' badge, and the message gives the filing's reference number. The change appears in the item's History.",
+      "tips": ["Attach the challan and working papers too, so the file is complete for audit."]
+    },
+    {
+      "title": "Mark a filing as not applicable",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > click the item > Not applicable",
+      "route": "/compliance/filings",
+      "steps": [
+        "Open the item and click Not applicable.",
+        "Type why it does not apply, for example 'No employees covered by ESI this month'.",
+        "Click Mark not applicable."
+      ],
+      "result": "The item stays in the calendar as closed with your reason and status Not applicable.",
+      "tips": ["To do this for many items at once, tick them on the Filings list and use Not applicable in the bulk bar."]
+    },
+    {
+      "title": "Reopen a filed or not-applicable item",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > click the item > Reopen",
+      "route": "/compliance/filings",
+      "steps": [
+        "Open the item and click Reopen.",
+        "Type why it is being reopened and click Reopen."
+      ],
+      "result": "The item is open again and shows Upcoming, Due soon or Overdue according to its due date. The reason is kept in the History.",
+      "tips": []
+    },
+    {
+      "title": "Reassign, change the due date (extension) or change reminders",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > click the item > Reassign or change dates",
+      "route": "/compliance/filings",
+      "steps": [
+        "Open the item and click Reassign or change dates.",
+        "Change Assigned to and Priority as needed.",
+        "Change Due date only for an extension granted by the department, for example from 31-10-2026 to 30-11-2026.",
+        "Change Remind me (days before, comma separated), for example 30, 7, 1.",
+        "Click Save.",
+        "For many items at once: tick them on the Filings list, then in the bulk bar choose Assign to… and click Assign, or Priority… and click Set."
+      ],
+      "result": "The item shows 'moved by hand' next to a changed due date; generating the calendar again will not move it back.",
+      "tips": []
+    },
+    {
+      "title": "Add a one-off task or an event filing",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Filings > New task (or Calendar > New task, or '+ New' > Compliance task)",
+      "route": "/compliance/filings?new=1",
+      "steps": [
+        "Click New task.",
+        "For a one-off task, keep One-off task selected and enter Task, Due date, Category, Form / reference, Priority, Assigned to and Notes.",
+        "For an event filing, click Event filing (Form 3, 4, 5 ...), choose the Filing, enter the Date of the event and Assigned to. The due date is worked out from the event (30 days after).",
+        "Click Add task."
+      ],
+      "result": "The task appears in the Filings list and on the Calendar.",
+      "tips": []
+    },
+    {
+      "title": "Estimate a late filing fee",
+      "who": "Anyone with access to the module",
+      "where": "Compliance > Filings > Late filing penalty estimator (bottom of the page)",
+      "route": "/compliance/filings",
+      "steps": [
+        "Scroll to Late filing penalty estimator.",
+        "Choose the Rule, enter the Due date and Filed (or will file) on.",
+        "For the income tax rule enter Total income (Rs); for the TDS rule enter TDS in the return (Rs); for the GST rule tick Nil return if it applies.",
+        "Click Estimate."
+      ],
+      "result": "You see the days late, the estimated amount and the formula. The Filings list also shows a Late fee estimate column for late items.",
+      "tips": ["It is an estimate under the current rules; always confirm the amount on the official portal before paying."]
+    },
+    {
+      "title": "Keep the LLP's legal history (legal events)",
+      "who": "Admin, Partner or Finance Manager (others can view)",
+      "where": "Compliance > Legal Events",
+      "route": "/compliance/legal-events",
+      "steps": [
+        "Click Legal Events. The first time, click Import from company records to bring in incorporation and partner history from the company profile.",
+        "To add an event, click New event, choose the Kind of event, enter What happened, the Date (not in the future), Form number, SRN and Details.",
+        "For a partner change, name change, agreement amendment or address change, tick 'Also add the filing due 30 days after this event to the calendar'.",
+        "Click Save.",
+        "Click an event's title to open it: Edit, Delete, or attach certificates and filed forms under Documents.",
+        "Open the LLP master record tab to see LLPIN, PAN, TAN, GSTIN, registered office and partners as read from the company profile."
+      ],
+      "result": "The event appears on the Timeline with a reference. If you ticked the filing box, the message gives the filing's due date and the filing (for example LLP Form 4) appears in Filings.",
+      "tips": ["Master record details are changed in the company profile, not here. The LLP master record warns if there are fewer than two designated partners."]
+    },
+    {
+      "title": "Add a contract and track its expiry",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Contracts > New contract (or '+ New' > Contract)",
+      "route": "/compliance/contracts",
+      "steps": [
+        "Click Contracts, then New contract.",
+        "Enter Title, Counterparty, Type and Effective from.",
+        "Enter Expires on, or leave it empty for an open-ended contract.",
+        "Tick Renews automatically if it does, and set Renewal term (months), for example 12.",
+        "Set Alert before expiry (days), for example 30, and the Value (Rs, optional), for example 3,60,000.",
+        "Choose Status (Active or Draft), Owner, and optionally the Customer, Vendor or Project.",
+        "Click Save, then open the contract and attach the signed agreement under Contract documents."
+      ],
+      "result": "The contract gets a reference number. It shows as Expiring soon once it is within its alert days of expiry, and appears in Expiry Watch.",
+      "tips": ["Auto-renewal needs an expiry date. The list shows the current expiry, rolled forward by auto-renewal."]
+    },
+    {
+      "title": "Renew, terminate or delete a contract",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Contracts > click the contract",
+      "route": "/compliance/contracts",
+      "steps": [
+        "Use the chips All, Active, Expiring soon, Expired, Draft, Terminated, plus Type and Search, to find it, then click it.",
+        "To renew: click Renew, enter the New expiry date (for example a year later), an optional New value and a Note, and click Renew.",
+        "To end it: click Terminate, type why it is ending and confirm with Terminate.",
+        "To remove a draft: click Delete draft and confirm.",
+        "Click Edit to change other details."
+      ],
+      "result": "Renewing sets the new expiry and adds one to the 'Renewed' count. A terminated contract is kept as a record and cannot be renewed; only its notes can be edited.",
+      "tips": []
+    },
+    {
+      "title": "Record a legal notice or court case and update it",
+      "who": "Admin, Partner or Finance Manager",
+      "where": "Compliance > Notices & Cases > New notice or case",
+      "route": "/compliance/cases",
+      "steps": [
+        "Click Notices & Cases, then New notice or case.",
+        "Enter the Matter, Kind, Our position, Court, tribunal or authority, Case or notice number, Other party and Filed or received on.",
+        "Enter the Next hearing date, Lawyer, Lawyer contact, Amount involved (Rs), for example 2,50,000, and Owner.",
+        "Keep Status Open and click Save.",
+        "After each hearing, open the matter, click Edit or update, change Next hearing or Status (In progress), and save.",
+        "To finish it, set Status to Disposed or Closed, write the Outcome (required) and save.",
+        "Attach notices, orders and pleadings in the matter."
+      ],
+      "result": "The matter gets a reference number. A hearing badge warns when the hearing is today, soon, or past and needs an update. Hearings also appear in Expiry Watch.",
+      "tips": ["Only open or in-progress matters can be deleted. The Active chip shows the matters still running."]
+    },
+    {
+      "title": "Publish a policy and collect acknowledgements",
+      "who": "Admin, Partner or Finance Manager (acknowledging: anyone who can open the page)",
+      "where": "Compliance > Policies > New policy",
+      "route": "/compliance/policies",
+      "steps": [
+        "Click Policies, then New policy.",
+        "Enter Policy name, Category (for example HR), Version (1.0), Effective from, Review on and Owner.",
+        "Tick People must acknowledge this policy if needed, add a Summary and set Status to Active when it is ready (or Draft until then).",
+        "Click Save, open the policy and attach the document under Policy document.",
+        "A reader opens the policy and clicks I have read and accept this policy.",
+        "For a new version, click Edit and change Version, for example to 1.1."
+      ],
+      "result": "The policy gets a reference number. The list and the policy show how many people acknowledged the current version and when. Changing the version asks everyone to acknowledge again. A 'Review due' badge appears when the review date is reached.",
+      "tips": ["To delete an active policy, set it to Retired first."]
+    },
+    {
+      "title": "Watch expiries and reminders",
+      "who": "Anyone with access to the module",
+      "where": "Compliance > Expiry Watch",
+      "route": "/compliance/expiry-watch",
+      "steps": [
+        "Click Expiry Watch and choose Look ahead (Next 30 days up to Next 12 months).",
+        "The first table lists company licences and registrations (read only, from the company profile) and contract expiries, with Expired, Expiring soon or Valid.",
+        "The second table, Everything coming due, lists filings, contract and licence expiries, hearings, policy reviews and tax dates, overdue first. Use the chips to filter by kind.",
+        "Items show a Reminder today badge on their reminder days (by default 15, 7 and 1 days before the due date).",
+        "Click a row to open it, or click Export CSV."
+      ],
+      "result": "You have one list to work from. Reminders are shown here and on the dashboards; they are not sent by email.",
+      "tips": []
+    },
+    {
+      "title": "Export the filings list",
+      "who": "Anyone with access to the module",
+      "where": "Compliance > Filings > Export CSV",
+      "route": "/compliance/filings",
+      "steps": [
+        "Choose the Financial year and any filters.",
+        "Click Export CSV."
+      ],
+      "result": "A file with reference, filing, form, period, category, due date, status, assignee, priority, filed date, SRN/ARN, fee, penalty and remarks is downloaded.",
+      "tips": []
+    },
+    {
+      "title": "Read the Compliance Dashboard",
+      "who": "Anyone with access to the module",
+      "where": "Compliance > Compliance Dashboard",
+      "route": "/compliance",
+      "steps": [
+        "Open the module; the dashboard opens first. Choose the Financial year at the top.",
+        "If a note says no calendar exists for the year, click Generate calendar.",
+        "Read the tiles: Compliance score (filed on time out of everything due so far), Overdue, Due in 30 days, Filed this year. Click a tile to open the list.",
+        "Check By category, By status, Filings per month, Workload by person, Upcoming filings and Expiry watch."
+      ],
+      "result": "Click an upcoming filing to open it and act on it directly.",
+      "tips": ["Refresh calendar on the dashboard does the same as Generate calendar on Filings."]
+    }
+  ],
+  "statuses": [
+    {"name": "Upcoming", "meaning": "Open and due more than 15 days from today."},
+    {"name": "Due soon", "meaning": "Open and due within 15 days."},
+    {"name": "Overdue", "meaning": "Open and past its due date."},
+    {"name": "Filed", "meaning": "Marked as filed, with the filing date (On time or n days late)."},
+    {"name": "Not applicable", "meaning": "Closed because it does not apply, with a reason."},
+    {"name": "Contract: Draft / Active / Expiring soon / Expired / Terminated", "meaning": "Expiring soon means within the contract's alert days of its expiry; Terminated contracts cannot be renewed."},
+    {"name": "Case: Open / In progress / Disposed / Closed", "meaning": "Disposed and Closed need an outcome."},
+    {"name": "Policy: Draft / Active / Retired", "meaning": "Only Active policies can be acknowledged; Retired or Draft ones can be deleted."}
+  ],
+  "routines": {
+    "daily": ["Check the Compliance Dashboard tiles for Overdue and Due soon items.", "Mark returns filed on the day you file them and attach the acknowledgement."],
+    "weekly": ["Work through Expiry Watch: items with a Reminder today badge, hearings coming up, contracts expiring.", "Update notices and cases after each hearing."],
+    "monthly": ["At the start of each month, open Filings, filter by the TDS and GST categories, and make sure each of the month's items is assigned.", "Review contracts that are Expiring soon and renew or terminate them."],
+    "yearly": ["At the start of the financial year, review Obligations and generate the calendar for the new year.", "Review policies whose review date has come and issue new versions.", "Import from company records in Legal Events after partner or office changes, and record any events not yet entered."]
+  },
+  "common_problems": [
+    {"problem": "The Filings list or Calendar is empty.", "fix": "The calendar for that financial year has not been generated. Click Generate calendar on Filings or the dashboard (needs the manage permission)."},
+    {"problem": "I changed an obligation but the calendar did not change.", "fix": "Click Generate calendar again. Filed items and due dates moved by hand are deliberately left alone."},
+    {"problem": "Filed on date is rejected.", "fix": "The filing date cannot be in the future."},
+    {"problem": "An obligation has no Delete button.", "fix": "Only obligations you added, with no calendar items, can be deleted. Switch others off instead."},
+    {"problem": "Cannot close a case.", "fix": "Write the Outcome first; it is required for Disposed or Closed."},
+    {"problem": "Auto-renewal will not save.", "fix": "Enter an Expires on date; auto-renewal needs one."},
+    {"problem": "I expected an email reminder.", "fix": "Reminders are shown in the app (Reminder today badges and the dashboards); no email is sent."}
+  ],
+  "connected": [
+    "Company module: reads the LLP profile, registrations, licences and partners (read only); minutes and documents stay there.",
+    "Tax module: its GST and TDS due dates are shown on the Compliance Calendar and in Expiry Watch (read only).",
+    "Sales, Purchases and Projects: a contract can be linked to a customer, vendor or project.",
+    "Partners: partner changes recorded as legal events can add the LLP Form 4 filing to the calendar."
+  ]
+}

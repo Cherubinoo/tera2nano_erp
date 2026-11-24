@@ -4,9 +4,11 @@ import { api } from '../../api';
 import { useAuth } from '../../context';
 import { money } from '../../format';
 import { asList, useLoad } from '../../hooks';
+import { EmailStatusBadge, useEmailServer } from '../../components/Email';
 import { Badge, Dialog, ErrorBox, Field, FormErrors, Loading, Notice, PageHeader, Tabs, fmtDate, fmtDateTime, useReasonDialog, useToast } from '../../ui';
 
-export const NO_EMAIL_NOTICE = 'No email is sent from this system. “Record as sent” keeps the message against the invoice; copy the text or open it in your own email program to actually send it.';
+export const NO_EMAIL_NOTICE = 'Email is not set up on the server, so reminders are not emailed. “Record as sent” keeps the message against the invoice; copy the text or open it in your own email program to send it.';
+export const EMAIL_NOTICE = 'Send emails the reminder to the customer and records it against the invoice. Check or change the text before sending.';
 
 // Copy to the clipboard, with a fallback for browsers that refuse the modern API.
 async function copyText(text) {
@@ -51,7 +53,10 @@ export function ReminderTextDialog({ reminder, onClose }) {
         <>
           <TextBlock subject={reminder.subject} body={reminder.body} email={reminder.to_email} />
           <div className="actions"><CopyAndMail subject={reminder.subject} body={reminder.body} mailto={reminder.mailto || `mailto:${reminder.to_email || ''}?subject=${encodeURIComponent(reminder.subject)}&body=${encodeURIComponent(reminder.body)}`} notify={notify} /></div>
-          <p className="hint">Recorded {fmtDateTime(reminder.created_at)}{reminder.by ? ` by ${reminder.by}` : ''}. {NO_EMAIL_NOTICE}</p>
+          <p className="hint">Recorded {fmtDateTime(reminder.created_at)}{reminder.by ? ` by ${reminder.by}` : ''}.</p>
+          {reminder.email ? (
+            <p className="hint">Email: <EmailStatusBadge status={reminder.email.status} label={reminder.email.status_label} />{reminder.email.error ? ` ${reminder.email.error}` : ''}</p>
+          ) : <p className="hint">This reminder was not emailed by the system.</p>}
         </>
       )}
     </Dialog>
@@ -60,27 +65,65 @@ export function ReminderTextDialog({ reminder, onClose }) {
 
 function SendDialog({ row, onClose, onDone }) {
   const notify = useToast();
+  const server = useEmailServer();
+  const emailing = !!server?.configured;
+  const [v, setV] = useState({ to: row.customer.email || '', cc: '', subject: row.subject, body: row.body });
+  const [errors, setErrors] = useState({});
   const [saved, setSaved] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const set = (k) => (e) => { setV((x) => ({ ...x, [k]: e.target.value })); setErrors((x) => ({ ...x, [k]: undefined })); };
+  const split = (t) => t.split(/[,;\s]+/).filter(Boolean);
   const record = async () => {
+    const errs = {};
+    if (!v.subject.trim()) errs.subject = 'Write the subject.';
+    if (!v.body.trim()) errs.body = 'Write the message.';
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
     setBusy(true); setError(null);
-    try { setSaved(await api.post('/sales/reminders/send/', { document: row.document.id, days_offset: row.rule.days_offset })); onDone(); } catch (e) { setError(e); }
+    const body = { document: row.document.id, days_offset: row.rule.days_offset, subject: v.subject, body: v.body };
+    if (emailing) { body.to = split(v.to); body.cc = split(v.cc); }
+    try { setSaved(await api.post('/sales/reminders/send/', body)); onDone(); } catch (e) { setError(e); setErrors(e.fieldErrors || {}); }
     setBusy(false);
   };
-  const subject = saved ? saved.subject : row.subject, body = saved ? saved.body : row.body;
+  const willEmail = emailing && split(v.to).length > 0;
+  const label = willEmail ? 'Send reminder' : 'Record as sent';
   return (
     <Dialog title={`Reminder for ${row.document.number}`} onClose={onClose} wide
       footer={saved ? <button type="button" className="btn btn-primary" onClick={onClose}>Done</button> : (
         <>
           <button type="button" className="btn" onClick={onClose}>Cancel</button>
-          <button type="button" className="btn btn-primary" disabled={busy} onClick={record}>{busy ? 'Recording…' : 'Record as sent'}</button>
+          <button type="button" className="btn btn-primary" disabled={busy || !server} onClick={record}>{busy ? 'Sending…' : label}</button>
         </>
       )}>
-      <FormErrors error={error} fields={[]} />
-      <Notice type={saved ? 'info' : 'warn'}>{saved ? 'Recorded against the invoice. Now copy the text or open it in your email program to send it.' : NO_EMAIL_NOTICE}</Notice>
-      <TextBlock subject={subject} body={body} email={row.customer.email} />
-      <div className="actions"><CopyAndMail subject={subject} body={body} mailto={saved ? saved.mailto : row.mailto} notify={notify} /></div>
+      <FormErrors error={error} fields={[{ name: 'to' }, { name: 'cc' }, { name: 'subject' }, { name: 'body' }]} />
+      {saved ? (
+        <>
+          {saved.email?.status === 'sent' && <Notice type="success">Reminder emailed to {saved.to_email} and recorded against the invoice.</Notice>}
+          {saved.email?.status === 'failed' && <Notice type="error"><span><strong>The reminder is recorded but the email was not sent.</strong> {saved.email.error} It can be sent again from Administration, Sent emails.</span></Notice>}
+          {saved.email?.status === 'saved' && <Notice type="warn">Recorded; the email was saved but not delivered because email is not set up on the server.</Notice>}
+          {!saved.email && <Notice type="info">Recorded against the invoice. Now copy the text or open it in your email program to send it.</Notice>}
+          <TextBlock subject={saved.subject} body={saved.body} email={saved.to_email} />
+          {!saved.email && <div className="actions"><CopyAndMail subject={saved.subject} body={saved.body} mailto={saved.mailto} notify={notify} /></div>}
+        </>
+      ) : (
+        <>
+          <Notice type={emailing ? 'info' : 'warn'}>{emailing ? EMAIL_NOTICE : NO_EMAIL_NOTICE}</Notice>
+          <div className="form-grid">
+            {emailing && (
+              <>
+                <Field id="rm-to" label="To" wide error={errors.to} hint={row.customer.email ? 'Separate several addresses with commas.' : 'This customer has no email address on file. Type one to email the reminder, or leave it empty to record it only.'}>
+                  <input id="rm-to" value={v.to} onChange={set('to')} inputMode="email" />
+                </Field>
+                <Field id="rm-cc" label="Copy to (optional)" wide error={errors.cc}><input id="rm-cc" value={v.cc} onChange={set('cc')} inputMode="email" /></Field>
+              </>
+            )}
+            <Field id="rm-subject" label="Subject" wide error={errors.subject}><input id="rm-subject" value={v.subject} maxLength={200} onChange={set('subject')} /></Field>
+            <Field id="rm-body" label="Message" wide error={errors.body}><textarea id="rm-body" rows={9} value={v.body} onChange={set('body')} /></Field>
+          </div>
+          {!emailing && <div className="actions"><CopyAndMail subject={v.subject} body={v.body} mailto={`mailto:${row.customer.email || ''}?subject=${encodeURIComponent(v.subject)}&body=${encodeURIComponent(v.body)}`} notify={notify} /></div>}
+        </>
+      )}
     </Dialog>
   );
 }
@@ -142,7 +185,7 @@ function HistoryTab() {
       {rows.length === 0 ? <p className="empty">No reminder has been sent or skipped yet.</p> : (
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Recorded</th><th>Invoice</th><th>Customer</th><th>Reminder</th><th className="amount">Amount due</th><th>Result</th><th>By</th><th /></tr></thead>
+            <thead><tr><th>Recorded</th><th>Invoice</th><th>Customer</th><th>Reminder</th><th className="amount">Amount due</th><th>Result</th><th>Email</th><th>By</th><th /></tr></thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id}>
@@ -152,6 +195,7 @@ function HistoryTab() {
                   <td data-label="Reminder">{r.rule.label}</td>
                   <td className="amount" data-label="Amount due">{money(r.amount_due)}</td>
                   <td data-label="Result"><Badge tone={r.status === 'sent' ? 'good' : 'neutral'}>{r.status_label}</Badge></td>
+                  <td data-label="Email">{r.email ? <><EmailStatusBadge status={r.email.status} label={r.email.status_label} />{r.email.error && <div className="hint">{r.email.error}</div>}</> : <span className="hint">{r.status === 'sent' ? 'Not emailed' : '—'}</span>}</td>
                   <td data-label="By">{r.by || '—'}</td>
                   <td data-label="Text"><button type="button" className="btn btn-small" onClick={() => setView(r)}>{r.status === 'sent' ? 'View text' : 'View'}</button></td>
                 </tr>
@@ -224,6 +268,31 @@ function RuleDialog({ rule, placeholders, onClose, onSaved }) {
   );
 }
 
+function AutoReminders({ canAct }) {
+  const notify = useToast();
+  const server = useEmailServer();
+  const { data, reload } = useLoad(() => api.get('/email/settings/'), []);
+  const [busy, setBusy] = useState(false);
+  if (!data) return null;
+  const toggle = async (e) => {
+    const on = e.target.checked;
+    setBusy(true);
+    try { await api.patch('/email/settings/', { auto_reminders: on }); notify(on ? 'Reminders will be emailed automatically.' : 'Automatic reminder emails switched off.'); reload(); } catch (err) { notify(err.message, 'error'); }
+    setBusy(false);
+  };
+  return (
+    <div className="auto-reminders">
+      <label className="checkbox-inline">
+        <input type="checkbox" checked={data.auto_reminders} disabled={busy || !(canAct && data.can_edit_reminders)} onChange={toggle} /> Email payment reminders automatically
+      </label>
+      <p className="hint">
+        Once a day the reminders that are due are emailed to customers who have an email address, each one only once. Customers without an address stay under “Due now” for you.
+        {server && !server.configured && ' Email is not set up on the server, so nothing is sent automatically yet.'}
+      </p>
+    </div>
+  );
+}
+
 function RulesTab({ canAct }) {
   const { data, error, loading, reload } = useLoad(() => api.get('/sales/reminders/rules/'), []);
   const [editing, setEditing] = useState(null);
@@ -236,6 +305,7 @@ function RulesTab({ canAct }) {
         {canAct && <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>New rule</button>}
       </div>
       <p className="muted">Each rule offers one reminder per unpaid invoice, counted from its due date. If several rules have come due for an invoice, only the latest is offered.</p>
+      <AutoReminders canAct={canAct} />
       <div className="table-wrap">
         <table>
           <thead><tr><th>When</th><th>Subject</th><th>Status</th>{canAct && <th />}</tr></thead>
@@ -256,6 +326,12 @@ function RulesTab({ canAct }) {
   );
 }
 
+function ReminderServerNotice() {
+  const server = useEmailServer();
+  if (!server) return null;
+  return <Notice type={server.configured ? 'info' : 'warn'}>{server.configured ? EMAIL_NOTICE : NO_EMAIL_NOTICE}</Notice>;
+}
+
 export default function Reminders() {
   const { user } = useAuth();
   const canAct = user.permissions.includes('sales.manage');
@@ -264,7 +340,7 @@ export default function Reminders() {
   return (
     <>
       <PageHeader title="Payment reminders" description="Unpaid invoices that need a reminder today, and the wording used." />
-      <Notice>{NO_EMAIL_NOTICE}</Notice>
+      <ReminderServerNotice />
       <Tabs tabs={[{ key: 'due', label: 'Due now' }, { key: 'history', label: 'History' }, { key: 'rules', label: 'Rules and wording' }]} value={tab} onChange={setTab} />
       {tab === 'due' && <DueTab canAct={canAct} onChanged={() => setStamp((n) => n + 1)} />}
       {tab === 'history' && <HistoryTab key={stamp} />}

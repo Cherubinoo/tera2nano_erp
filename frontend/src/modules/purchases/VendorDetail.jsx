@@ -66,8 +66,15 @@ export default function VendorDetail() {
         actions={<>{!v.is_active && <Badge>Inactive</Badge>}
           {canManage && <><Link className="btn" to={`/purchases/bills/new?vendor=${id}`}>New bill</Link><Link className="btn" to={`/purchases/orders/new?vendor=${id}`}>New order</Link>
             <Link className="btn" to={`/purchases/payments?new=1&vendor=${id}`}>Record payment</Link><button type="button" className="btn" onClick={() => setEditing(true)}>Edit</button>
+            <button type="button" className="btn" onClick={async () => {
+              const on = !v.is_active;
+              if (!window.confirm(on ? `Switch ${v.name} back on? It can be used on new orders, bills and payments again.`
+                : `Switch off ${v.name}? Its history stays, but it cannot be used on new orders, bills or payments.`)) return;
+              try { await api.patch(`/purchases/vendors/${id}/`, { is_active: on }); notify(on ? 'Vendor switched on.' : 'Vendor switched off.'); reload(); }
+              catch (e) { notify(e.message, 'error'); }
+            }}>{v.is_active ? 'Switch off' : 'Switch on'}</button>
             {v.is_active && <button type="button" className="btn" onClick={async () => {
-              if (!window.confirm(`Switch off ${v.name}?`)) return;
+              if (!window.confirm(`Delete ${v.name}? This only works for a vendor with no bills, payments, orders or quotations.`)) return;
               try { await api.del(`/purchases/vendors/${id}/`); notify('Vendor deleted.'); window.location.assign('/purchases/vendors'); }
               catch (e) { notify(e.message, 'error'); }
             }}>Delete vendor</button>}

@@ -7,6 +7,7 @@ import { useLoad } from '../../hooks';
 import { Dialog, ErrorBox, Field, FormErrors, Loading, Notice, PageHeader, useReasonDialog, useToast, fmtDate } from '../../ui';
 import { blankItem, itemsFromRecord, itemsPayload, ItemsEditor, LinesTable, ProjectSelect, Status, Totals, useVendors, usePurchaseOptions, useWorking, validateItems, VendorSelect } from './common';
 import { ApprovalPanel } from '../approvals/ApprovalBadge';
+import { EmailButton } from '../../components/Email';
 import DocList from './DocList';
 
 const STATUSES = [['', 'All'], ['draft', 'Draft'], ['pending_approval', 'Pending approval'], ['approved', 'Approved'], ['open', 'Open'], ['received', 'Received'], ['closed', 'Closed'], ['cancelled', 'Cancelled']];
@@ -172,10 +173,11 @@ export function OrderDetail() {
           <Status k={s} label={o.status_label} />
           {s !== 'cancelled' && <ApprovalPanel kind="purchase_order" sourceId={o.id} waiting={s === 'pending_approval'} canSubmit={canManage} onChange={reload} refreshKey={s} />}
           {o.issued && <><button type="button" className="btn" onClick={() => downloadFile(`/purchases/orders/${id}/pdf/?download=true`, 'purchase-order.pdf').catch((e) => notify(e.message, 'error'))}>Download PDF</button>
-            {o.issued.has_print_file && <button type="button" className="btn" onClick={() => downloadFile(`/purchases/orders/${id}/pdf/?download=true&variant=print`, 'purchase-order-print.pdf').catch((e) => notify(e.message, 'error'))}>Print copy</button>}</>}
+            {o.issued.has_print_file && <button type="button" className="btn" onClick={() => downloadFile(`/purchases/orders/${id}/pdf/?download=true&variant=print`, 'purchase-order-print.pdf').catch((e) => notify(e.message, 'error'))}>Print copy</button>}
+            {s !== 'cancelled' && <EmailButton kind="purchase_order" id={o.id} perm="purchases.manage" label="Email to vendor" title={`Email purchase order ${o.number}`} />}</>}
           {canManage && s === 'draft' && <><Link className="btn" to={`/purchases/orders/${id}/edit`}>Edit</Link>
             <button type="button" className="btn" onClick={() => act('submit', 'Sent for approval.')}>Send for approval</button>
-            <button type="button" className="btn btn-primary" onClick={() => act('issue', 'Purchase order issued.')}>Issue</button></>}
+            {!o.needs_approval && <button type="button" className="btn btn-primary" onClick={() => act('issue', 'Purchase order issued.')}>Issue</button>}</>}
           {canManage && s === 'pending_approval' && !o.approval_managed && <><button type="button" className="btn btn-primary" onClick={() => act('approve', 'Approved.')}>Approve</button>
             <button type="button" className="btn" onClick={() => withReason('reject', 'Reject order', 'Order sent back to draft.')}>Reject</button></>}
           {canManage && s === 'approved' && <button type="button" className="btn btn-primary" onClick={() => act('issue', 'Purchase order issued.')}>Issue</button>}
@@ -185,6 +187,7 @@ export function OrderDetail() {
           {canManage && ['draft', 'pending_approval', 'approved', 'issued'].includes(s) && <button type="button" className="btn" onClick={() => withReason('cancel', 'Cancel order', 'Order cancelled.')}>Cancel order</button>}
           {canManage && s === 'draft' && <button type="button" className="btn" onClick={async () => { if (window.confirm('Delete this draft?')) { try { await api.del(`/purchases/orders/${id}/`); navigate('/purchases/orders'); } catch (e) { notify(e.message, 'error'); } } }}>Delete</button>}
         </>} />
+      {s === 'draft' && o.needs_approval && <Notice>An approval rule covers this order. Send it for approval; once it is approved you can issue it.</Notice>}
       {s === 'pending_approval' && o.approval_managed && <Notice>Waiting for approval. The approvers decide it in the Approvals module; follow it with the approval badge above.</Notice>}
       {o.decision_note && <Notice type="warn">{o.decision_note}</Notice>}
       {o.cancel_reason && <Notice type="warn">Cancelled: {o.cancel_reason}</Notice>}

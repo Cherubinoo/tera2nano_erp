@@ -1,0 +1,465 @@
+{
+  "key": "sales",
+  "title": "Sales",
+  "purpose": "Sales is where you bill customers and collect money: customers, quotations, invoices, proforma invoices, credit and debit notes, payments received, recurring invoices and payment reminders. GST (CGST and SGST, or IGST) is worked out from the customer's place of supply, every issued document gets an automatic number and a PDF on your letterhead, and invoices, notes and payments post to the books by themselves.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Everything in Sales, including voiding issued quotations and deciding approvals."},
+    {"role": "Finance Manager", "does": "Adds and edits customers, prepares and issues invoices and notes, records and voids payments, runs recurring invoices and reminders, and creates invoices from quotations (sales.view, sales.manage, sales.issue)."},
+    {"role": "Project Manager", "does": "Views customers, invoices, payments and reports (sales.view) and can issue quotations; cannot create invoices or record payments."},
+    {"role": "Employee, HR Manager", "does": "Can open Sales > Quotations and issue quotations (documents.issue). The other Sales pages need sales.view."}
+  ],
+  "before_you_start": [
+    "Company > Tax Configuration: GST must be switched on (GST applies to this company) for tax to be charged. While it is off, documents say \"GST is not switched on for the company (Tax Configuration)\" and print without tax.",
+    "Company > Policies and Default Terms: active payment terms (for example 30 days) and default terms print on quotations and invoices and set the default due date.",
+    "Company > Bank Accounts: add the account so bank details can print for payment and payments can be marked Deposited to it.",
+    "Approvals > Approval Rules: a rule for Quotation holds large quotations for approval; a rule for Payment holds voiding a large payment.",
+    "Sales > Customers: give each customer an email address so invoices, quotations and reminders can be emailed to them. Email itself is set up under Administration > Email settings.",
+    "Numbers are automatic: for example T2N/QUO/26/2411/00001 (quotation), T2N/INV/26/2411/00001 (invoice), T2N/PI/… (proforma), T2N/CN/… (credit note), T2N/DN/… (debit note), T2N/PAY/… (payment), T2N-CUS-26-2411-0001 (customer) and T2N-RIN-26-2411-0001 (recurring profile)."
+  ],
+  "tasks": [
+    {
+      "title": "Read the Sales Dashboard",
+      "who": "Anyone with sales.view",
+      "where": "Sales > Sales Dashboard",
+      "route": "/sales",
+      "steps": [
+        "Open the Sales tile on the launcher.",
+        "Read the tiles: Total receivables, Overdue, Invoiced this month, Reminders due and Customers. Click a tile to open the matching list.",
+        "Look at Receivables by age, Invoice status, Invoiced and received, Who owes the most and Recent invoices.",
+        "Click New invoice to start an invoice."
+      ],
+      "result": "Nothing is changed. The Sales tile on the launcher shows how many reminders are due.",
+      "tips": []
+    },
+    {
+      "title": "Add a customer",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Customers > New customer",
+      "route": "/sales/customers?new=1",
+      "steps": [
+        "Open Sales > Customers and click New customer (or + New > Customer).",
+        "Enter the Customer name (for example Sunrise Packaging) and, if different, the Legal name printed on invoices.",
+        "Choose Type (Business or Individual) and GST treatment: Registered business (has a GSTIN), Unregistered business or consumer, or Overseas.",
+        "For a registered business enter the GSTIN (for example 29ABCDE1234F1Z5); it is required.",
+        "Fill in PAN, Contact person, Email, Phone and Payment terms (days), for example 30 (leave empty for the company default).",
+        "Fill in Address line 1, Address line 2, City, State (place of supply) and PIN code. Leave the state empty to take it from the GSTIN.",
+        "Click Save."
+      ],
+      "result": "The customer gets a code (for example T2N-CUS-26-2411-0001) and their page opens. The state decides CGST + SGST (same state as the company) or IGST (another state).",
+      "tips": ["Customers are also created automatically when a CRM deal is won."]
+    },
+    {
+      "title": "View, edit or switch off a customer",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (viewing: anyone with sales.view)",
+      "where": "Sales > Customers > open a customer",
+      "route": "/sales/customers",
+      "steps": [
+        "Open Sales > Customers. Search by name, GSTIN, code or email, tick Only those who owe or Include switched off, and click Search.",
+        "Click a customer. Tiles show Outstanding, Received in advance, Unused credit notes and Net balance.",
+        "The Transactions tab is the customer statement (Debit, Credit, Balance); Invoices and notes lists their documents; Details shows their information.",
+        "Click Edit to change details and Save.",
+        "Click Switch off (with an optional reason) to stop using the customer; Switch on brings them back.",
+        "Use New invoice or Record payment to start work for this customer."
+      ],
+      "result": "A switched-off customer cannot be chosen on new documents, and its drafts cannot be issued.",
+      "tips": []
+    },
+    {
+      "title": "Issue a quotation",
+      "who": "Anyone who may issue documents (all roles by default)",
+      "where": "Sales > Quotations",
+      "route": "/company/quotations",
+      "steps": [
+        "Open Sales > Quotations (or + New > Quotation). The notice Quotation ID shows the number it will get.",
+        "Under Customer enter the Customer name, the Address (one line per row), Customer GSTIN (optional) and Customer state (place of supply), or leave the state on automatic.",
+        "Set the Quotation date and Valid until (leave empty for the company's validity period), and optionally Customer's own reference, Subject and Introduction.",
+        "Under Items enter each item: description, HSN/SAC (for example 998314), Quantity, Unit, Rate (INR), Discount % and GST %. Click Add item for more. The totals with GST appear as you type.",
+        "Optionally fill in Key details (for example Completion period: 12 weeks) and Scope and conditions sections, Notes and Terms and conditions (empty prints the company default terms).",
+        "Tick Print the bank details for payment and the Authorised Signatory block if wanted.",
+        "Click Issue quotation and confirm Issue quotation."
+      ],
+      "result": "If no approval rule applies, the quotation is issued at once with its number (for example T2N/QUO/26/2411/00001) and PDFs, and appears under Issued quotations. If it is above an approval limit, it is Sent for approval instead: it has no number or PDF yet and waits under Waiting for approval and drafts.",
+      "tips": [
+        "An issued quotation cannot be edited. If it is wrong, void it and issue a new one.",
+        "A quotation started from a CRM deal is already filled in and is linked back to the deal."
+      ]
+    },
+    {
+      "title": "Follow a quotation waiting for approval, correct and resend it",
+      "who": "The person who prepared it, or Finance Manager / partners",
+      "where": "Sales > Quotations > Waiting for approval and drafts > Open",
+      "route": "/company/quotations",
+      "steps": [
+        "On the Quotations page find it under Waiting for approval and drafts and click Open.",
+        "The badge shows Pending approval or Draft and the approval status. Approvers decide it in Approvals > Pending My Approval.",
+        "To change it while it waits, click Take back; it returns to Draft.",
+        "For a Draft (taken back, or rejected with the approver's note shown), click Edit, correct the form and click Send quotation (confirm Send quotation). Or click Send quotation on the quotation page to send it unchanged.",
+        "Click Delete to remove a draft you no longer need."
+      ],
+      "result": "When approved, the quotation is issued exactly as if it had been issued directly: it gets its number and PDF. A rejected quotation comes back as a draft with the reason.",
+      "tips": ["Cancel the correction leaves the edit without sending."]
+    },
+    {
+      "title": "Download, print or void an issued quotation",
+      "who": "Anyone with access (void: Admin, Managing Partner, Partner)",
+      "where": "Sales > Quotations > Issued quotations",
+      "route": "/company/quotations",
+      "steps": [
+        "Scroll to Issued quotations. Use Search by ID or heading (for example T2N/QUO/26/) and click Search.",
+        "Click Letterhead PDF to download it on your letterhead, Print PDF for pre-printed letterhead paper, or Open to print.",
+        "To cancel a quotation, click Void, type the reason and click Void document."
+      ],
+      "result": "A voided quotation and its number are kept, marked void; the number is never reused.",
+      "tips": []
+    },
+    {
+      "title": "Email a quotation to the customer",
+      "who": "Anyone who can issue quotations (documents.issue)",
+      "where": "Sales > Quotations > Issued quotations > Email",
+      "route": "/company/quotations",
+      "steps": [
+        "Find the issued quotation under Issued quotations (or use the panel shown right after issuing) and click Email.",
+        "The Send by email window opens ready to send: To is the customer's address when a sales customer with the same name has one (or the CRM contact of the deal), the Subject names the quotation, the message gives its number, date and validity, ending with your signature, and the letterhead PDF is shown under Attached.",
+        "Type the address if To is empty, add anyone under Copy to, and change the wording if you like.",
+        "Click Send email and read the result. Click Done."
+      ],
+      "result": "The customer receives the quotation PDF. The message is listed under Administration > Sent emails, and the window shows it under \"Sent before\" next time.",
+      "tips": [
+        "If the window says \"Email is not set up on the server; messages are saved but not delivered\", the message is not delivered. Download the PDF and send it yourself, and ask your administrator to set up email.",
+        "Letters, minutes and operations documents have the same Email button in their lists."
+      ]
+    },
+    {
+      "title": "Create an invoice from a quotation",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Quotations > Issued quotations > Create invoice",
+      "route": "/company/quotations",
+      "steps": [
+        "Find the issued quotation and click Create invoice (also on the quotation page).",
+        "The New invoice form opens with the note \"Started from quotation…\": items, GST rates, notes and terms are copied.",
+        "Choose the Customer. If no customer matches the name on the quotation, click New customer; the form is pre-filled from the quotation.",
+        "Check the items and dates and click Save as draft or Save and issue."
+      ],
+      "result": "The invoice keeps a link back to the quotation (shown as From quotation). GST on the invoice follows the customer you chose.",
+      "tips": []
+    },
+    {
+      "title": "Create and issue an invoice",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Invoices and Notes > New invoice",
+      "route": "/sales/documents/new?kind=invoice",
+      "steps": [
+        "Open Sales > Invoices and Notes and click New invoice (or + New > Invoice).",
+        "Choose the Customer (or click New customer).",
+        "Set the Invoice date. Leave Due date empty to use the customer's or company's payment terms (the hint shows the date).",
+        "Optionally choose a Project, enter the Customer's PO or reference and a Subject.",
+        "Enter the items: description, HSN/SAC, Quantity, Unit, Rate, Discount % and GST %. For example 1 x ₹2,00,000 at 18% gives ₹2,36,000 with CGST ₹18,000 and SGST ₹18,000 for a same-state customer.",
+        "Add Notes and Terms and conditions if needed, and tick the bank details and signature options.",
+        "Click Save as draft to finish later, or Save and issue and confirm Issue."
+      ],
+      "result": "Issuing gives the next number (for example T2N/INV/26/2411/00001), freezes the invoice, makes its PDFs and posts it to the books: the customer owes the total, sales are credited with the taxable value and output GST with the tax.",
+      "tips": [
+        "Save and issue appears only for roles that may issue (sales.issue).",
+        "If issuing fails, the invoice is kept as a draft and the reason is shown."
+      ]
+    },
+    {
+      "title": "Edit, issue or delete a draft",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Invoices and Notes > Draft chip > open the draft",
+      "route": "/sales/documents?status=draft",
+      "steps": [
+        "Open Sales > Invoices and Notes and click the Draft chip.",
+        "Open the draft. Click Edit to change it, Issue to number and post it, or Delete to remove it (confirm Delete draft)."
+      ],
+      "result": "A deleted draft never used a number.",
+      "tips": ["Only drafts can be edited."]
+    },
+    {
+      "title": "Find, filter and download invoices",
+      "who": "Anyone with sales.view",
+      "where": "Sales > Invoices and Notes",
+      "route": "/sales/documents",
+      "steps": [
+        "Open Sales > Invoices and Notes and pick the tab: Invoices, Proforma invoices, Credit notes or Debit notes.",
+        "Click a status chip: All, Draft, Unpaid, Overdue, Partially paid, Paid or Void (credit notes: Draft, Open, Void).",
+        "Search by number or customer name, choose a Project if you use projects, and click Search.",
+        "Open a document and click Letterhead PDF, Print PDF or Open to print."
+      ],
+      "result": "The foot of the list shows the count, total and balance due.",
+      "tips": []
+    },
+    {
+      "title": "Email an invoice or credit note to the customer",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (sales.manage)",
+      "where": "Sales > Invoices and Notes > open an issued document > Email",
+      "route": "/sales/documents",
+      "steps": [
+        "Open Sales > Invoices and Notes and open an issued invoice, credit note, debit note or proforma invoice.",
+        "Click Email at the top of the page.",
+        "Check the Send by email window: To is the customer's email address, the Subject is for example \"Invoice T2N/INV/26/2411/00001 from Example Ventures\", the message gives the number, date, total and (for an unpaid invoice) the amount due and due date, and the invoice PDF is shown under Attached.",
+        "Change the address or wording if needed, add anyone under Copy to (separate several addresses with commas) and click Send email.",
+        "Read the result: \"Email sent\", \"Saved, not delivered\" or \"The email was not sent\" with the reason. Click Done."
+      ],
+      "result": "The customer receives the PDF exactly as issued. The message is kept under Administration > Sent emails and shown under \"Sent before\" the next time you open the window.",
+      "tips": [
+        "A draft has no number or PDF, so Email appears only after the document is issued.",
+        "If the customer has no email address, type it in the window, or add it to the customer (Sales > Customers > Edit) so it is filled in next time.",
+        "A failed email never changes the invoice: it stays issued. Fix the problem and try again, or ask an administrator to use Send again."
+      ]
+    },
+    {
+      "title": "Void an issued invoice or note",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Invoices and Notes > open the document > Void",
+      "route": "/sales/documents",
+      "steps": [
+        "Open the issued document and click Void.",
+        "Type the reason (for example Wrong customer) and click Void."
+      ],
+      "result": "The document and its number are kept but marked Void; the number is never reused. Its entry in the books is reversed.",
+      "tips": [
+        "If payments or credits are applied, void those first. If credit or debit notes are raised against the invoice, void them first.",
+        "A credit note that has been used cannot be voided until the payments it settled are voided."
+      ]
+    },
+    {
+      "title": "Raise a proforma invoice and convert it",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Invoices and Notes > Proforma invoices > New proforma invoice",
+      "route": "/sales/documents/new?kind=proforma_invoice",
+      "steps": [
+        "Open the Proforma invoices tab and click New proforma invoice.",
+        "Fill it in like an invoice (there is no due date) and click Save and issue.",
+        "When the customer confirms, open the proforma and click Convert to invoice.",
+        "Check the new draft invoice and issue it."
+      ],
+      "result": "A proforma gets its own number (T2N/PI/…) and PDF but is not posted to the books and is not a receivable. Convert to invoice makes a draft invoice with the same items.",
+      "tips": ["Clone on an issued invoice or proforma makes a new draft copy of it."]
+    },
+    {
+      "title": "Raise a credit note and apply the credit",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Open the issued invoice > Create credit note",
+      "route": "/sales/documents",
+      "steps": [
+        "Open the issued invoice and click Create credit note.",
+        "Check the customer and Against invoice, type the Reason (for example Price correction) and enter the items being credited, for example ₹10,000 plus GST.",
+        "Click Save and issue and confirm Issue.",
+        "If credit is left over (Still unused), open the credit note, click Apply to an invoice, choose the invoice, enter the Amount and click Apply credit."
+      ],
+      "result": "The credit note is numbered (T2N/CN/…) and posted: sales returns and GST are debited and the customer's balance is reduced. It is applied straight away to the invoice it was raised against, up to that invoice's balance.",
+      "tips": ["Credit notes against one invoice cannot add up to more than the invoice total."]
+    },
+    {
+      "title": "Raise a debit note",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Open the issued invoice > Create debit note",
+      "route": "/sales/documents",
+      "steps": [
+        "Open the issued invoice and click Create debit note.",
+        "Type the Reason (for example Late payment charge) and enter the extra amount as items.",
+        "Click Save and issue and confirm Issue."
+      ],
+      "result": "The debit note is numbered (T2N/DN/…), posted like an invoice and appears as an amount the customer owes, with its own due date and payments.",
+      "tips": []
+    },
+    {
+      "title": "Record a payment received",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Payments Received > Record payment",
+      "route": "/sales/payments?new=1",
+      "steps": [
+        "Open Sales > Payments Received and click Record payment (or Record payment on an invoice or customer page).",
+        "Choose the Customer, enter the Amount received (for example ₹1,18,000), Payment date and Paid by (Bank transfer (NEFT/RTGS/IMPS), UPI, Cheque, Cash, Card or Other).",
+        "Enter the Reference (cheque no., UTR ...) and choose Deposited to (your bank account). Optionally choose a Project and add Notes.",
+        "Under Apply to invoices type the amount for each invoice, or click Apply to oldest first.",
+        "Check the line Applied … of … and click Record payment."
+      ],
+      "result": "The payment is numbered (for example T2N/PAY/26/2411/00001) and posted: the bank (or cash) is debited and the customer's balance is reduced. Anything not applied is kept as the customer's advance.",
+      "tips": [
+        "Opened from an invoice, the amount and allocation are filled in for that invoice.",
+        "A customer with no unpaid invoices: the whole amount is kept as an advance."
+      ]
+    },
+    {
+      "title": "Void a payment received",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Payments Received > Void (or open the payment > Void payment)",
+      "route": "/sales/payments",
+      "steps": [
+        "Find the payment and click Void, or open it and click Void payment.",
+        "Type the reason (for example Cheque bounced) and click Void payment.",
+        "If a message says it was sent for approval, follow it on the payment page; Withdraw the void request cancels the request."
+      ],
+      "result": "The invoices it paid go back to unpaid and the entry in the books is reversed. Above an approval limit, the payment stays recorded (and the invoices stay paid) until the void is approved.",
+      "tips": ["Use the Show filter (Recorded, Void pending approval, Void, All) to find payments."]
+    },
+    {
+      "title": "Check receivables ageing",
+      "who": "Anyone with sales.view",
+      "where": "Sales > Receivables Ageing",
+      "route": "/sales/receivables",
+      "steps": [
+        "Open Sales > Receivables Ageing.",
+        "Read the total split by age and the top customers.",
+        "In the table, read each customer's amounts in the age columns (current, then days past due) and the Total. Click a customer to open their statement."
+      ],
+      "result": "Ageing is counted from each invoice's due date and covers unpaid invoices and debit notes.",
+      "tips": []
+    },
+    {
+      "title": "Set up a recurring invoice",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Recurring invoices > New recurring invoice",
+      "route": "/sales/recurring/new",
+      "steps": [
+        "Open Sales > Recurring invoices and click New recurring invoice.",
+        "Enter a Profile name (for example Acme monthly retainer) and choose the Customer.",
+        "Under Schedule choose Repeats (Weekly, Monthly, Quarterly, Half-yearly, Yearly or Custom), the First invoice date and, optionally, End date or Number of invoices. Check Next invoices.",
+        "Under What happens at each run choose Each run: Create as a draft or Create and issue, and Due after (days).",
+        "Enter the Items on every invoice, for example Monthly support ₹25,000 at 18%.",
+        "Optionally tick Apply these notes and terms to every invoice and fill them in.",
+        "Click Create profile."
+      ],
+      "result": "The profile is numbered (for example T2N-RIN-26-2411-0001). Each run creates a normal invoice with the usual numbering and GST; issued ones are posted to the books at once, drafts wait to be issued.",
+      "tips": [
+        "A first invoice date in the past creates the missed invoices the next time the profile runs (up to 12 at a time).",
+        "A profile starting on the 31st bills on the last day of shorter months.",
+        "Create and issue is available only to roles that may issue invoices."
+      ]
+    },
+    {
+      "title": "Run, pause, resume or stop recurring invoices",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Recurring invoices",
+      "route": "/sales/recurring",
+      "steps": [
+        "Open Sales > Recurring invoices. The Due now tile shows profiles whose next date has come.",
+        "Click Create N due now and confirm Create now to make every due invoice.",
+        "Or open a profile and click Run now (generate next), then Generate, to make its next invoice straight away.",
+        "Click Pause to stop runs for a while, Resume to restart, or Stop (with an optional reason) to end it for good.",
+        "Click Edit to change future invoices; Delete appears only while no invoice has been made.",
+        "Open the Child invoices tab to see every invoice made."
+      ],
+      "result": "Each run date is made only once. Changes apply to future invoices only. When resumed, runs missed while paused are skipped. A stopped profile cannot be restarted.",
+      "tips": [
+        "Due invoices are created on their own once a day, the first time anyone opens the app that day (and at the time your administrator scheduled on the server, if they did). Create now and Run now make them straight away.",
+        "If a profile shows Last run failed, read the reason on its page, fix it and use Run now."
+      ]
+    },
+    {
+      "title": "Send or skip payment reminders",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Reminders > Due now",
+      "route": "/sales/reminders",
+      "steps": [
+        "Open Sales > Reminders. The Due now tab lists unpaid invoices that need a reminder today, with Days overdue, Amount due and which Reminder applies.",
+        "Click Send. The window shows To (the customer's email address), Copy to, Subject and Message, filled in from the rule's wording. Change anything you like.",
+        "Click Send reminder. The reminder is emailed to the customer and recorded. Read the result and click Done.",
+        "If email is not set up on the server, the window says so and the button reads Record as sent: click it, then Copy text or Open in email program and send the message from your own email.",
+        "If a reminder is not wanted, click Skip, give an optional reason and click Skip reminder.",
+        "Open the History tab to see every reminder recorded, with an Email column (Sent, Failed, Saved, not delivered, or Not emailed), and View text to read one again."
+      ],
+      "result": "The reminder is recorded against the invoice and shows in the invoice's Payment reminders section with how the email went. Emailed reminders are also listed under Administration > Sent emails.",
+      "tips": [
+        "If the email fails, the reminder still counts as sent and is not offered again; the reason is shown, and an administrator can use Send again under Sent emails.",
+        "A customer without an email address: type an address in To, or leave To empty to record the reminder only.",
+        "A skipped reminder is not offered again for that invoice, but a later reminder still comes up if it stays unpaid.",
+        "If several rules have come due for an invoice, only the latest is offered."
+      ]
+    },
+    {
+      "title": "Change reminder rules and wording",
+      "who": "Finance Manager, Admin, Managing Partner, Partner",
+      "where": "Sales > Reminders > Rules and wording",
+      "route": "/sales/reminders",
+      "steps": [
+        "Open the Rules and wording tab. The ready-made rules are 3 days before the due date, on the due date, and 7, 15 and 30 days after.",
+        "Click Edit on a rule, or New rule.",
+        "Set Days from the due date (-3 = three days before, 0 = on the due date, 7 = a week after; from -60 to 365).",
+        "Write the Subject and Message. Click a placeholder chip such as {invoice_no}, {due_date} or {days_overdue} to insert it.",
+        "Tick or untick Rule is switched on and click Save rule."
+      ],
+      "result": "Placeholders are filled in for each invoice when the reminder is offered.",
+      "tips": ["Only one rule is allowed for each number of days."]
+    },
+    {
+      "title": "Email payment reminders automatically",
+      "who": "Finance Manager, Admin, Managing Partner, Partner (sales.manage or email.manage)",
+      "where": "Sales > Reminders > Rules and wording",
+      "route": "/sales/reminders",
+      "steps": [
+        "Open Sales > Reminders and click the Rules and wording tab.",
+        "Tick \"Email payment reminders automatically\". A message confirms \"Reminders will be emailed automatically.\"",
+        "From then on, once a day, every reminder that is due is emailed to customers who have an email address, using the rule's wording and your signature.",
+        "Check the History tab now and then: automatic reminders show \"Automatic\" under By and their email result."
+      ],
+      "result": "Each reminder step goes out once per invoice, never twice. Reminders for customers without an email address stay under Due now for you to handle.",
+      "tips": [
+        "Nothing is sent automatically while email is not set up on the server; the tick box says so.",
+        "The daily run happens the first time someone opens the app each day, or at the time your administrator scheduled on the server.",
+        "The same switch is on Administration > Email settings."
+      ]
+    }
+  ],
+  "statuses": [
+    {"name": "Quotation: Draft", "meaning": "Not issued: taken back, or rejected by an approver (the note is shown). Can be edited and sent again."},
+    {"name": "Quotation: Pending approval", "meaning": "Above an approval limit; no number or PDF until approved."},
+    {"name": "Quotation: Issued", "meaning": "Numbered, frozen and printed. Can be voided by an administrator."},
+    {"name": "Draft", "meaning": "An invoice or note being prepared. No number yet; can be edited or deleted."},
+    {"name": "Unpaid", "meaning": "Issued and nothing received yet; not past its due date."},
+    {"name": "Partially paid", "meaning": "Some money or credit received; a balance remains."},
+    {"name": "Overdue", "meaning": "A balance remains after the due date."},
+    {"name": "Paid", "meaning": "Fully settled by payments and credit notes."},
+    {"name": "Void", "meaning": "Cancelled after issue. Number kept and never reused; the books entry reversed."},
+    {"name": "Issued (proforma)", "meaning": "A proforma invoice that has been numbered and printed. Not a receivable."},
+    {"name": "Open / Closed (credit note)", "meaning": "Open while some credit is still unused; Closed when all of it has been applied."},
+    {"name": "Payment: Recorded / Void pending approval / Void", "meaning": "A payment counts while Recorded. Void pending approval means a void request waits for approval and the payment still counts."},
+    {"name": "Recurring: Active / Paused / Stopped / Completed", "meaning": "Active runs on schedule; Paused makes no invoices until resumed; Stopped ends it for good; Completed means all scheduled invoices are made."},
+    {"name": "Reminder: Sent / Skipped", "meaning": "Sent (emailed by the app, or recorded as sent when you sent it yourself) or skipped with an optional reason."},
+    {"name": "Email: Sent / Saved, not delivered / Failed / Not emailed", "meaning": "How an emailed reminder or document went: delivered to the mail server; kept on the server because email is not set up; refused (the reason is shown); or not emailed by the app."}
+  ],
+  "routines": {
+    "daily": [
+      "Record every payment that reached the bank and apply it to invoices.",
+      "Issue draft invoices that are ready, including drafts made by recurring profiles.",
+      "Follow up quotations waiting for approval."
+    ],
+    "weekly": [
+      "Work through Sales > Reminders > Due now (or let them go out automatically, see \"Email payment reminders automatically\").",
+      "Review Receivables Ageing and call customers in the older columns.",
+      "Check the Overdue chip on Invoices and Notes."
+    ],
+    "monthly": [
+      "Click Create N due now on Recurring invoices and issue any drafts.",
+      "Make sure every invoice and credit note for the month is issued before preparing GST returns.",
+      "Compare Payments Received with the bank statement during bank reconciliation."
+    ],
+    "yearly": [
+      "Review customer payment terms and the reminder wording.",
+      "Stop recurring profiles for contracts that have ended."
+    ]
+  },
+  "common_problems": [
+    {"problem": "The document prints without GST.", "fix": "GST is not switched on in Company > Tax Configuration. Switch it on only if the company is registered."},
+    {"problem": "The tax is IGST when it should be CGST and SGST (or the other way round).", "fix": "Check the customer's State (place of supply) or GSTIN, and the company's state."},
+    {"problem": "Save and issue or Issue is missing.", "fix": "Your role cannot issue invoices (sales.issue). Save as draft and ask the Finance Manager or a partner to issue it."},
+    {"problem": "Void says \"Payments or credits are applied to this document. Void those first.\"", "fix": "Void the payments (and credit notes) applied to it, then void the invoice."},
+    {"problem": "\"Credit notes against this invoice would exceed the invoice total.\"", "fix": "Reduce the credit note amount; earlier credit notes already cover part of the invoice."},
+    {"problem": "A quotation has no number or PDF.", "fix": "It is above an approval limit and waits for approval. Follow it from Waiting for approval and drafts."},
+    {"problem": "Recurring invoices were not created on their date.", "fix": "They are made the first time someone opens the app on or after the date. If a profile shows Last run failed, read the reason and use Run now; otherwise click Create N due now on Sales > Recurring invoices."},
+    {"problem": "A reminder was recorded but the customer got nothing.", "fix": "Look at the Email column in Reminders > History. \"Not emailed\" or \"Saved, not delivered\": email is not set up or the customer had no address; use Copy text or Open in email program. \"Failed\": the reason is shown; an administrator can use Send again under Sent emails."},
+    {"problem": "The Email button is missing on an invoice.", "fix": "The invoice is still a draft (issue it first), it is void, or your role does not hold sales.manage."},
+    {"problem": "The customer is not in the list on a new invoice.", "fix": "The customer may be switched off. Open Sales > Customers, tick Include switched off and switch them on."}
+  ],
+  "connected": [
+    "CRM: a won deal creates or links the customer; Create quotation on a deal fills in the quotation, which is linked back to the deal.",
+    "Accounting: issued invoices, debit notes, credit notes and payments post to the books automatically; voiding reverses the entry.",
+    "GST & Tax: issued invoices and notes feed the sales register and GST returns.",
+    "Company: letterhead, bank details, default terms, payment terms and numbering come from the Company module.",
+    "Approvals: quotations above a rule wait for approval; voiding a payment above a rule waits too.",
+    "Projects: invoices, payments and recurring profiles can be tagged to a project for profitability.",
+    "Reports: Pending Customer Payments and the executive dashboard read sales figures."
+  ]
+}

@@ -85,6 +85,8 @@ class LogoutView(APIView):
 
 class MeView(APIView):
     def get(self, request):
+        from apps.company import daily
+        daily.run_if_due()  # the first app load of the day runs the daily jobs (recurring invoices ...); never raises
         return Response(UserSerializer(request.user).data)
 
 
@@ -254,7 +256,7 @@ class UserPasswordView(APIView):
 def _matrix_payload():
     matrix = access.effective_matrix()
     return {
-        "roles": [{"value": v, "label": l, "locked": v == access.ADMIN} for v, l in access.ROLES],
+        "roles": [{"value": v, "label": l, "locked": v in access.ALL_ACCESS_ROLES} for v, l in access.ROLES],
         "permissions": [{"code": c, "label": l, "group": g} for c, l, g in access.PERMISSIONS],
         "matrix": {role: sorted(codes) for role, codes in matrix.items()},
         "defaults": {role: sorted(codes) for role, codes in access.DEFAULT_MATRIX.items()},
@@ -285,8 +287,8 @@ class AccessMatrixView(APIView):
             unknown = set(codes) - set(access.CODES)
             if unknown:
                 raise ValidationError({"matrix": f"{role}: unknown permissions {', '.join(sorted(unknown))}."})
-            if role == access.ADMIN:
-                continue  # the admin role always holds everything
+            if role in access.ALL_ACCESS_ROLES:
+                continue  # the admin and partner roles always hold everything
             for code in access.CODES:
                 RolePermission.objects.update_or_create(role=role, code=code, defaults={"granted": code in codes})
         access.matrix_changed()
@@ -343,7 +345,7 @@ class ActivityView(APIView):
     def get(self, request):
         from apps.company.models import CompanyProfileAuditEvent
 
-        qs = CompanyProfileAuditEvent.objects.filter(entity_type__in=["user", "access_matrix"]).order_by("-occurred_at")[:300]
+        qs = CompanyProfileAuditEvent.objects.filter(entity_type__in=["user", "access_matrix", "invitation"]).order_by("-occurred_at")[:300]
         return Response([{
             "id": str(e.id), "entity_type": e.entity_type, "entity_id": str(e.entity_id) if e.entity_id else None,
             "action": e.action, "actor": e.actor_label, "changed_fields": e.changed_fields,

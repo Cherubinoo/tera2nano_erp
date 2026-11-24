@@ -282,7 +282,7 @@ class SalaryTests(ReportsBase):
         self.assertEqual(events.count(), 2)
         e = events.order_by("occurred_at").first()
         self.assertEqual((e.action, e.new_values["report"]), ("downloaded", "salary"))
-        self.export("salary", Role.PARTNER, expect=403, **FY)       # refused: no event
+        self.export("salary", Role.PROJECT_MANAGER, expect=403, **FY)  # refused: no event
         self.assertEqual(events.count(), 2)
         self.get("salary", Role.HR_MANAGER, **FY)                   # viewing alone is not an export
         self.assertEqual(events.count(), 2)

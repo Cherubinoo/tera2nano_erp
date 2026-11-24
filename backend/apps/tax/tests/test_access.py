@@ -17,14 +17,14 @@ READ_PATHS = ["dashboard/", "options/", "calendar/", "gst/summary/", "gst/sales-
 
 
 class PermissionMatrixTests(TaxBase):
-    """tax.view: admin, managing partner, partner, finance manager.  tax.manage: admin, managing partner, finance manager."""
+    """tax.view: admin, managing partner, partner, finance manager.  tax.manage: the same four (both partner roles hold every permission)."""
 
     def setUp(self):
         super().setUp()
         self.clients = {role: client_for(make_user(f"u_{role}", role)) for role in
                         (Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER, Role.HR_MANAGER, Role.PROJECT_MANAGER, Role.EMPLOYEE)}
         self.viewers = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
-        self.managers = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+        self.managers = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
 
     def test_every_read_endpoint_follows_tax_view(self):
         for role, client in self.clients.items():
@@ -81,9 +81,11 @@ class PermissionMatrixTests(TaxBase):
         def upload(client):
             return client.post("/api/v1/attachments/", {"entity_type": "tax_filing", "entity_id": f["id"], "title": "Acknowledgement",
                                                         "file": SimpleUploadedFile("ack.pdf", pdf_stub(), content_type="application/pdf")}, format="multipart")
-        self.assertEqual(upload(self.clients[Role.PARTNER]).status_code, 403)
+        from apps.company.tests.base import viewer_client
+        self.assertEqual(upload(viewer_client("viewer", "tax.view")).status_code, 403)  # may view, not manage
+        self.assertEqual(upload(self.clients[Role.PARTNER]).status_code, 201)         # a partner holds tax.manage
         self.assertEqual(upload(self.fin).status_code, 201)
-        self.assertEqual(len(self.fin.get("/api/v1/attachments/", {"entity_type": "tax_filing", "entity_id": f["id"]}).json()), 1)
+        self.assertEqual(len(self.fin.get("/api/v1/attachments/", {"entity_type": "tax_filing", "entity_id": f["id"]}).json()), 2)  # the partner's and finance's
 
 
 class DashboardTests(TaxBase):

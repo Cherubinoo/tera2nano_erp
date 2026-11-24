@@ -340,7 +340,7 @@ class StandaloneAndPermissionTests(PaymentApprovalBase):
 
     def test_every_role_against_the_payment_actions(self):
         p = self.pending()
-        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+        manage = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
         for role in ALL_ROLES:
             c = client_for(make_user(f"u_{role}", role))
             self.assertEqual(c.delete(f"{P}/payments/{p['id']}/").status_code, 400 if role in manage else 403, role)

@@ -216,7 +216,7 @@ class StandaloneAndPermissionTests(BillApprovalBase):
 
     def test_every_role_against_the_bill_actions(self):
         b = self.pending_bill()
-        allowed = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+        allowed = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
         for role in ALL_ROLES:
             c = client_for(make_user(f"u_{role}", role))
             for verb in ("approve", "reject", "withdraw"):

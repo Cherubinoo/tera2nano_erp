@@ -29,6 +29,8 @@ const STATIC = [
         { to: '/accounting', label: 'Accounting Dashboard', end: true, perms: ['accounting.view'] },
         { to: '/accounting/vouchers', label: 'Expenses and Income', perms: ['accounting.view'] },
         { to: '/accounting/bank', label: 'Bank and Cash', perms: ['accounting.view'] },
+        { to: '/accounting/bank-reconciliation', label: 'Bank reconciliation', perms: ['accounting.view'] },
+        { to: '/accounting/bank-import', label: 'Import statement', perms: ['accounting.manage'] },
         { to: '/accounting/journal', label: 'Journal', perms: ['accounting.view'] },
         { to: '/accounting/assets', label: 'Fixed Assets', perms: ['accounting.view'] },
         { to: '/accounting/budgets', label: 'Budgets', perms: ['accounting.view'] },
@@ -76,8 +78,11 @@ const STATIC = [
   {
     key: 'admin', label: 'Administration', groups: [{
       key: 'admin', label: 'Administration', items: [
+        { to: '/company/invite', label: 'Invite members', perms: ['users.invite'] },
         { to: '/company/access', label: 'Users and Access', perms: ['users.manage', 'users.view_activity'] },
         { to: '/company/history', label: 'Change History', perms: ['audit.view'] },
+        { to: '/company/email', label: 'Email settings', perms: ['email.manage'] },
+        { to: '/company/sent-emails', label: 'Sent emails', perms: ['email.manage'] },
       ],
     }],
   },
@@ -87,6 +92,8 @@ const FROM_MODULES = MODULES.map((m) => ({
   key: m.key, label: m.label, basePath: m.basePath, perm: m.perm,
   // A module may define `groups: [{ key, label, items }]` for a sidebar with several headed sections (the Guide does); otherwise `nav` is one group.
   groups: m.groups || [{ key: m.key, label: m.label, items: m.nav }],
+  // Optional `crumbLabel(segment)` names the last breadcrumb for pages that are not menu items (return null for the default).
+  crumbLabel: m.crumbLabel,
 }));
 
 export const WORKSPACES = [...STATIC, ...FROM_MODULES]
@@ -148,7 +155,9 @@ export function pageCrumbs(ws, pathname) {
   if (rest.length) {
     const last = rest[rest.length - 1];
     const plain = last.replace(/-/g, ' ');
-    crumbs.push({ label: last === 'new' ? 'New' : last === 'edit' ? 'Edit' : /^[0-9a-f-]{8,}$|^\d+$/i.test(last) ? 'Details' : plain.charAt(0).toUpperCase() + plain.slice(1) });
+    const named = ws.crumbLabel ? ws.crumbLabel(last) : null;
+    const fallback = last === 'new' ? 'New' : last === 'edit' ? 'Edit' : /^[0-9a-f-]{8,}$|^\d+$/i.test(last) ? 'Details' : plain.charAt(0).toUpperCase() + plain.slice(1);
+    crumbs.push({ label: named || fallback });
   }
   return crumbs;
 }

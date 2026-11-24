@@ -1,5 +1,6 @@
 """Payment reminders: which invoice needs which reminder (fixed dates), never for paid, void or draft invoices, send and skip,
-history, rule editing, permissions and audit. Nothing is emailed; sending only records the prepared text."""
+history, rule editing, permissions and audit. No mail server is set up here, so sending only records the prepared text (emailing
+is covered in apps/emails/tests)."""
 import datetime
 
 from django.db import IntegrityError, transaction

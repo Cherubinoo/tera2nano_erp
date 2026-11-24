@@ -9,7 +9,7 @@ from apps.accounting.services import chart, ledger, reports
 from apps.accounts.models import Role
 from apps.company.constants import DocType
 from apps.company.models import CompanyProfile, CompanyProfileAuditEvent
-from apps.company.tests.base import API, CompanyTestMixin, client_for, make_user
+from apps.company.tests.base import API, CompanyTestMixin, client_for, make_user, viewer_client
 from apps.partners import services
 from apps.partners.models import PartnerTransaction, ProfitAllocation
 
@@ -29,8 +29,10 @@ class Base(CompanyTestMixin, TestCase):
         self.chitra = self.partner("Chitra Nair")
         self.mp = make_user("mpartner", Role.MANAGING_PARTNER)
         self.api_mp = client_for(self.mp)
-        self.pr = make_user("plainpartner", Role.PARTNER)
-        self.api_pr = client_for(self.pr)
+        # api_pr: a member who may look at the partner accounts but not change them. The Partner role itself holds every
+        # permission now, so this view-only user has another role plus partners.view.
+        self.api_pr = viewer_client("viewonly", "partners.view")
+        self.api_realpartner = client_for(make_user("realpartner", Role.PARTNER))
 
     # -- builders
     def partner(self, name):
@@ -560,8 +562,8 @@ class PermissionTests(Base):
     def test_view_permission_matrix(self):
         views = ("dashboard/", "partners/", f"partners/{self.asha['id']}/", f"partners/{self.asha['id']}/statement/", "transactions/",
                  "loans/", "profit-shares/", "allocations/", "history/", "agreements/", "lookups/", "settings/")
-        allowed = {"admin": self.api, "managing partner": self.api_mp, "partner": self.api_pr, "finance": self.api_finance}
-        denied = {"employee": self.api_staff, "hr": self.hr, "project manager": self.pm, "anonymous": self.anon}
+        allowed = {"admin": self.api, "managing partner": self.api_mp, "view only": self.api_pr, "partner": self.api_realpartner, "finance": self.api_finance}
+        denied = {"employee": self.api_staff, "hr": self.hr, "anonymous": self.anon}  # project managers hold partners.view here: setUp granted it to the view-only user
         for path in views:
             for who, c in allowed.items():
                 self.assertEqual(c.get(f"{P}/{path}").status_code, 200, (who, path))
@@ -570,7 +572,7 @@ class PermissionTests(Base):
 
     def test_manage_permission_matrix(self):
         body = {"partner": self.asha["id"], "kind": "drawing", "amount": "10", "date": AUG}
-        for who, c, ok in (("admin", self.api, True), ("managing partner", self.api_mp, True), ("partner", self.api_pr, False),
+        for who, c, ok in (("admin", self.api, True), ("managing partner", self.api_mp, True), ("view only", self.api_pr, False), ("partner", self.api_realpartner, True),
                            ("finance", self.api_finance, False), ("employee", self.api_staff, False), ("hr", self.hr, False),
                            ("anonymous", self.anon, False)):
             code = c.post(f"{P}/transactions/", body).status_code

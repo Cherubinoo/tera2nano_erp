@@ -133,6 +133,20 @@ class OrderTests(PurchasesBase):
         reasons = [e.reason for e in CompanyProfileAuditEvent.objects.filter(entity_type="purchase_order", entity_id=o["id"]).order_by("occurred_at")]
         self.assertEqual(reasons, ["", "Sent for approval", "Rejected: Rate too high", "Sent for approval", "OK", "Issued"])
 
+    def test_a_draft_covered_by_an_approval_rule_cannot_be_issued_directly(self):
+        from apps.approvals import api as approvals
+        o = self.order()
+        with mock.patch.object(approvals, "requires_approval", return_value=True):
+            d = self.fin.get(f"{P}/orders/{o['id']}/").json()
+            self.assertTrue(d["needs_approval"])
+            r = self.fin.post(f"{P}/orders/{o['id']}/issue/")
+            self.assertEqual(r.status_code, 400)
+            self.assertIn("Send it for approval first", str(r.json()))
+            self.assertEqual(self.fin.get(f"{P}/orders/{o['id']}/").json()["status"], "draft")
+        with mock.patch.object(approvals, "requires_approval", return_value=False):
+            self.assertFalse(self.fin.get(f"{P}/orders/{o['id']}/").json()["needs_approval"])
+            self.assertEqual(self.issue_order(o)["status"], "issued")  # no rule: the direct flow still works
+
     def test_with_the_approvals_module_an_order_nobody_needs_to_approve_is_approved_at_once(self):
         o = self.order()
         o = self.fin.post(f"{P}/orders/{o['id']}/submit/").json()

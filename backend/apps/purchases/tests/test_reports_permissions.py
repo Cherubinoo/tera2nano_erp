@@ -89,7 +89,7 @@ class ReportTests(PurchasesBase):
 
 class PermissionTests(PurchasesBase):
     VIEW = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER, Role.PROJECT_MANAGER}
-    MANAGE = {Role.ADMIN, Role.MANAGING_PARTNER, Role.FINANCE_MANAGER}
+    MANAGE = {Role.ADMIN, Role.MANAGING_PARTNER, Role.PARTNER, Role.FINANCE_MANAGER}
 
     def setUp(self):
         super().setUp()

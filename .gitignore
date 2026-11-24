@@ -6,6 +6,7 @@ node_modules/
 dist/
 backend/private_media/
 backend/staticfiles/
+backend/sent_emails/
 
 # throwaway verification builds and browser-test Vite configs
 frontend/dist-*/

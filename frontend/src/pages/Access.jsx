@@ -227,7 +227,7 @@ function PermissionsTab({ matrixData, reloadMatrix }) {
       <div className="card-head">
         <div>
           <h2>Role permissions</h2>
-          <p className="muted">Tick what each role may do. Changes apply at once. The Admin role always holds everything, so you cannot lock yourself out.</p>
+          <p className="muted">Tick what each role may do. Changes apply at once. Admin, Managing Partner and Partner always hold every permission (those columns are locked and cannot be reduced), so no partner can be locked out and every new permission reaches them automatically.</p>
         </div>
         <div className="page-actions">
           <button type="button" className="btn" disabled={busy} onClick={reset}>Reset to defaults</button>
@@ -237,7 +237,7 @@ function PermissionsTab({ matrixData, reloadMatrix }) {
       <div className="table-wrap">
         <table className="matrix">
           <thead>
-            <tr><th scope="col">Permission</th>{roles.map((r) => <th key={r.value} scope="col" className="num">{r.label}</th>)}</tr>
+            <tr><th scope="col">Permission</th>{roles.map((r) => <th key={r.value} scope="col" className={`num${r.locked ? ' col-locked' : ''}`}>{r.label}{r.locked && <div className="hint">Locked: full access</div>}</th>)}</tr>
           </thead>
           <tbody>
             {groups.map((g) => (
@@ -252,7 +252,7 @@ function PermissionsTab({ matrixData, reloadMatrix }) {
                       return (
                         <td key={r.value} className="num" data-label={r.label}>
                           <input type="checkbox" checked={on} disabled={r.locked || busy}
-                            aria-label={`${r.label}: ${p.label}`} title={r.locked ? 'Admin always holds every permission' : isDefault ? '' : 'Differs from the default'}
+                            aria-label={`${r.label}: ${p.label}`} title={r.locked ? `${r.label} always holds every permission` : isDefault ? '' : 'Differs from the default'}
                             onChange={() => toggle(r.value, p.code)} />
                           {!isDefault && !r.locked && <span className="hint" aria-hidden="true"> ●</span>}
                         </td>
@@ -319,8 +319,10 @@ function HistoryTab() {
 }
 
 const ACTION_LABEL = { created: 'Added', updated: 'Changed', activated: 'Switched on', deactivated: 'Switched off' };
+const INVITE_ACTION = { created: 'Link created', updated: 'Changed', deactivated: 'Link withdrawn' };
 const summarize = (e) => {
   if (e.entity_type === 'access_matrix') return `Permissions changed for: ${e.changed_fields.join(', ') || '—'}`;
+  if (e.entity_type === 'invitation' && !e.changed_fields.length) return `Access role: ${e.new_values.role || '—'}`;
   return e.changed_fields.length
     ? e.changed_fields.map((f) => `${f}: ${e.previous_values[f] ?? '—'} → ${e.new_values[f] ?? '—'}`).join('; ')
     : `${e.new_values.username || ''} ${e.new_values.role ? `(${e.new_values.role})` : ''}`.trim();
@@ -344,7 +346,7 @@ function ActivityTab() {
                 <tr key={e.id}>
                   <td data-label="When">{fmtDateTime(e.occurred_at)}</td>
                   <td data-label="By">{e.actor || '—'}</td>
-                  <td data-label="What">{e.entity_type === 'access_matrix' ? 'Permissions' : `User · ${ACTION_LABEL[e.action] || e.action}`}</td>
+                  <td data-label="What">{e.entity_type === 'access_matrix' ? 'Permissions' : e.entity_type === 'invitation' ? `Invitation · ${INVITE_ACTION[e.action] || e.action}` : `User · ${ACTION_LABEL[e.action] || e.action}`}</td>
                   <td data-label="Details">{summarize(e)}</td>
                   <td data-label="Reason">{e.reason || '—'}</td>
                 </tr>

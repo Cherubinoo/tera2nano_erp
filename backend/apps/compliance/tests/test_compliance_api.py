@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from apps.accounts.models import Role
 from apps.company.models import CompanyPartner, CompanyProfile, CompanyProfileAuditEvent, CompanyTaxRegistration
-from apps.company.tests.base import CompanyTestMixin, client_for, make_user, pdf_stub
+from apps.company.tests.base import CompanyTestMixin, client_for, make_user, pdf_stub, viewer_client
 from apps.compliance import constants as C
 from apps.compliance.models import CalendarItem, Obligation
 from apps.compliance.services import filings, reports
@@ -35,6 +35,7 @@ class Base(CompanyTestMixin, TestCase):
         self.partner = make_user("partner1", Role.PARTNER)
         self.hr = make_user("hr1", Role.HR_MANAGER)
         self.api_partner = client_for(self.partner)
+        self.api_viewer = viewer_client("viewer1", "compliance.view")  # may look, may not change (a partner holds every permission)
         self.api_hr = client_for(self.hr)
         self.company = CompanyProfile.objects.first()
         # The tax module's own calendar must not leak into counts here; the tax tests switch it back on.
@@ -563,7 +564,7 @@ class ExpiryWatchAndRegistryTests(Base):
                                       dpin="01234567", appointment_date=D(2024, 4, 1))
         admin = self.get("registry/")
         self.assertEqual((admin["pan"], admin["partners"][0]["dpin"], admin["designated_partners"]), ("ABCDE1234F", "01234567", 1))
-        viewer = self.get("registry/", client=self.api_partner)
+        viewer = self.get("registry/", client=self.api_viewer)
         self.assertEqual((viewer["pan"], viewer["partners"][0]["dpin"]), ("••••••234F", "••••4567"))
         self.assertEqual(viewer["date_of_incorporation"], "2024-04-01")
 
@@ -623,8 +624,9 @@ class PermissionTests(Base):
         item = self.adhoc()
         reads = ["summary/", "dashboard/", "reminders/", "expiry-watch/", "registry/", "assignees/", "options/", "obligations/", "items/",
                  f"items/{item['id']}/", "legal-events/", "contracts/", "cases/", "policies/", "penalty/rules/"]
-        can_view = {"admin": True, "partner": True, "finance": True, "hr": False, "staff": False}
-        clients = {"admin": self.api, "partner": self.api_partner, "finance": self.api_finance, "hr": self.api_hr, "staff": self.api_staff}
+        can_view = {"admin": True, "partner": True, "viewer": True, "finance": True, "hr": False, "staff": False}
+        clients = {"admin": self.api, "partner": self.api_partner, "viewer": self.api_viewer, "finance": self.api_finance, "hr": self.api_hr,
+                   "staff": self.api_staff}
         for who, client in clients.items():
             for path in reads:
                 r = client.get(f"{B}/{path}")
@@ -634,7 +636,7 @@ class PermissionTests(Base):
                   ("items/bulk/", {"action": "priority", "ids": [item["id"]], "priority": "low"}), ("obligations/seed/", {}),
                   ("legal-events/import-history/", {}), (f"items/{item['id']}/file/", {"filed_date": iso(TODAY)})]
         for who, client in clients.items():
-            expected = 403 if who != "admin" and who != "finance" else None
+            expected = 403 if who not in ("admin", "finance", "partner") else None
             for path, body in writes:
                 r = client.post(f"{B}/{path}", body, format="json")
                 if expected:
@@ -646,9 +648,9 @@ class PermissionTests(Base):
 
     def test_viewer_cannot_change_but_can_estimate_a_penalty(self):
         item = self.adhoc()
-        self.assertEqual(self.api_partner.patch(f"{B}/items/{item['id']}/", {"priority": "low"}, format="json").status_code, 403)
-        self.assertEqual(self.api_partner.delete(f"{B}/items/{item['id']}/").status_code, 403)
-        r = self.api_partner.post(f"{B}/penalty/estimate/", {"rule": "llp_per_day", "due_date": "2026-05-30", "filed_date": "2026-06-02"}, format="json")
+        self.assertEqual(self.api_viewer.patch(f"{B}/items/{item['id']}/", {"priority": "low"}, format="json").status_code, 403)
+        self.assertEqual(self.api_viewer.delete(f"{B}/items/{item['id']}/").status_code, 403)
+        r = self.api_viewer.post(f"{B}/penalty/estimate/", {"rule": "llp_per_day", "due_date": "2026-05-30", "filed_date": "2026-06-02"}, format="json")
         self.assertEqual(r.json()["amount"], "300.00")
 
     def test_anonymous_is_refused_everywhere(self):
@@ -661,10 +663,10 @@ class PermissionTests(Base):
         item = self.adhoc()
         data = {"entity_type": "compliance_filing", "entity_id": item["id"], "title": "Acknowledgement",
                 "file": SimpleUploadedFile("ack.pdf", pdf_stub(), content_type="application/pdf")}
-        self.assertEqual(self.api_partner.post("/api/v1/attachments/", data, format="multipart").status_code, 403)
+        self.assertEqual(self.api_viewer.post("/api/v1/attachments/", data, format="multipart").status_code, 403)
         data["file"] = SimpleUploadedFile("ack.pdf", pdf_stub(), content_type="application/pdf")
         self.assertEqual(self.api_finance.post("/api/v1/attachments/", data, format="multipart").status_code, 201)
-        r = self.api_partner.get("/api/v1/attachments/", {"entity_type": "compliance_filing", "entity_id": item["id"]})
+        r = self.api_viewer.get("/api/v1/attachments/", {"entity_type": "compliance_filing", "entity_id": item["id"]})
         self.assertEqual((r.status_code, len(r.json())), (200, 1))
         self.assertEqual(self.api_staff.get("/api/v1/attachments/", {"entity_type": "contract", "entity_id": "x"}).status_code, 403)
         for entity in ("legal_event", "contract", "legal_case", "compliance_policy"):

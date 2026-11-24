@@ -1,0 +1,292 @@
+{
+  "key": "workplace",
+  "title": "Workplace",
+  "purpose": "Workplace is the office's day-to-day hub. Here you schedule meetings with agendas, record decisions and action items, and issue numbered minutes. Everyone keeps their tasks on a board, management publishes announcements and formal circulars (with acknowledgement tracking), and the office keeps an asset register and a visitor log.",
+  "who": [
+    {"role": "Admin, Managing Partner, Partner", "does": "Hold every permission: schedule meetings, issue minutes, assign tasks to anyone, publish announcements, issue circulars, keep the asset register and visitor log."},
+    {"role": "HR Manager, Project Manager", "does": "Have the workplace manage permission by default, so they can do the same as the partners in this module."},
+    {"role": "Finance Manager, Employee", "does": "View meetings and circulars, acknowledge circulars, read announcements, and create and work on their own tasks. They cannot schedule meetings, assign tasks to others, or open Assets and Visitors."}
+  ],
+  "before_you_start": [
+    "Every colleague who should attend meetings, get tasks or receive circulars needs a user account with the right role (Access module).",
+    "Circulars and minutes are printed on the company letterhead from the Company module, so the company profile should be complete.",
+    "Announcements and circulars can be sent to everyone or only to selected roles."
+  ],
+  "tasks": [
+    {
+      "title": "Start your day on Workplace Home",
+      "who": "Everyone",
+      "where": "Workplace > Workplace Home",
+      "route": "/workplace",
+      "steps": [
+        "Open the Workplace module from the launcher; Workplace Home opens first.",
+        "Read the tiles: Meetings this week, My open tasks, Overdue, To acknowledge. Click a tile to open the list behind it.",
+        "Check Upcoming meetings, My tasks due, Overdue tasks and Announcements.",
+        "If 'Circulars waiting for your acknowledgement' appears, click Read and acknowledge."
+      ],
+      "result": "Nothing changes; you see what needs your attention. New task and Schedule meeting buttons are at the top.",
+      "tips": []
+    },
+    {
+      "title": "Schedule a meeting with attendees and an agenda",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > Schedule meeting (or '+ New' > Meeting)",
+      "route": "/workplace/meetings",
+      "steps": [
+        "Click Meetings, then Schedule meeting. (In Month view you can also click a date number.)",
+        "Enter the Title, for example 'Monthly partners review', and choose the Type (Partners, Board, Team, Client or Vendor).",
+        "Enter the Date, Start time and End time, the Venue and/or the Online meeting link (must start with https://).",
+        "Choose the Organiser (leave as Me for yourself).",
+        "If it repeats, choose Repeats (Every week or Every month) and Further meetings to create, for example 3.",
+        "Under Attendees from the team, tick the colleagues. Click Add outside attendee for guests and enter their name and designation or company.",
+        "Under Agenda, click Add agenda item and enter each Item, its Owner and Minutes, for example 'Cash flow review', 'Ravi', 20.",
+        "Click Schedule meeting."
+      ],
+      "result": "The meeting gets a meeting ID (shown in the message) and opens on its own page with status Scheduled. For a repeating meeting the further meetings are created at once, one per week or month.",
+      "tips": ["End time must be after start time."]
+    },
+    {
+      "title": "Edit a meeting or create the next meetings in a series",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > open the meeting > Edit / Create next meetings",
+      "route": "/workplace/meetings",
+      "steps": [
+        "Open the meeting from the calendar or the All meetings tab.",
+        "Click Edit to change details, attendees or agenda, then click Save meeting.",
+        "For a repeating meeting, click Create next meetings, enter How many more (1 to 52) and click Create meetings."
+      ],
+      "result": "New meetings follow the latest one in the series with the same attendees and agenda; dates that already exist are skipped.",
+      "tips": []
+    },
+    {
+      "title": "Reschedule, cancel, reopen, mark as held or delete a meeting",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > open the meeting",
+      "route": "/workplace/meetings",
+      "steps": [
+        "To move it: click Reschedule, enter the New date, times and a Reason, and click Reschedule.",
+        "To call it off: click Cancel meeting, enter the reason (required) and confirm.",
+        "To bring back a cancelled meeting: click Reopen.",
+        "After it takes place: click Mark as held.",
+        "To remove it completely: click Delete and confirm. Delete is shown only while no minutes have been issued."
+      ],
+      "result": "The status changes to Rescheduled, Cancelled, Scheduled or Held, and the reason is shown on the meeting. Deleting removes the meeting, agenda and attendee list; action items already created stay in Tasks.",
+      "tips": []
+    },
+    {
+      "title": "Record decisions taken in a meeting",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > open the meeting > Decisions",
+      "route": "/workplace/meetings",
+      "steps": [
+        "In the Decisions card, type the decision in Add a decision, for example 'Approve purchase of two laptops up to ₹1,20,000'.",
+        "Click Add.",
+        "To remove a decision, click the × next to it."
+      ],
+      "result": "The decision is listed on the meeting and is pre-filled into the minutes.",
+      "tips": []
+    },
+    {
+      "title": "Add action items from a meeting",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > open the meeting > Action items > Add action item",
+      "route": "/workplace/meetings",
+      "steps": [
+        "In the Action items card, click Add action item.",
+        "Enter the Title, Description, Assigned to, Due date and Priority, and optionally Labels and Project.",
+        "Click Create task."
+      ],
+      "result": "The action item becomes a numbered task in Tasks (its Source shows the meeting) and in the assignee's My tasks. It is also pre-filled into the minutes.",
+      "tips": ["Click an action item to open the task and update it."]
+    },
+    {
+      "title": "Record and issue the minutes of meeting",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Meetings > open the meeting > Record minutes",
+      "route": "/workplace/meetings",
+      "steps": [
+        "Open the meeting and click Record minutes. The form is pre-filled from the meeting, agenda, decisions and action items.",
+        "Check Meeting title, times, Venue, Mode (In person, Online, Hybrid), Minutes taken by and Next meeting.",
+        "Under Attendees, set each person's Attendance (Present, Absent, Apologies).",
+        "Edit the Agenda (one item per line), Discussion and decisions, and Action items.",
+        "Click Issue minutes and confirm with Issue minutes."
+      ],
+      "result": "The minutes are numbered under the meeting ID and saved exactly as written; they are listed under Minutes of meeting with Letterhead PDF (and Print PDF) download buttons.",
+      "tips": ["Issued minutes cannot be edited. If they are wrong, void them in Company > Minutes of meeting and issue them again.", "Add at least attendees, an agenda or one discussion item."]
+    },
+    {
+      "title": "Attach meeting papers",
+      "who": "Admin, Partners, HR Manager, Project Manager (others can download)",
+      "where": "Workplace > Meetings > open the meeting > Meeting papers",
+      "route": "/workplace/meetings",
+      "steps": [
+        "Scroll to Meeting papers.",
+        "Choose the File (PDF, PNG or JPEG), enter a Name and, if needed, an Expires date.",
+        "Click Attach file."
+      ],
+      "result": "The paper is listed with Download and Remove buttons.",
+      "tips": []
+    },
+    {
+      "title": "Create a task",
+      "who": "Everyone (only managers can assign to other people)",
+      "where": "Workplace > Tasks or My Tasks > New task (or '+ New' > Task)",
+      "route": "/workplace/my-tasks?new=1",
+      "steps": [
+        "Click New task.",
+        "Enter the Title, for example 'Renew office internet plan', and a Description.",
+        "Managers choose Assigned to; everyone else creates tasks for themselves (shown as Me).",
+        "Enter the Due date, Priority (Low, Medium, High, Urgent), Labels separated by commas, and the Project if it belongs to one.",
+        "Click Create task."
+      ],
+      "result": "The task gets a number (shown in the message) and status To do.",
+      "tips": []
+    },
+    {
+      "title": "Work on a task: move it, tick the checklist, comment",
+      "who": "The assignee, the person who raised it, or a manager",
+      "where": "Workplace > Tasks (Board or List) > click the task",
+      "route": "/workplace/tasks",
+      "steps": [
+        "On the Board, drag a card to another column, or use its Move to… box.",
+        "Click a task title to open it. In Move to, choose In progress, Blocked, Done or Cancelled.",
+        "Under Checklist, type in Add a checklist item and click Add; tick items as you finish them.",
+        "Under Comments, type in Add a comment and click Post comment.",
+        "The person who raised the task (or a manager) can click Edit task to change details, then Save task, or Delete to remove it."
+      ],
+      "result": "The board updates; a Done task records its completion time. A Done or Cancelled task can only be moved back to To do.",
+      "tips": ["Tasks past their due date show an Overdue badge."]
+    },
+    {
+      "title": "See only your tasks (My tasks)",
+      "who": "Everyone",
+      "where": "Workplace > My Tasks",
+      "route": "/workplace/my-tasks",
+      "steps": [
+        "Click My Tasks.",
+        "Use the chips Open, All, To do, In progress, Blocked, Done, Cancelled and Overdue only.",
+        "Use Search and Priority, and switch between Board and List."
+      ],
+      "result": "Only tasks assigned to you are shown.",
+      "tips": []
+    },
+    {
+      "title": "Filter tasks and see task analytics",
+      "who": "Managers see all tasks; others see tasks they raised or that are assigned to them",
+      "where": "Workplace > Tasks",
+      "route": "/workplace/tasks",
+      "steps": [
+        "Click Tasks and use the status chips, Overdue only, Search, Priority and (managers) Assigned to.",
+        "Click Show analytics to see Tasks by status, Open tasks by person and Completed per week."
+      ],
+      "result": "The footer shows the number of tasks and how many are overdue.",
+      "tips": []
+    },
+    {
+      "title": "Publish an announcement",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Announcements > New announcement (or '+ New' > Announcement)",
+      "route": "/workplace/announcements",
+      "steps": [
+        "Click Announcements, then New announcement.",
+        "Enter the Title and the Message (Markdown works: **bold**, *italic*, lists with -). A Preview appears below.",
+        "Choose the audience: everyone, or selected roles.",
+        "Set Publish on (today, or a later date) and Expires on (optional).",
+        "Tick Pin to the top of the feed if it is important.",
+        "Click Publish.",
+        "To change or remove one later, open the Manage all tab and click Edit or Delete."
+      ],
+      "result": "The announcement shows in the Feed (and on Workplace Home) for its audience from the publish date until it expires. In Manage all its state is live, scheduled or expired.",
+      "tips": []
+    },
+    {
+      "title": "Draft and issue a circular",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Circulars > New circular (or '+ New' > Circular)",
+      "route": "/workplace/circulars",
+      "steps": [
+        "Click Circulars, then New circular.",
+        "Enter the Subject, Addressed to (for example 'All employees'; leave empty to use the audience), Issue date, the audience, and the Text of the circular.",
+        "Click Save draft. The draft opens.",
+        "Check it, use Edit if needed, then click Issue circular and confirm."
+      ],
+      "result": "The circular gets a reference number, is printed on the company letterhead (Letterhead PDF and Print PDF buttons), and its audience is asked to acknowledge it. After issue it cannot be edited or deleted.",
+      "tips": ["A draft can be deleted with Delete. Attach enclosures under Enclosures."]
+    },
+    {
+      "title": "Acknowledge a circular, and track who has",
+      "who": "Recipients acknowledge; managers track",
+      "where": "Workplace > Circulars > open the circular",
+      "route": "/workplace/circulars",
+      "steps": [
+        "Click the Waiting for my acknowledgement chip (or the To acknowledge tile on Workplace Home).",
+        "Open the circular, read it and click I have read and acknowledge this.",
+        "Managers: open an issued circular and look at Acknowledgements. Use the tabs Everyone, Waiting and Acknowledged."
+      ],
+      "result": "Your acknowledgement is recorded with the date and time. Managers see 'n of n acknowledged' and who is still waiting; the list shows the count per circular.",
+      "tips": []
+    },
+    {
+      "title": "Keep the office asset register",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Assets > Add asset",
+      "route": "/workplace/assets",
+      "steps": [
+        "Click Assets, then Add asset.",
+        "Enter the Name (for example 'Dell laptop'), Category, Serial number and Status (In stock, In use, In repair, Retired, Lost).",
+        "Choose Assigned to, and enter Location, Purchase date, Purchase value (INR), for example 65,000, and Warranty expiry.",
+        "Click Add asset. The asset stays open so you can attach the invoice and warranty papers.",
+        "To update an asset (for example when it is handed to someone else), click Open, change the fields and click Save asset.",
+        "Use Search (name, tag, serial number), Status and Category to find assets."
+      ],
+      "result": "Each asset gets an automatic tag such as T2N-AST-26-2411-0001. The tiles show the number of assets, total purchase value, how many are in use and how many warranties end within 60 days.",
+      "tips": ["If an asset is only out of use, set its status to Retired instead of deleting it."]
+    },
+    {
+      "title": "Sign visitors in and out",
+      "who": "Admin, Partners, HR Manager, Project Manager",
+      "where": "Workplace > Visitors > Sign in a visitor",
+      "route": "/workplace/visitors",
+      "steps": [
+        "Click Visitors, then Sign in a visitor.",
+        "Enter the Visitor name, Company, Phone, Time in (filled with now) and Purpose of visit.",
+        "In Meeting (host), choose the colleague, or choose Someone else and type the Host name.",
+        "Click Sign in.",
+        "When the visitor leaves, click Sign out on their row.",
+        "Use the chips In the office, A day (choose the Day) and All, and Search, to look back."
+      ],
+      "result": "The tiles show who is in the office now and how many visitors came today. Sign out records the time out.",
+      "tips": ["Delete removes an entry from the log and is recorded in the change history."]
+    }
+  ],
+  "statuses": [
+    {"name": "Meeting: Scheduled", "meaning": "Planned and not yet held."},
+    {"name": "Meeting: Rescheduled", "meaning": "Moved to a new date or time, with a reason."},
+    {"name": "Meeting: Held", "meaning": "Marked as having taken place."},
+    {"name": "Meeting: Cancelled", "meaning": "Called off with a reason; can be reopened."},
+    {"name": "Task: To do / In progress / Blocked / Done / Cancelled", "meaning": "Where a task stands; Done and Cancelled can only go back to To do. An Overdue badge shows when an open task is past its due date."},
+    {"name": "Circular: Draft / Issued", "meaning": "A draft can be edited or deleted; an issued circular is numbered, on letterhead and frozen."},
+    {"name": "Announcement: live / scheduled / expired", "meaning": "Shown now, waiting for its publish date, or past its expiry date."},
+    {"name": "Asset: In stock / In use / In repair / Retired / Lost", "meaning": "Where the asset is; the warranty badge shows In warranty, Expiring soon (within 60 days) or Expired."},
+    {"name": "Visitor: Inside", "meaning": "Signed in and not yet signed out."}
+  ],
+  "routines": {
+    "daily": ["Check Workplace Home and My Tasks; move tasks along and tick checklists.", "Acknowledge any circulars waiting for you.", "Front office: sign visitors in and out."],
+    "weekly": ["Managers: review Overdue tasks and the Open tasks by person chart.", "Prepare agendas for the coming week's meetings and record minutes for meetings held."],
+    "monthly": ["Check acknowledgement progress on recent circulars and remind those still waiting.", "Update the asset register for any handovers, repairs or new purchases."],
+    "yearly": ["Review the asset register against the physical items and mark lost or retired assets.", "Create the next set of meetings for repeating series."]
+  },
+  "common_problems": [
+    {"problem": "I cannot see Schedule meeting, Assets or Visitors.", "fix": "These need the workplace manage permission (Admin, Partners, HR Manager, Project Manager by default)."},
+    {"problem": "I cannot assign a task to a colleague.", "fix": "Only managers can assign to others; everyone else creates tasks for themselves."},
+    {"problem": "Minutes have a mistake.", "fix": "Issued minutes cannot be edited. Void them in Company > Minutes of meeting and record them again from the meeting."},
+    {"problem": "The Delete button is missing on a meeting.", "fix": "Minutes have been issued for it. Cancel the meeting instead, or void the minutes first."},
+    {"problem": "A circular cannot be edited.", "fix": "Once issued it is frozen. Issue a new circular with the correction."},
+    {"problem": "Meeting link is rejected.", "fix": "The link must start with http:// or https://."}
+  ],
+  "connected": [
+    "Company module: minutes of meeting and circulars are issued and numbered there, on the company letterhead; voiding minutes is done there.",
+    "Projects: a task can be linked to a project.",
+    "Access: user roles decide who can manage Workplace and who receives role-targeted announcements and circulars."
+  ]
+}
